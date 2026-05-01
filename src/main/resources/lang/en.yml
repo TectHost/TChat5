@@ -1,0 +1,32 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                            en.yml                            ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# DON'T TOUCH THIS
+config-version: 0
+
+# You cannot use placeholders in the prefix
+#
+# To disable the prefix, you can leave this field blank
+#prefix: ""
+prefix: "<gradient:#5B03E4:#C03AFE>TChat</gradient> <color:#FFD700>»</color> <gray>"
+
+# You can use the legacy ‘&’ colors and MiniMessage (recommended) in all messages
+#
+# Legacy colors may cause compatibility issues,
+# we recommend using MiniMessage whenever possible
+#
+# All messages are compatible with PlaceholderAPI.
+messages:
+  no-permission: "<red>You do not have permission to execute this command.</red>"
+  reload-start: "<yellow>Reloading plugin state...</yellow>"
+  reload-success: "<green>TChat reloaded successfully.</green>"
+  reload-failure: "<red>TChat could not be reloaded. Check console for details.</red>"
+  unknown-subcommand: "<red>Unknown subcommand. Use <white>/tchat reload</white>.</red>"
+
+  # Update-Notify module
+  # You can use %latest% and %current%
+  update-notify-outdated: "<yellow>A new version of TChat is available: <white>%latest%</white> (you have <white>%current%</white>). <click:open_url:'https://www.spigotmc.org/resources/111858/'><underlined>Download it here</underlined></click></yellow>"

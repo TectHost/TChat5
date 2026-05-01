@@ -1,0 +1,32 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                            es.yml                            ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# NO TOCAR!
+config-version: 0
+
+# No puedes usar placeholders en el prefijo
+#
+# Para deshabilitar el prefijo, puedes dejar este apartado vacío
+#prefix: ""
+prefix: "<gradient:#5B03E4:#C03AFE>TChat</gradient> <color:#FFD700>»</color> <gray>"
+
+# Puedes usar los colores legacy '&' y MiniMessage (recomendado) en todos los mensajes
+#
+# Es posible que los colores legacy puedan dar problemas de compatibilidad,
+# se recomienda usar MiniMessage siempre que sea posible.
+#
+# Todos los mensajes tienen compatibilidad con PlaceholderAPI.
+messages:
+  no-permission: "<red>No tienes permisos para ejecutar este comando.</red>"
+  reload-start: "<yellow>Recargando estado del plugin...</yellow>"
+  reload-success: "<green>TChat se ha recargado correctamente.</green>"
+  reload-failure: "<red>No se pudo recargar TChat. Revisa la consola para mas detalles.</red>"
+  unknown-subcommand: "<red>Subcomando desconocido. Usa <white>/tchat reload</white>.</red>"
+
+  # Módulo Update-Notify
+  # Puedes usar %latest% y %current%
+  update-notify-outdated: "<yellow>Hay una nueva versión de TChat disponible: <white>%latest%</white> (tienes la <white>%current%</white>). <click:open_url:'%url%'><underlined>Descárgala aquí</underlined></click></yellow>"

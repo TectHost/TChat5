@@ -1,0 +1,43 @@
+package tect.host.tpl.module;
+
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+import tect.host.tpl.TChat;
+import tect.host.tpl.config.ConfigFile;
+import tect.host.tpl.config.ConfigManager;
+import tect.host.tpl.config.MessagesManager;
+import tect.host.tpl.module.hook.placeholderapi.PlaceholderApiHook;
+
+import java.util.logging.Logger;
+
+public final class ModuleContext {
+
+    private final TChat plugin;
+    private final ConfigManager coreConfig;
+    private final MessagesManager messagesManager;
+    private final PlaceholderApiHook placeholderApiHook;
+    private final SchedulerAccess scheduler;
+    private final String pluginVersion;
+    private final Logger logger;
+
+    public ModuleContext(@NonNull TChat plugin, @NonNull ConfigManager coreConfig, @NonNull MessagesManager messagesManager, @NonNull PlaceholderApiHook placeholderApiHook, @NonNull SchedulerAccess scheduler) {
+        this.plugin = plugin;
+        this.coreConfig = coreConfig;
+        this.messagesManager = messagesManager;
+        this.placeholderApiHook = placeholderApiHook;
+        this.scheduler = scheduler;
+        this.pluginVersion = plugin.getPluginMeta().getVersion();
+        this.logger = plugin.getLogger();
+    }
+
+    public @NonNull ConfigFile createConfigFile(@NonNull String fileName, @Nullable String subFolder) {
+        return new ConfigFile(plugin, fileName, subFolder);
+    }
+
+    public @NonNull ConfigManager getCoreConfig() { return coreConfig; }
+    public @NonNull MessagesManager getMessagesManager() { return messagesManager; }
+    public @NonNull PlaceholderApiHook getPlaceholderApiHook() { return placeholderApiHook; }
+    public @NonNull SchedulerAccess getScheduler() { return scheduler; }
+    public @NonNull String getPluginVersion() { return pluginVersion; }
+    public @NonNull Logger getLogger() { return logger; }
+}

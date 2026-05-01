@@ -1,0 +1,153 @@
+name: ${project.name}
+version: ${project.version}
+main: tect.host.tpl.TChat
+
+description: ${project.description}
+author: Alex M. (TectHost)
+api-version: '1.21'
+website: https://tect.host
+
+softdepend:
+  - PlaceholderAPI
+
+commands:
+  tchat:
+    description: Main TChat command
+    usage: /tchat reload
+    permission: tchat.admin.reload
+
+permissions:
+  tchat.admin:
+    description: Allows to do everything in TChat
+    default: op
+
+  tchat.admin.reload:
+    description: Allows reloading TChat
+    default: op
+
+  tchat.colorchat.color.black:
+    description: Use &0 / <black> in chat
+    default: false
+  tchat.colorchat.color.dark_blue:
+    description: Use &1 / <dark_blue> in chat
+    default: false
+  tchat.colorchat.color.dark_green:
+    description: Use &2 / <dark_green> in chat
+    default: false
+  tchat.colorchat.color.dark_aqua:
+    description: Use &3 / <dark_aqua> in chat
+    default: false
+  tchat.colorchat.color.dark_red:
+    description: Use &4 / <dark_red> in chat
+    default: false
+  tchat.colorchat.color.dark_purple:
+    description: Use &5 / <dark_purple> in chat
+    default: false
+  tchat.colorchat.color.gold:
+    description: Use &6 / <gold> in chat
+    default: false
+  tchat.colorchat.color.gray:
+    description: Use &7 / <gray> in chat
+    default: false
+  tchat.colorchat.color.dark_gray:
+    description: Use &8 / <dark_gray> in chat
+    default: false
+  tchat.colorchat.color.blue:
+    description: Use &9 / <blue> in chat
+    default: false
+  tchat.colorchat.color.green:
+    description: Use &a / <green> in chat
+    default: false
+  tchat.colorchat.color.aqua:
+    description: Use &b / <aqua> in chat
+    default: false
+  tchat.colorchat.color.red:
+    description: Use &c / <red> in chat
+    default: false
+  tchat.colorchat.color.light_purple:
+    description: Use &d / <light_purple> in chat
+    default: false
+  tchat.colorchat.color.yellow:
+    description: Use &e / <yellow> in chat
+    default: false
+  tchat.colorchat.color.white:
+    description: Use &f / <white> in chat
+    default: false
+
+  tchat.colorchat.format.bold:
+    description: Use &l / <bold> in chat
+    default: false
+  tchat.colorchat.format.italic:
+    description: Use &o / <italic> in chat
+    default: false
+  tchat.colorchat.format.underlined:
+    description: Use &n / <underlined> in chat
+    default: false
+  tchat.colorchat.format.strikethrough:
+    description: Use &m / <strikethrough> in chat
+    default: false
+  tchat.colorchat.format.obfuscated:
+    description: Use &k / <obfuscated> in chat
+    default: false
+  tchat.colorchat.format.reset:
+    description: Use &r / <reset> in chat
+    default: false
+
+  tchat.colorchat.advanced.hex:
+    description: Use hex colors (#RRGGBB / <color:#RRGGBB>) in chat
+    default: false
+  tchat.colorchat.advanced.gradient:
+    description: Use <gradient> in chat
+    default: false
+  tchat.colorchat.advanced.rainbow:
+    description: Use <rainbow> in chat
+    default: false
+
+
+  tchat.colorchat.colors:
+    description: Grants all 16 standard colors
+    default: false
+    children:
+      tchat.colorchat.color.black: true
+      tchat.colorchat.color.dark_blue: true
+      tchat.colorchat.color.dark_green: true
+      tchat.colorchat.color.dark_aqua: true
+      tchat.colorchat.color.dark_red: true
+      tchat.colorchat.color.dark_purple: true
+      tchat.colorchat.color.gold: true
+      tchat.colorchat.color.gray: true
+      tchat.colorchat.color.dark_gray: true
+      tchat.colorchat.color.blue: true
+      tchat.colorchat.color.green: true
+      tchat.colorchat.color.aqua: true
+      tchat.colorchat.color.red: true
+      tchat.colorchat.color.light_purple: true
+      tchat.colorchat.color.yellow: true
+      tchat.colorchat.color.white: true
+
+  tchat.colorchat.formats:
+    description: Grants all text decorations
+    default: false
+    children:
+      tchat.colorchat.format.bold: true
+      tchat.colorchat.format.italic: true
+      tchat.colorchat.format.underlined: true
+      tchat.colorchat.format.strikethrough: true
+      tchat.colorchat.format.obfuscated: true
+      tchat.colorchat.format.reset: true
+
+  tchat.colorchat.advanced:
+    description: Grants hex, gradient and rainbow
+    default: false
+    children:
+      tchat.colorchat.advanced.hex: true
+      tchat.colorchat.advanced.gradient: true
+      tchat.colorchat.advanced.rainbow: true
+
+  tchat.colorchat:
+    description: Grants all colorchat permissions (colors + formats + advanced)
+    default: false
+    children:
+      tchat.colorchat.colors: true
+      tchat.colorchat.formats: true
+      tchat.colorchat.advanced: true

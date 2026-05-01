@@ -1,0 +1,48 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                          config.yml                          ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# DON'T TOUCH THIS!
+config-version: 0
+
+chat:
+  # Global chat format (modules.format)
+  # You can use placeholders from the PlaceholderAPI
+  # Preferably use MiniMessage colors, although legacy colors (&) will also work
+  format: "%luckperms_prefix%&a%player_name% &e>> &7<message>"
+
+  # Language file to use for plugin messages
+  # Place your file in /lang/ folder (e.g. fr.yml)
+  # Available: en.yml | es.yml
+  lang: "en.yml"
+
+
+# If the value is false, the module will not be instantiated, will not load its own configuration
+# and will not participate in the chat flow at all (you can also delete its corresponding configuration file)
+modules:
+
+  # Global format module (The group format will continue working even if you disable this module)
+  #
+  # The formatting module applies to all users; if used in conjunction with the groups module,
+  # it will only apply if the user's group does not have formatting enabled
+  #
+  # Format module loaded from config.yml (do not delete this if you disable the formatting module)
+  format: true
+
+  # Allows you to configure prefixes, suffixes, formats, and other options by permission-based groups
+  #
+  # Group module loaded from modules/groups.yml
+  group: true
+
+  # Send a message to the admins via chat when the plugin isn't up to date
+  #
+  # This module does not have a configuration file
+  update-notify: true
+
+  # Allows to translate colors and formats in chat using permissions
+  #
+  # This module does not have a configuration file
+  colorchat: true
