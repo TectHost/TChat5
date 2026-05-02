@@ -30,86 +30,86 @@ permissions:
 
   tchat.colorchat.color.black:
     description: Use &0 / <black> in chat
-    default: false
+    default: op
   tchat.colorchat.color.dark_blue:
     description: Use &1 / <dark_blue> in chat
-    default: false
+    default: op
   tchat.colorchat.color.dark_green:
     description: Use &2 / <dark_green> in chat
-    default: false
+    default: op
   tchat.colorchat.color.dark_aqua:
     description: Use &3 / <dark_aqua> in chat
-    default: false
+    default: op
   tchat.colorchat.color.dark_red:
     description: Use &4 / <dark_red> in chat
-    default: false
+    default: op
   tchat.colorchat.color.dark_purple:
     description: Use &5 / <dark_purple> in chat
-    default: false
+    default: op
   tchat.colorchat.color.gold:
     description: Use &6 / <gold> in chat
-    default: false
+    default: op
   tchat.colorchat.color.gray:
     description: Use &7 / <gray> in chat
-    default: false
+    default: op
   tchat.colorchat.color.dark_gray:
     description: Use &8 / <dark_gray> in chat
-    default: false
+    default: op
   tchat.colorchat.color.blue:
     description: Use &9 / <blue> in chat
-    default: false
+    default: op
   tchat.colorchat.color.green:
     description: Use &a / <green> in chat
-    default: false
+    default: op
   tchat.colorchat.color.aqua:
     description: Use &b / <aqua> in chat
-    default: false
+    default: op
   tchat.colorchat.color.red:
     description: Use &c / <red> in chat
-    default: false
+    default: op
   tchat.colorchat.color.light_purple:
     description: Use &d / <light_purple> in chat
-    default: false
+    default: op
   tchat.colorchat.color.yellow:
     description: Use &e / <yellow> in chat
-    default: false
+    default: op
   tchat.colorchat.color.white:
     description: Use &f / <white> in chat
-    default: false
+    default: op
 
   tchat.colorchat.format.bold:
     description: Use &l / <bold> in chat
-    default: false
+    default: op
   tchat.colorchat.format.italic:
     description: Use &o / <italic> in chat
-    default: false
+    default: op
   tchat.colorchat.format.underlined:
     description: Use &n / <underlined> in chat
-    default: false
+    default: op
   tchat.colorchat.format.strikethrough:
     description: Use &m / <strikethrough> in chat
-    default: false
+    default: op
   tchat.colorchat.format.obfuscated:
     description: Use &k / <obfuscated> in chat
-    default: false
+    default: op
   tchat.colorchat.format.reset:
     description: Use &r / <reset> in chat
-    default: false
+    default: op
 
   tchat.colorchat.advanced.hex:
     description: Use hex colors (#RRGGBB / <color:#RRGGBB>) in chat
-    default: false
+    default: op
   tchat.colorchat.advanced.gradient:
     description: Use <gradient> in chat
-    default: false
+    default: op
   tchat.colorchat.advanced.rainbow:
     description: Use <rainbow> in chat
-    default: false
+    default: op
     
   
   tchat.colorchat.colors:
     description: Grants all 16 standard colors
-    default: false
+    default: op
     children:
       tchat.colorchat.color.black: true
       tchat.colorchat.color.dark_blue: true
@@ -130,7 +130,7 @@ permissions:
 
   tchat.colorchat.formats:
     description: Grants all text decorations
-    default: false
+    default: op
     children:
       tchat.colorchat.format.bold: true
       tchat.colorchat.format.italic: true
@@ -141,7 +141,7 @@ permissions:
 
   tchat.colorchat.advanced:
     description: Grants hex, gradient and rainbow
-    default: false
+    default: op
     children:
       tchat.colorchat.advanced.hex: true
       tchat.colorchat.advanced.gradient: true
@@ -149,7 +149,7 @@ permissions:
 
   tchat.colorchat:
     description: Grants all colorchat permissions (colors + formats + advanced)
-    default: false
+    default: op
     children:
       tchat.colorchat.colors: true
       tchat.colorchat.formats: true
