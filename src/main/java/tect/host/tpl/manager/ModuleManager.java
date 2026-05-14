@@ -175,8 +175,8 @@ public final class ModuleManager {
 
     /** Kahn's algorithm, topological sort for dependency ordering */
     private @NonNull List<ModuleDescriptor> resolveDependencyOrder(@NonNull Map<String, ModuleDescriptor> enabled) {
-        Map<String, Integer>       inDegree   = new LinkedHashMap<>();
-        Map<String, List<String>>  dependents = new HashMap<>();
+        Map<String, Integer> inDegree = new LinkedHashMap<>();
+        Map<String, List<String>> dependents = new HashMap<>();
 
         for (ModuleDescriptor d : enabled.values()) {
             inDegree.putIfAbsent(d.getId(), 0);

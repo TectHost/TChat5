@@ -60,6 +60,7 @@ public final class BlockedWordsModule implements ChatModule {
     @Override
     public void onEnable() {
         configFile = moduleContext.createConfigFile("blockedwords.yml", "modules");
+        configFile.setMigrator(BlockedWordsMigrations.create(moduleContext.getLogger()));
         configFile.register();
         load();
     }
