@@ -5,11 +5,13 @@ import tect.host.tpl.module.ChatModule;
 import tect.host.tpl.module.ModulePhase;
 import tect.host.tpl.util.MessageContext;
 
+import java.util.EnumSet;
 import java.util.List;
 
 public final class ChatProcessor {
 
-    private static final List<ModulePhase> PHASES = List.of(ModulePhase.values());
+    private static final EnumSet<ModulePhase> PHASES = EnumSet.allOf(ModulePhase.class);
+
     private final ModuleManager moduleManager;
 
     public ChatProcessor(ModuleManager moduleManager) {

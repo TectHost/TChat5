@@ -5,6 +5,8 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.NonNull;
 import tect.host.tpl.module.ModulePhase;
+import tect.host.tpl.module.impl.chat.blockedwords.BlockedWordsCommand;
+import tect.host.tpl.module.impl.chat.blockedwords.BlockedWordsModule;
 import tect.host.tpl.module.impl.chat.colorchat.ColorChatModule;
 import tect.host.tpl.module.impl.chat.group.GroupModule;
 import tect.host.tpl.module.impl.chat.format.FormatModule;
@@ -18,31 +20,6 @@ public final class ModuleRegistry {
 
     private ModuleRegistry() {}
 
-    /*
-     * Registration order does not affect execution order
-     * Execution order is determined by phase and priority defined in each descriptor
-     * Dependency resolution (Kahn's algorithm) uses registration order only as a tiebreaker
-     * when multiple modules become available simultaneously, this has no observable effect
-     */
-
-    /*
-     * In togglePath, I just need to specify the module according to config.yml
-     * I don't need to include “modules.<module>” since that is added by the ConfigManager
-     */
-
-    /*
-     * Sample code for adding a module that does not modify the chat, only commands or messages
-     * (remember: don't include .phase, unless the module modifies the chat)
-     *
-     * ModuleDescriptor.builder("announcements", "announcements", AnnouncementsModule::new)
-     *   .build()
-     */
-
-    /**
-     * The reason for putting multiple categories into an array is that
-     * TChat will eventually have more than 50 modules
-     * otherwise, I would create a list and just throw everything into it without any order
-     */
     @Contract(" -> new")
     public static @NonNull @UnmodifiableView List<ModuleDescriptor> createDefaultRegistry() {
         List<ModuleDescriptor> all = new ArrayList<>();
@@ -56,6 +33,8 @@ public final class ModuleRegistry {
     @Contract(" -> new")
     private static @NonNull @Unmodifiable List<ModuleDescriptor> chatModules() {
         return List.of(
+                ModuleDescriptor.builder("blocked-words", "blocked-words", BlockedWordsModule::new)
+                        .phase(ModulePhase.PRE_PROCESS).priority(5).command(mm -> new BlockedWordsCommand(mm, mm.getModuleContext().getMessagesManager())).build(),
                 ModuleDescriptor.builder("colorchat", "colorchat", ColorChatModule::new)
                         .phase(ModulePhase.PRE_PROCESS).priority(8).build(),
                 ModuleDescriptor.builder("group", "group", GroupModule::new)

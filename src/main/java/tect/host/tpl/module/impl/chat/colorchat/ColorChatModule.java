@@ -1,5 +1,6 @@
 package tect.host.tpl.module.impl.chat.colorchat;
 
+import net.kyori.adventure.text.Component;
 import org.jspecify.annotations.NonNull;
 import tect.host.tpl.module.ChatModule;
 import tect.host.tpl.module.ModuleContext;
@@ -16,7 +17,7 @@ import tect.host.tpl.util.MessageContext;
  *   2. Sanitize: translate allowed legacy codes to MiniMessage tags, strip the rest
  *   3. Cancel if the result is blank (e.g. player sent only "<green>" or "&a")
  *   4. Parse the sanitized MiniMessage string into a Component (single parse)
- *   5. Write the Component back to msgCtx
+ *   5. Write the Component back to the messages context
  */
 public final class ColorChatModule implements ChatModule {
 
@@ -34,9 +35,14 @@ public final class ColorChatModule implements ChatModule {
     public void process(@NonNull MessageContext msgCtx) {
         if (msgCtx.isCancelled()) return;
 
-        String rawText = msgCtx.getRawMessage();
+        String rawText = msgCtx.getEffectiveRaw();
 
-        if (!ColorChatParser.hasMarkup(rawText)) return;
+        if (!ColorChatParser.hasMarkup(rawText)) {
+            if (!msgCtx.getEffectiveRaw().equals(msgCtx.getRawMessage())) {
+                msgCtx.setMessage(Component.text(rawText));
+            }
+            return;
+        }
 
         String sanitized = ColorChatParser.sanitize(msgCtx.getPlayer(), rawText);
 

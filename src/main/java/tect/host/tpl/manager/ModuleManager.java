@@ -8,13 +8,16 @@ import tect.host.tpl.module.*;
 import tect.host.tpl.module.Module;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public final class ModuleManager {
 
     private final Map<String, ModuleDescriptor> descriptors = new LinkedHashMap<>();
-    private final Map<String, Module> activeModules = new LinkedHashMap<>();
+    private final ConcurrentHashMap<String, Module> activeModules = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ModuleCommand> activeCommands = new ConcurrentHashMap<>();
 
     private record Pipeline(Map<ModulePhase, List<ChatModule>> chat, List<JoinModule> join) {
         static final Pipeline EMPTY = new Pipeline(Map.of(), List.of());
@@ -39,12 +42,6 @@ public final class ModuleManager {
         moduleDescriptors.forEach(this::registerDescriptor);
     }
 
-    /**
-     * Loads enabled modules with smart reload:
-     * - Modules that were active and remain enabled receive onReload()
-     * - New modules are created and receive onEnable()
-     * - Modules no longer enabled are unloaded
-     */
     public void loadEnabledModules() {
         Map<String, ModuleDescriptor> enabled = new LinkedHashMap<>();
         for (ModuleDescriptor descriptor : descriptors.values()) {
@@ -55,98 +52,72 @@ public final class ModuleManager {
 
         List<ModuleDescriptor> ordered = resolveDependencyOrder(enabled);
 
-        // Determine which currently active modules must be unloaded
         Set<String> toUnload = new LinkedHashSet<>(activeModules.keySet());
-        for (ModuleDescriptor d : ordered) {
-            toUnload.remove(d.getId());
-        }
+        for (ModuleDescriptor d : ordered) toUnload.remove(d.getId());
 
-        // Unload removed modules in reverse insertion order (avoid dependency errors)
         List<String> reverseUnload = new ArrayList<>(toUnload);
         Collections.reverse(reverseUnload);
-        for (String id : reverseUnload) {
-            Module module = activeModules.remove(id);
-            if (module != null) {
-                module.onDisable();
-                logger.info("Module unloaded: %s".formatted(id));
-            }
-        }
 
-        // Load or reload each module in dependency order
+        for (String id : reverseUnload) disableAndRemove(id);
+
         for (ModuleDescriptor descriptor : ordered) {
-            boolean hasMissing = descriptor.getRequiredModules().stream().anyMatch(dep -> !activeModules.containsKey(dep));
+            Set<String> missing = descriptor.getRequiredModules().stream()
+                    .filter(dep -> !activeModules.containsKey(dep))
+                    .collect(Collectors.toUnmodifiableSet());
 
-            if (hasMissing) {
-                Set<String> missing = descriptor.getRequiredModules().stream()
-                        .filter(dep -> !activeModules.containsKey(dep))
-                        .collect(Collectors.toUnmodifiableSet());
-
+            if (!missing.isEmpty()) {
                 logger.warning("Module '%s' skipped: missing required modules %s".formatted(descriptor.getId(), missing));
-                Module stale = activeModules.remove(descriptor.getId());
-                if (stale != null) stale.onDisable();
+                disableAndRemove(descriptor.getId());
                 continue;
             }
 
             Module existing = activeModules.get(descriptor.getId());
             if (existing != null) {
-                // If module already active -> smart reload
-                try {
-                    existing.onReload();
-                    logger.info("Module reloaded: %s".formatted(descriptor.getId()));
-                } catch (Exception e) {
-                    logger.severe("Failed to reload module '%s': %s".formatted(descriptor.getId(), e.getMessage()));
-                }
+                reloadModule(descriptor, existing);
             } else {
-                // If new module -> create and enable
-                try {
-                    Module module = descriptor.getFactory().create(moduleContext);
-                    module.onEnable();
-                    activeModules.put(descriptor.getId(), module);
-                    logger.info("Module loaded: %s".formatted(descriptor.getId()));
-                } catch (Exception e) {
-                    logger.severe("Failed to load module '%s': %s".formatted(descriptor.getId(), e.getMessage()));
-                }
+                enableModule(descriptor);
             }
         }
 
         rebuildPipeline();
     }
 
-    /**
-     * I'm keeping this method in case I need to reload something else in the future
-     * and maintain a consistent structure across the classes
-     */
     public void reloadModules() {
         loadEnabledModules();
     }
 
-    /**
-     * activeModules preserves insertion order (LinkedHashMap) and modules
-     * are inserted in topological order by loadEnabledModules(), so
-     * reversing gives us correct teardown order (dependents before dependencies)
-      */
     public void unloadAll() {
-        List<Module> toUnload = new ArrayList<>(activeModules.values());
-        Collections.reverse(toUnload);
+        List<String> ids = new ArrayList<>(activeModules.keySet());
+        Collections.reverse(ids);
 
-        for (Module module : toUnload) {
+        for (String id : ids) {
+            Module module = activeModules.remove(id);
+            activeCommands.remove(id);
+            if (module == null) continue;
             try {
                 module.onDisable();
-                logger.info("Module unloaded: %s".formatted(module.getId()));
+                logger.info("Module unloaded: %s".formatted(id));
             } catch (Exception e) {
-                logger.severe("Error disabling module '%s': %s".formatted(module.getId(), e.getMessage()));
+                logger.severe("Error disabling module '%s': %s".formatted(id, e.getMessage()));
             }
         }
 
-        activeModules.clear();
-        this.pipeline = Pipeline.EMPTY;
+        pipeline = Pipeline.EMPTY;
+    }
+
+    public @NonNull ModuleContext getModuleContext() {
+        return moduleContext;
     }
 
     public @NonNull @UnmodifiableView Collection<Module> getActiveModules() {
         return Collections.unmodifiableCollection(activeModules.values());
     }
 
-    public List<ChatModule> getModulesForPhase(ModulePhase phase) {
+    public @NonNull @UnmodifiableView Collection<ModuleCommand> getActiveCommands() {
+        return Collections.unmodifiableCollection(activeCommands.values());
+    }
+
+    public List<ChatModule> getModulesForPhase(@NonNull ModulePhase phase) {
         return pipeline.chat().getOrDefault(phase, List.of());
     }
 
@@ -164,12 +135,48 @@ public final class ModuleManager {
         return type.isInstance(module) ? (T) module : null;
     }
 
-    /**
-     * I use Kahn's algorithm for topological sorting of module dependencies
-     */
+    private void disableAndRemove(@NonNull String id) {
+        Module module = activeModules.remove(id);
+        activeCommands.remove(id);
+        if (module == null) return;
+        try {
+            module.onDisable();
+            logger.info("Module unloaded: %s".formatted(id));
+        } catch (Exception e) {
+            logger.severe("Error disabling module '%s': %s".formatted(id, e.getMessage()));
+        }
+    }
+
+    private void reloadModule(@NonNull ModuleDescriptor descriptor, @NonNull Module module) {
+        try {
+            module.onReload();
+            logger.info("Module reloaded: %s".formatted(descriptor.getId()));
+        } catch (Exception e) {
+            logger.severe("Failed to reload module '%s': %s".formatted(descriptor.getId(), e.getMessage()));
+        }
+    }
+
+    private void enableModule(@NonNull ModuleDescriptor descriptor) {
+        try {
+            Module module = descriptor.getFactory().create(moduleContext);
+            module.onEnable();
+            activeModules.put(descriptor.getId(), module);
+
+            Function<ModuleManager, ModuleCommand> cmdFactory = descriptor.getCommandFactory();
+            if (cmdFactory != null) {
+                activeCommands.put(descriptor.getId(), cmdFactory.apply(this));
+            }
+
+            logger.info("Module loaded: %s".formatted(descriptor.getId()));
+        } catch (Exception e) {
+            logger.severe("Failed to load module '%s': %s".formatted(descriptor.getId(), e.getMessage()));
+        }
+    }
+
+    /** Kahn's algorithm, topological sort for dependency ordering */
     private @NonNull List<ModuleDescriptor> resolveDependencyOrder(@NonNull Map<String, ModuleDescriptor> enabled) {
-        Map<String, Integer> inDegree = new LinkedHashMap<>();
-        Map<String, List<String>> dependents = new HashMap<>();
+        Map<String, Integer>       inDegree   = new LinkedHashMap<>();
+        Map<String, List<String>>  dependents = new HashMap<>();
 
         for (ModuleDescriptor d : enabled.values()) {
             inDegree.putIfAbsent(d.getId(), 0);
@@ -188,11 +195,8 @@ public final class ModuleManager {
             String id = queue.poll();
             ModuleDescriptor descriptor = enabled.get(id);
             if (descriptor != null) ordered.add(descriptor);
-
             for (String dependent : dependents.getOrDefault(id, List.of())) {
-                if (inDegree.merge(dependent, -1, Integer::sum) == 0) {
-                    queue.add(dependent);
-                }
+                if (inDegree.merge(dependent, -1, Integer::sum) == 0) queue.add(dependent);
             }
         }
 
@@ -214,20 +218,24 @@ public final class ModuleManager {
                 .forEach(e -> {
                     Module m = e.getValue();
                     ModuleDescriptor desc = descriptors.get(e.getKey());
-                    if (m instanceof ChatModule cm && desc != null && desc.getPhase() != null) {
-                        snap.computeIfAbsent(desc.getPhase(), $ -> new ArrayList<>()).add(cm);
+
+                    if (m instanceof ChatModule cm) {
+                        if (desc == null || desc.getPhase() == null) {
+                            logger.warning("ChatModule '%s' has no phase — it will never execute!".formatted(e.getKey()));
+                        } else {
+                            snap.computeIfAbsent(desc.getPhase(), $ -> new ArrayList<>()).add(cm);
+                        }
                     } else if (m instanceof JoinModule jm) {
                         newJoin.add(jm);
                     }
                 });
 
-        this.pipeline = new Pipeline(Map.copyOf(snap), List.copyOf(newJoin));
+        pipeline = new Pipeline(Collections.unmodifiableMap(snap), List.copyOf(newJoin));
     }
 
     private int compareByPriorityThenId(Map.@NonNull Entry<String, Module> a, Map.@NonNull Entry<String, Module> b) {
         int pa = descriptors.get(a.getKey()).getPriority();
         int pb = descriptors.get(b.getKey()).getPriority();
-        if (pa != pb) return Integer.compare(pa, pb);
-        return a.getKey().compareTo(b.getKey());
+        return pa != pb ? Integer.compare(pa, pb) : a.getKey().compareTo(b.getKey());
     }
 }

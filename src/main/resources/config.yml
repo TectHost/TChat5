@@ -6,7 +6,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # DON'T TOUCH THIS!
-config-version: 0
+config-version: 1
 
 chat:
   # Global chat format (modules.format)
@@ -46,3 +46,10 @@ modules:
   #
   # This module does not have a configuration file
   colorchat: true
+
+  # Allows you to block or censor words from a list
+  # It also detects similar words; for example:
+  # If the word "hello" is blocked, "he llo" will also be blocked
+  #
+  # Blocked words module loaded from modules/blockedwords.yml
+  blocked-words: true

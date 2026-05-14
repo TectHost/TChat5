@@ -6,13 +6,15 @@ import org.jspecify.annotations.NonNull;
 
 public class Utils {
 
+    private static final String ADMIN_PERM = "tchat.admin";
+
     private Utils() {}
 
     public static boolean hasPerms(@NonNull Player player, String perm) {
-        return player.hasPermission("tchat.admin") || player.hasPermission(perm);
+        return player.hasPermission(ADMIN_PERM) || player.hasPermission(perm);
     }
 
     public static boolean hasPerms(@NonNull CommandSender sender, String perm) {
-        return sender.hasPermission("tchat.admin") || sender.hasPermission(perm);
+        return sender.hasPermission(ADMIN_PERM) || sender.hasPermission(perm);
     }
 }

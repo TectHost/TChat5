@@ -8,14 +8,14 @@ import tect.host.tpl.config.ConfigManager;
 import tect.host.tpl.config.MessagesManager;
 import tect.host.tpl.listener.ChatListener;
 import tect.host.tpl.listener.PlayerJoinListener;
-import tect.host.tpl.manager.ChatProcessor;
-import tect.host.tpl.manager.JoinProcessor;
-import tect.host.tpl.manager.ModuleManager;
-import tect.host.tpl.manager.ModuleRegistry;
+import tect.host.tpl.manager.*;
 import tect.host.tpl.module.BukkitSchedulerAccess;
+import tect.host.tpl.module.ModuleCommand;
 import tect.host.tpl.module.ModuleContext;
 import tect.host.tpl.module.SchedulerAccess;
 import tect.host.tpl.module.hook.placeholderapi.PlaceholderApiHook;
+
+import java.util.List;
 
 public final class TChat extends JavaPlugin {
 
@@ -42,11 +42,8 @@ public final class TChat extends JavaPlugin {
 
         placeholderApiHook.registerExpansion(this, moduleManager);
 
-        ChatProcessor chatProcessor = new ChatProcessor(moduleManager);
-        getServer().getPluginManager().registerEvents(new ChatListener(chatProcessor), this);
-
-        JoinProcessor joinProcessor = new JoinProcessor(moduleManager);
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(joinProcessor), this);
+        getServer().getPluginManager().registerEvents(new ChatListener(new ChatProcessor(moduleManager)), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(new JoinProcessor(moduleManager)), this);
 
         registerCommands();
         new Metrics(this, 23305);
@@ -66,10 +63,20 @@ public final class TChat extends JavaPlugin {
 
     private void registerCommands() {
         getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
-            TChatCommand cmd = new TChatCommand(this);
+            TChatCommand tChatCommand = new TChatCommand(this);
+            event.registrar().register("tchat", tChatCommand);
+            event.registrar().register("chat",  tChatCommand);
 
-            event.registrar().register("tchat", cmd);
-            event.registrar().register("chat", cmd);
+            for (ModuleDescriptor descriptor : ModuleRegistry.createDefaultRegistry()) {
+                var cmdFactory = descriptor.getCommandFactory();
+                if (cmdFactory != null) {
+                    ModuleCommand cmd = cmdFactory.apply(moduleManager);
+                    event.registrar().register(cmd.getName(), cmd);
+                    for (String alias : cmd.getAliases()) {
+                        event.registrar().register(alias, cmd);
+                    }
+                }
+            }
         });
     }
 

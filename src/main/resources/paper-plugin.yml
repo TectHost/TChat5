@@ -23,9 +23,21 @@ permissions:
   tchat.admin:
     description: Allows to do everything in TChat
     default: op
+    children:
+      tchat.admin.reload: true
+      tchat.admin.blockedwords: true
+      tchat.bypass.blockedwords: true
 
   tchat.admin.reload:
     description: Allows reloading TChat
+    default: op
+
+  tchat.admin.blockedwords:
+    description: Allows to add and remove blocked words
+    default: op
+
+  tchat.bypass.blockedwords:
+    description: Bypass blockedwords module
     default: op
 
   tchat.colorchat.color.black:

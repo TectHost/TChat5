@@ -12,14 +12,6 @@ public final class ChatRenderer {
 
     private ChatRenderer() {}
 
-    /**
-     * Renders a chat format template into a final Component.
-     *.
-     * Pipeline:
-     * 1. PAPI placeholders resolved on the raw String
-     * 2. Legacy '&' codes + MiniMessage tags converted to MiniMessage String
-     * 3. Single MiniMessage parse with <message> tag injected
-     */
     public static @NonNull Component render(@NonNull PlaceholderApiHook hook, @Nullable Player player, @NonNull String template, @NonNull MessageContext ctx) {
         String withPlaceholders = hook.apply(player, template);
         String miniString = ColorUtil.legacyToMini(withPlaceholders);

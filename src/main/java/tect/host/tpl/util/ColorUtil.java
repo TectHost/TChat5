@@ -18,10 +18,6 @@ public final class ColorUtil {
 
     private ColorUtil() {}
 
-    /**
-     * Full pipeline to Component for config templates
-     * Resolves PAPI then parses as MiniMessage
-     */
     public static @NonNull Component translate(@NonNull PlaceholderApiHook hook, @Nullable Player player, @NonNull String message) {
         return deserialize(hook.apply(player, message));
     }

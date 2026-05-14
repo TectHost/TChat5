@@ -6,7 +6,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # DON'T TOUCH THIS
-config-version: 0
+config-version: 1
 
 # You cannot use placeholders in the prefix
 #
@@ -30,3 +30,14 @@ messages:
   # Update-Notify module
   # You can use %latest% and %current%
   update-notify-outdated: "<yellow>A new version of TChat is available: <white>%latest%</white> (you have <white>%current%</white>). <click:open_url:'https://www.spigotmc.org/resources/111858/'><underlined>Download it here</underlined></click></yellow>"
+
+  # BlockedWords module
+  # You can use %word% and %count% where applicable
+  blocked-words-module-disabled: "<red>The blocked-words module is not enabled.</red>"
+  blocked-words-usage: "<gray>Usage: /blockedwords <add|remove|list> [word]</gray>"
+  blocked-words-add-success: "<green>Word added: <white>%word%</white></green>"
+  blocked-words-add-duplicate: "<yellow>That word is already blocked.</yellow>"
+  blocked-words-remove-success: "<green>Word removed: <white>%word%</white></green>"
+  blocked-words-remove-not-found: "<yellow>That word is not in the list.</yellow>"
+  blocked-words-list-empty: "<gray>No words are currently blocked.</gray>"
+  blocked-words-list: "<gold>Blocked words (%count%): <white>%words%</white></gold>"

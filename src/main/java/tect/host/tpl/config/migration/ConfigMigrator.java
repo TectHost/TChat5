@@ -6,6 +6,7 @@ import org.jspecify.annotations.NonNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,8 +28,6 @@ public final class ConfigMigrator {
     /**
      * Applies all pending migrations to the given FileConfiguration
      * If any changes are made, the file will be saved to disk
-     *
-     * @return true if at least one migration was applied
      */
     public boolean migrate(@NonNull FileConfiguration config, @NonNull File file) {
         int current = config.getInt(VERSION_KEY, 0);
@@ -56,5 +55,15 @@ public final class ConfigMigrator {
         }
 
         return true;
+    }
+
+    public @NonNull ConfigMigrator addMigration(@NonNull ConfigMigration migration) {
+        migrations.add(migration);
+        return this;
+    }
+
+    public @NonNull ConfigMigrator addMigrations(@NonNull ConfigMigration... steps) {
+        Collections.addAll(migrations, steps);
+        return this;
     }
 }

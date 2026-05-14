@@ -31,13 +31,13 @@ public final class ChatListener implements Listener {
 
         if (ctx.isCancelled()) { event.setCancelled(true); return; }
 
-        if (ctx.getFormat() != null) {
-            event.renderer((source, dn, msg, viewer) -> ctx.getFormat());
+        Component format = ctx.getFormat();
+        if (format != null) {
+            event.renderer((source, dn, msg, viewer) -> format);
+        } else if (ctx.hasRawOverride()) {
+            event.message(Component.text(ctx.getEffectiveRaw()));
         } else if (!ctx.getMessage().equals(original)) {
             event.message(ctx.getMessage());
         }
-
-        // If no module sets the format, Paper uses its default renderer
-        // This is the expected behavior when all formatting modules are disabled
     }
 }

@@ -3,9 +3,13 @@ package tect.host.tpl.manager;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import tect.host.tpl.module.ModuleCommand;
+import tect.host.tpl.module.ModuleContext;
 import tect.host.tpl.module.ModulePhase;
 
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public final class ModuleDescriptor {
 
@@ -15,6 +19,7 @@ public final class ModuleDescriptor {
     private final Set<String> requiredModules;
     private final @Nullable ModulePhase phase;
     private final int priority;
+    private final @Nullable Function<ModuleManager, ModuleCommand> commandFactory;
 
     private ModuleDescriptor(@NonNull Builder builder) {
         this.id = builder.id;
@@ -23,6 +28,7 @@ public final class ModuleDescriptor {
         this.requiredModules = Set.copyOf(builder.requiredModules);
         this.phase = builder.phase;
         this.priority = builder.priority;
+        this.commandFactory = builder.commandFactory;
     }
 
     @Contract("_, _, _ -> new")
@@ -37,6 +43,10 @@ public final class ModuleDescriptor {
     public @Nullable ModulePhase getPhase() { return phase; }
     public int getPriority() { return priority; }
 
+    public @Nullable Function<ModuleManager, ModuleCommand> getCommandFactory() {
+        return commandFactory;
+    }
+
     public static final class Builder {
 
         private final String id;
@@ -45,6 +55,7 @@ public final class ModuleDescriptor {
         private Set<String> requiredModules = Set.of();
         private @Nullable ModulePhase phase = null;
         private int priority = 100;
+        private @Nullable Function<ModuleManager, ModuleCommand> commandFactory = null;
 
         private Builder(String id, String togglePath, ModuleFactory factory) {
             this.id = id;
@@ -52,10 +63,6 @@ public final class ModuleDescriptor {
             this.factory = factory;
         }
 
-        /**
-         * Each call to requires() replaces the previous set entirely
-         * To declare multiple dependencies, pass all IDs in one call: .requires("a", "b")
-         */
         public Builder requires(@NonNull String... moduleIds) {
             this.requiredModules = Set.of(moduleIds);
             return this;
@@ -68,6 +75,11 @@ public final class ModuleDescriptor {
 
         public Builder priority(int priority) {
             this.priority = priority;
+            return this;
+        }
+
+        public Builder command(@NonNull Function<ModuleManager, ModuleCommand> commandFactory) {
+            this.commandFactory = commandFactory;
             return this;
         }
 

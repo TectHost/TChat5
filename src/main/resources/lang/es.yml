@@ -6,7 +6,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # NO TOCAR!
-config-version: 0
+config-version: 1
 
 # No puedes usar placeholders en el prefijo
 #
@@ -30,3 +30,14 @@ messages:
   # Módulo Update-Notify
   # Puedes usar %latest% y %current%
   update-notify-outdated: "<yellow>Hay una nueva versión de TChat disponible: <white>%latest%</white> (tienes la <white>%current%</white>). <click:open_url:'%url%'><underlined>Descárgala aquí</underlined></click></yellow>"
+
+  # Módulo BlockedWords
+  # Puedes usar %word% y %count% donde corresponda
+  blocked-words-module-disabled: "<red>El módulo de palabras bloqueadas no está habilitado.</red>"
+  blocked-words-usage: "<gray>Uso: /blockedwords <add|remove|list> [palabra]</gray>"
+  blocked-words-add-success: "<green>Palabra añadida: <white>%word%</white></green>"
+  blocked-words-add-duplicate: "<yellow>Esa palabra ya está bloqueada.</yellow>"
+  blocked-words-remove-success: "<green>Palabra eliminada: <white>%word%</white></green>"
+  blocked-words-remove-not-found: "<yellow>Esa palabra no está en la lista.</yellow>"
+  blocked-words-list-empty: "<gray>No hay ninguna palabra bloqueada actualmente.</gray>"
+  blocked-words-list: "<gold>Palabras bloqueadas (%count%): <white>%words%</white></gold>"
