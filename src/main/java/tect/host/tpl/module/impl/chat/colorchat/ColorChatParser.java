@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  * Two-pass strategy (both passes are single regex sweeps):
  *.
  *  1. Legacy codes (&X):
- *    Allowed -> translated inline to the canonical MiniMessage tag (e.g. &c → <red>)
+ *    Allowed -> translated inline to the canonical MiniMessage tag (e.g. &c -> <red>)
  *    Denied -> removed entirely
  *.
  *  2. MiniMessage tags (<tag>, <tag:args>, </tag>):
@@ -33,28 +33,24 @@ public final class ColorChatParser {
 
     private ColorChatParser() {}
 
-    /**
-     * Returns the sanitized string safe to pass directly into {@code MiniMessage.deserialize()}
-     * Legacy codes are translated to MiniMessage tags; disallowed and blocked tags are removed
-     */
     public static @NonNull String sanitize(@NonNull Player player, @NonNull String raw) {
         String result = processLegacy(player, raw);
         return processMiniTags(player, result);
     }
 
     /**
-     * Returns {@code true} if the string contains any character that could be
+     * Returns true if the string contains any character that could be
      * a color/format marker. Used as a cheap pre-check to skip sanitize() on
-     * plain messages (the common case on most servers)
+     * plain messages
      */
     public static boolean hasMarkup(@NonNull String raw) {
         return raw.indexOf('&') >= 0 || raw.indexOf('<') >= 0;
     }
 
     /**
-     * Returns {@code true} if, after stripping all MiniMessage tags, the remaining text is blank
+     * Returns true if, after stripping all MiniMessage tags, the remaining text is blank
      * Used by ColorChatModule to cancel empty messages such as
-     * a player sending only {@code "<green>"} or {@code "&a"}
+     * a player sending only "<green>" or "&a"
      */
     public static boolean isBlankAfterTags(@NonNull String sanitized) {
         if (sanitized.isBlank()) return true;
@@ -96,8 +92,7 @@ public final class ColorChatParser {
             if (tag.startsWith("#")) {
                 keep = player.hasPermission(ColorPermission.HEX_COLOR.getNode());
             } else {
-                keep = !ColorPermission.BLOCKED_TAGS.contains(tag)
-                        && ColorPermission.byMiniTag(tag)
+                keep = !ColorPermission.BLOCKED_TAGS.contains(tag) && ColorPermission.byMiniTag(tag)
                         .map(cp -> player.hasPermission(cp.getNode()))
                         .orElse(false);
             }

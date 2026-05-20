@@ -1,4 +1,4 @@
-package tect.host.tpl.util;
+package tect.host.tpl.context;
 
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;

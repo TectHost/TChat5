@@ -1,11 +1,14 @@
+# noinspection YAMLSchemaValidation
 name: ${project.name}
 version: ${project.version}
-main: tect.host.tpl.TChat
+# noinspection YAMLSchemaValidation
+main: ${plugin.main}
 
 description: ${project.description}
-author: Alex M. (TectHost)
-api-version: '1.21'
-website: https://tect.host
+author: ${plugin.author}
+# noinspection YAMLSchemaValidation
+api-version: ${plugin.api-version}
+website: ${plugin.website}
 
 softdepend:
   - PlaceholderAPI
@@ -22,20 +25,102 @@ permissions:
     default: op
     children:
       tchat.colorchat: true
-      tchat.admin.reload: true
-      tchat.admin.blockedwords: true
-      tchat.bypass.blockedwords: true
+      tchat.admin.command: true
+      tchat.admin.bypass: true
+      tchat.admin.check-updates: true
+      tchat.nick: true
+      tchat.admin.nick.others: true
 
-  tchat.admin.reload:
+  tchat.colorchat:
+    description: Grants all colorchat permissions (colors + formats + advanced)
+    default: op
+    children:
+      tchat.colorchat.colors: true
+      tchat.colorchat.formats: true
+      tchat.colorchat.advanced: true
+
+  tchat.admin.command:
+    description: Grants all command permissions
+    default: op
+    children:
+      tchat.admin.command.reload: true
+      tchat.admin.command.blockedwords: true
+      tchat.admin.command.nick.others: true
+      tchat.command.nick: true
+
+  tchat.admin.bypass:
+    description: Grants all bypass permissions
+    default: op
+    children:
+      tchat.admin.bypass.blockedwords: true
+      tchat.admin.bypass.anticap: true
+
+  tchat.colorchat.colors:
+    description: Grants all 16 standard colors
+    default: op
+    children:
+      tchat.colorchat.color.black: true
+      tchat.colorchat.color.dark_blue: true
+      tchat.colorchat.color.dark_green: true
+      tchat.colorchat.color.dark_aqua: true
+      tchat.colorchat.color.dark_red: true
+      tchat.colorchat.color.dark_purple: true
+      tchat.colorchat.color.gold: true
+      tchat.colorchat.color.gray: true
+      tchat.colorchat.color.dark_gray: true
+      tchat.colorchat.color.blue: true
+      tchat.colorchat.color.green: true
+      tchat.colorchat.color.aqua: true
+      tchat.colorchat.color.red: true
+      tchat.colorchat.color.light_purple: true
+      tchat.colorchat.color.yellow: true
+      tchat.colorchat.color.white: true
+
+  tchat.colorchat.formats:
+    description: Grants all text decorations
+    default: op
+    children:
+      tchat.colorchat.format.bold: true
+      tchat.colorchat.format.italic: true
+      tchat.colorchat.format.underlined: true
+      tchat.colorchat.format.strikethrough: true
+      tchat.colorchat.format.obfuscated: true
+      tchat.colorchat.format.reset: true
+
+  tchat.colorchat.advanced:
+    description: Grants hex, gradient and rainbow
+    default: op
+    children:
+      tchat.colorchat.advanced.hex: true
+      tchat.colorchat.advanced.gradient: true
+      tchat.colorchat.advanced.rainbow: true
+
+  tchat.admin.command.reload:
     description: Allows reloading TChat
     default: op
 
-  tchat.admin.blockedwords:
+  tchat.admin.command.blockedwords:
     description: Allows to add and remove blocked words
     default: op
 
-  tchat.bypass.blockedwords:
+  tchat.admin.bypass.blockedwords:
     description: Bypass blockedwords module
+    default: op
+
+  tchat.admin.bypass.anticap:
+    description: Bypass anticap module
+    default: op
+
+  tchat.admin.check-updates:
+    description: Get notifications about plugin updates
+    default: op
+
+  tchat.command.nick:
+    description: Allows to change your own nick
+    default: op
+
+  tchat.admin.command.nick.others:
+    description: Allows to change the nick to other users
     default: op
 
   tchat.colorchat.color.black:
@@ -115,52 +200,3 @@ permissions:
   tchat.colorchat.advanced.rainbow:
     description: Use <rainbow> in chat
     default: op
-
-
-  tchat.colorchat.colors:
-    description: Grants all 16 standard colors
-    default: op
-    children:
-      tchat.colorchat.color.black: true
-      tchat.colorchat.color.dark_blue: true
-      tchat.colorchat.color.dark_green: true
-      tchat.colorchat.color.dark_aqua: true
-      tchat.colorchat.color.dark_red: true
-      tchat.colorchat.color.dark_purple: true
-      tchat.colorchat.color.gold: true
-      tchat.colorchat.color.gray: true
-      tchat.colorchat.color.dark_gray: true
-      tchat.colorchat.color.blue: true
-      tchat.colorchat.color.green: true
-      tchat.colorchat.color.aqua: true
-      tchat.colorchat.color.red: true
-      tchat.colorchat.color.light_purple: true
-      tchat.colorchat.color.yellow: true
-      tchat.colorchat.color.white: true
-
-  tchat.colorchat.formats:
-    description: Grants all text decorations
-    default: op
-    children:
-      tchat.colorchat.format.bold: true
-      tchat.colorchat.format.italic: true
-      tchat.colorchat.format.underlined: true
-      tchat.colorchat.format.strikethrough: true
-      tchat.colorchat.format.obfuscated: true
-      tchat.colorchat.format.reset: true
-
-  tchat.colorchat.advanced:
-    description: Grants hex, gradient and rainbow
-    default: op
-    children:
-      tchat.colorchat.advanced.hex: true
-      tchat.colorchat.advanced.gradient: true
-      tchat.colorchat.advanced.rainbow: true
-
-  tchat.colorchat:
-    description: Grants all colorchat permissions (colors + formats + advanced)
-    default: op
-    children:
-      tchat.colorchat.colors: true
-      tchat.colorchat.formats: true
-      tchat.colorchat.advanced: true

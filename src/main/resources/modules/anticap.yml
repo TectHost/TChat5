@@ -1,0 +1,32 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                          anticap.yml                         ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# DON'T TOUCH THIS!
+config-version: 0
+
+# Action to take when a message exceeds the cap threshold:
+# - ToLowerCase : convert all uppercase letters to lowercase (recommended)
+# - BLOCK : cancel the message entirely
+# - CENSOR : replace uppercase letters with '*' (or the selected censor-char)
+action: "ToLowerCase"
+
+# Character used to replace matched letters (only relevant when action: CENSOR)
+censor-char: "*"
+
+# Fraction of letters (0.0–1.0) that must be uppercase to trigger
+# Examples: 0.5 = 50% | 0.75 = 75% | 1.0 = 100% (not recommended)
+# Messages with fewer than 4 letters are always ignored
+percent: 0.75
+
+# Message sent to the player when mode is BLOCK
+# Supports MiniMessage tags and legacy & color codes
+# Leave empty to block silently (no message shown)
+message:
+  - "<red>Please don't use excessive capitals."
+
+# Coming soon...
+actions: []

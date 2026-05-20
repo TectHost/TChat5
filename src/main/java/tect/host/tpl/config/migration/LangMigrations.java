@@ -13,39 +13,28 @@ public final class LangMigrations {
     public static @NonNull ConfigMigrator create(@NonNull Logger logger, String langFileName) {
         return new ConfigMigrator(logger, langFileName)
 
-            // v0 -> v1
-            .addMigration(config -> {
-                if (!config.isSet("blocked-words-module-disabled")) {
+                // v0 -> v1
+                .addMigration(config -> {
                     config.set("blocked-words-module-disabled", "<red>The blocked-words module is not enabled.</red>");
-                }
-
-                if (!config.isSet("blocked-words-usage")) {
                     config.set("blocked-words-usage", "<gray>Usage: /blockedwords <add|remove|list> [word]</gray>");
-                }
-
-                if (!config.isSet("blocked-words-add-success")) {
                     config.set("blocked-words-add-success", "<green>Word added: <white>%word%</white></green>");
-                }
-
-                if (!config.isSet("blocked-words-add-duplicate")) {
                     config.set("blocked-words-add-duplicate", "<yellow>That word is already blocked.</yellow>");
-                }
-
-                if (!config.isSet("blocked-words-remove-success")) {
                     config.set("blocked-words-remove-success", "<green>Word removed: <white>%word%</white></green>");
-                }
-
-                if (!config.isSet("blocked-words-remove-not-found")) {
                     config.set("blocked-words-remove-not-found", "<yellow>That word is not in the list.</yellow>");
-                }
-
-                if (!config.isSet("blocked-words-list-empty")) {
                     config.set("blocked-words-list-empty", "<gray>No words are currently blocked.</gray>");
-                }
-
-                if (!config.isSet("blocked-words-list")) {
                     config.set("blocked-words-list", "<gold>Blocked words (%count%): <white>%words%</white></gold>");
-                }
-            });
+                })
+
+                // v1 -> v2
+                .addMigration(config -> {
+                    config.set("messages.nick-module-disabled", "<red>The nick module is not enabled.</red>");
+                    config.set("messages.nick-usage", "<gray>Usage: /nick <nickname|off> [player]</gray>");
+                    config.set("messages.player-not-found", "<red>Player <white>%player%</white> not found.</red>");
+                    config.set("messages.nick-console-requires-target", "<red>Console must specify a target player: /nick <nickname> <player></red>");
+                    config.set("messages.nick-removed", "<green>Nickname removed for <white>%player%</white>.</green>");
+                    config.set("messages.nick-too-long", "<red>That nickname is too long! Maximum allowed is <white>%max%</white> characters.</red>");
+                    config.set("messages.nick-invalid-chars", "<red>That nickname contains invalid characters. Use only letters, numbers, dashes, and underscores.</red>");
+                    config.set("messages.nick-set", "<green>Nickname for <white>%player%</white> set to <white>%nick%</white>.</green>");
+                });
     }
 }

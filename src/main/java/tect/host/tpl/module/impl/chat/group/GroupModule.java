@@ -4,10 +4,10 @@ import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import tect.host.tpl.config.ConfigFile;
-import tect.host.tpl.module.ChatModule;
+import tect.host.tpl.module.type.ChatModule;
 import tect.host.tpl.module.ModuleContext;
-import tect.host.tpl.util.ChatRenderer;
-import tect.host.tpl.util.MessageContext;
+import tect.host.tpl.pipeline.ChatRenderer;
+import tect.host.tpl.context.MessageContext;
 
 public class GroupModule implements ChatModule {
 

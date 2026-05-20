@@ -5,11 +5,15 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.command.CommandSender;
 import org.jspecify.annotations.NonNull;
 import tect.host.tpl.TChat;
+import tect.host.tpl.util.CompletionUtil;
 import tect.host.tpl.util.Utils;
+
+import java.util.Collection;
+import java.util.List;
 
 public final class TChatCommand implements BasicCommand {
 
-    private static final String RELOAD_PERMISSION = "tchat.admin.reload";
+    private static final String RELOAD_PERMISSION = "tchat.admin.command.reload";
 
     private final TChat plugin;
 
@@ -40,5 +44,13 @@ public final class TChatCommand implements BasicCommand {
             plugin.getLogger().severe("Failed to reload TChat: " + ex.getMessage());
             plugin.getMessagesManager().sendMessage(sender, "reload-failure");
         }
+    }
+
+    @Override
+    public @NonNull Collection<String> suggest(@NonNull CommandSourceStack source, String @NonNull [] args) {
+        if (args.length <= 1) {
+            return CompletionUtil.filterFrom(List.of("reload"), args.length == 1 ? args[0] : "");
+        }
+        return List.of();
     }
 }

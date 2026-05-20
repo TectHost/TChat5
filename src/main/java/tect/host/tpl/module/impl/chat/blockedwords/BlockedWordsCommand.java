@@ -4,16 +4,19 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.command.CommandSender;
 import org.jspecify.annotations.NonNull;
 import tect.host.tpl.config.MessagesManager;
-import tect.host.tpl.manager.ModuleManager;
+import tect.host.tpl.module.registry.ModuleManager;
 import tect.host.tpl.module.ModuleCommand;
+import tect.host.tpl.util.CompletionUtil;
 import tect.host.tpl.util.Utils;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public final class BlockedWordsCommand implements ModuleCommand {
 
-    private static final String PERMISSION = "tchat.admin.blockedwords";
+    private static final String PERMISSION = "tchat.admin.command.blockedwords";
 
     private final ModuleManager moduleManager;
     private final MessagesManager messagesManager;
@@ -78,5 +81,24 @@ public final class BlockedWordsCommand implements ModuleCommand {
             }
             default -> messagesManager.sendMessage(sender, "blocked-words-usage");
         }
+    }
+
+    @Override
+    public @NonNull Collection<String> suggest(@NonNull CommandSourceStack source, String @NonNull [] args) {
+        if (args.length <= 1) {
+            return CompletionUtil.filterFrom(List.of("add", "remove", "list"), args.length == 1 ? args[0] : "");
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("remove")) {
+            BlockedWordsModule module = moduleManager.getModule("blocked-words", BlockedWordsModule.class);
+            if (module != null) {
+                String partial = args[1].toLowerCase();
+                return module.getWords().stream()
+                        .filter(w -> w.toLowerCase().startsWith(partial))
+                        .toList();
+            }
+        }
+
+        return List.of();
     }
 }

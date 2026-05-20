@@ -6,11 +6,10 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.NonNull;
 import tect.host.tpl.config.ConfigFile;
-import tect.host.tpl.module.ChatModule;
+import tect.host.tpl.module.type.ChatModule;
 import tect.host.tpl.module.ModuleContext;
-import tect.host.tpl.module.hook.placeholderapi.PlaceholderApiHook;
 import tect.host.tpl.util.ColorUtil;
-import tect.host.tpl.util.MessageContext;
+import tect.host.tpl.context.MessageContext;
 import tect.host.tpl.util.Utils;
 
 import java.util.*;
@@ -18,18 +17,18 @@ import java.util.*;
 public final class BlockedWordsModule implements ChatModule {
 
     private static final String ID = "blocked-words";
-    private static final String BYPASS_PERM = "tchat.bypass.blockedwords";
+    private static final String BYPASS_PERM = "tchat.admin.bypass.blockedwords";
 
-    private record LoadedState(BlockedWordsConfig config, SequencedSet<String> words, Map<String, String> cache, List<String> blockMessageLines) {
+    private record LoadedState(BlockedWordsConfig config, SequencedSet<String> words, Map<String, String> cache, List<Component> blockMessageLines) {
         @Contract("_ -> new")
         static @NonNull LoadedState from(@NonNull BlockedWordsConfig config) {
             SequencedSet<String> words = new LinkedHashSet<>(config.getBlockedWords());
-            return new LoadedState(config, words, buildCache(words), buildMessageLines(config));
+            return new LoadedState(config, words, buildCache(words), buildMessageComponents(config));
         }
 
         @Contract("_, _ -> new")
         static @NonNull LoadedState withWords(@NonNull BlockedWordsConfig config, @NonNull SequencedSet<String> words) {
-            return new LoadedState(config, new LinkedHashSet<>(words), buildCache(words), buildMessageLines(config));
+            return new LoadedState(config, new LinkedHashSet<>(words), buildCache(words), buildMessageComponents(config));
         }
 
         private static @NonNull @UnmodifiableView Map<String, String> buildCache(@NonNull Set<String> words) {
@@ -41,10 +40,10 @@ public final class BlockedWordsModule implements ChatModule {
             return Collections.unmodifiableMap(map);
         }
 
-        private static @NonNull List<String> buildMessageLines(@NonNull BlockedWordsConfig config) {
+        private static @NonNull List<Component> buildMessageComponents(@NonNull BlockedWordsConfig config) {
             List<String> lines = config.getBlockMessage();
             if (lines.isEmpty()) return List.of();
-            return lines.stream().map(ColorUtil::legacyToMini).toList();
+            return lines.stream().map(ColorUtil::legacyToMini).map(ColorUtil::deserialize).toList();
         }
     }
 
@@ -83,14 +82,15 @@ public final class BlockedWordsModule implements ChatModule {
 
         switch (snap.config().getAction()) {
             case BLOCK -> {
+                BlockedWordsMatcher.MatchResult result = BlockedWordsMatcher.check(ctx.getRawMessage(), snap.cache());
+                if (!result.matched()) return;
+
                 ctx.setCancelled(true);
 
-                List<String> lines = snap.blockMessageLines();
-                if (!lines.isEmpty()) {
-                    PlaceholderApiHook hook = moduleContext.getPlaceholderApiHook();
+                List<Component> components = snap.blockMessageLines();
+                if (!components.isEmpty()) {
                     Player player = ctx.getPlayer();
-                    for (String line : lines) {
-                        Component component = ColorUtil.translate(hook, player, line);
+                    for (Component component : components) {
                         player.sendMessage(component);
                     }
                 }

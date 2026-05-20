@@ -2,9 +2,9 @@ package tect.host.tpl.module.impl.join.notify;
 
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
-import tect.host.tpl.module.JoinModule;
+import tect.host.tpl.module.type.JoinModule;
 import tect.host.tpl.module.ModuleContext;
-import tect.host.tpl.util.JoinContext;
+import tect.host.tpl.context.JoinContext;
 import tect.host.tpl.util.Utils;
 
 import java.util.Map;

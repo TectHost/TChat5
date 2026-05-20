@@ -4,8 +4,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jspecify.annotations.NonNull;
-import tect.host.tpl.manager.JoinProcessor;
-import tect.host.tpl.util.JoinContext;
+import tect.host.tpl.pipeline.JoinProcessor;
+import tect.host.tpl.context.JoinContext;
 
 public final class PlayerJoinListener implements Listener {
 

@@ -2,10 +2,7 @@ package tect.host.tpl.module.impl.chat.colorchat;
 
 import org.jspecify.annotations.NonNull;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -15,7 +12,7 @@ import java.util.stream.Collectors;
  *  - all MiniMessage tag aliases it responds to
  *  - the legacy '&' codes it maps to (empty for MiniMessage-only features)
  *.
- * Naming convention: tchat.colorchat.<category>.<n>
+ * Naming convention: tchat.colorchat.<category>.<name>
  *.
  * BLOCKED_TAGS are action/event tags NEVER allowed regardless of permission
  */
@@ -53,32 +50,21 @@ public enum ColorPermission {
     RAINBOW   ("tchat.colorchat.advanced.rainbow",  "rainbow",  Set.of("rainbow", "rb"),        Set.of());
 
     // Blocked action tags from MM
-    public static final Set<String> BLOCKED_TAGS = Set.of(
-            "click", "hover", "insertion",
-            "keybind", "lang", "translatable",
-            "selector", "score", "nbt",
-            "newline", "br"
-    );
+    public static final Set<String> BLOCKED_TAGS = Set.of("click", "hover", "insertion", "keybind", "lang", "translatable", "selector", "score", "nbt", "newline", "br");
 
     private final String node;
-    /**
-     * Pre-built {@code "<primaryTag>"} string
-     * Stored as a field to avoid string concatenation on every legacy code hit
-     */
     private final String primaryTagWrapped;
-    /** All MiniMessage tag aliases (lowercase) */
     private final Set<String> miniTags;
-    /** Legacy code chars (lowercase, without '&') */
     private final Set<String> legacyCodes;
 
     ColorPermission(@NonNull String node, @NonNull String primaryTag, @NonNull Set<String> miniTags, @NonNull Set<String> legacyCodes) {
-        this.node              = node;
+        this.node = node;
         this.primaryTagWrapped = "<" + primaryTag + ">";
-        this.miniTags          = miniTags;
-        this.legacyCodes       = legacyCodes;
+        this.miniTags = miniTags;
+        this.legacyCodes = legacyCodes;
     }
 
-    public @NonNull String getNode()              { return node; }
+    public @NonNull String getNode() { return node; }
     public @NonNull String getPrimaryTagWrapped() { return primaryTagWrapped; }
 
     private static final Map<String, ColorPermission> BY_MINI_TAG;

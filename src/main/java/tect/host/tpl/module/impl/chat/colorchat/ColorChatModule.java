@@ -2,10 +2,10 @@ package tect.host.tpl.module.impl.chat.colorchat;
 
 import net.kyori.adventure.text.Component;
 import org.jspecify.annotations.NonNull;
-import tect.host.tpl.module.ChatModule;
+import tect.host.tpl.module.type.ChatModule;
 import tect.host.tpl.module.ModuleContext;
 import tect.host.tpl.util.ColorUtil;
-import tect.host.tpl.util.MessageContext;
+import tect.host.tpl.context.MessageContext;
 
 /**
  * Pipeline position:
@@ -27,9 +27,7 @@ public final class ColorChatModule implements ChatModule {
 
     @Override public @NonNull String getId() { return ID; }
 
-    /*
-     * This module does not have onEnable, onDisable, or onReload, since it does not need to execute anything
-     */
+    /* This module does not have onEnable, onDisable, or onReload, since it does not need to execute anything */
 
     @Override
     public void process(@NonNull MessageContext msgCtx) {

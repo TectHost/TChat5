@@ -1,14 +1,12 @@
-package tect.host.tpl.manager;
+package tect.host.tpl.module.registry;
 
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import tect.host.tpl.module.ModuleCommand;
-import tect.host.tpl.module.ModuleContext;
 import tect.host.tpl.module.ModulePhase;
 
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public final class ModuleDescriptor {

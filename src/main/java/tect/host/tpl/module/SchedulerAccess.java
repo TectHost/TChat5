@@ -2,6 +2,8 @@ package tect.host.tpl.module;
 
 import org.jspecify.annotations.NonNull;
 
+import java.util.concurrent.Executor;
+
 public interface SchedulerAccess {
 
     @FunctionalInterface
@@ -13,4 +15,9 @@ public interface SchedulerAccess {
     Cancellable runSync(@NonNull Runnable task);
     Cancellable runLater(@NonNull Runnable task, long delayTicks);
     Cancellable runTimer(@NonNull Runnable task, long delayTicks, long periodTicks);
+
+    /** Returns an Executor that dispatches via runAsync */
+    default @NonNull Executor asExecutor() {
+        return this::runAsync;
+    }
 }

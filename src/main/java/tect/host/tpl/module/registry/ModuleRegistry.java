@@ -1,15 +1,19 @@
-package tect.host.tpl.manager;
+package tect.host.tpl.module.registry;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.NonNull;
 import tect.host.tpl.module.ModulePhase;
+import tect.host.tpl.module.impl.chat.anticap.AntiCapModule;
 import tect.host.tpl.module.impl.chat.blockedwords.BlockedWordsCommand;
 import tect.host.tpl.module.impl.chat.blockedwords.BlockedWordsModule;
 import tect.host.tpl.module.impl.chat.colorchat.ColorChatModule;
 import tect.host.tpl.module.impl.chat.group.GroupModule;
 import tect.host.tpl.module.impl.chat.format.FormatModule;
+import tect.host.tpl.module.impl.command.blockedcommands.BlockedCommandsModule;
+import tect.host.tpl.module.impl.command.nick.NickCommand;
+import tect.host.tpl.module.impl.command.nick.NickModule;
 import tect.host.tpl.module.impl.join.notify.UpdateNotifyModule;
 
 import java.util.ArrayList;
@@ -26,6 +30,7 @@ public final class ModuleRegistry {
 
         all.addAll(chatModules());
         all.addAll(joinModules());
+        all.addAll(commandModules());
 
         return Collections.unmodifiableList(all);
     }
@@ -35,12 +40,14 @@ public final class ModuleRegistry {
         return List.of(
                 ModuleDescriptor.builder("blocked-words", "blocked-words", BlockedWordsModule::new)
                         .phase(ModulePhase.PRE_PROCESS).priority(5).command(mm -> new BlockedWordsCommand(mm, mm.getModuleContext().getMessagesManager())).build(),
+                ModuleDescriptor.builder("anti-cap", "anti-cap", AntiCapModule::new)
+                        .phase(ModulePhase.PRE_PROCESS).priority(6).build(),
                 ModuleDescriptor.builder("colorchat", "colorchat", ColorChatModule::new)
                         .phase(ModulePhase.PRE_PROCESS).priority(8).build(),
                 ModuleDescriptor.builder("group", "group", GroupModule::new)
-                        .phase(ModulePhase.FORMAT).priority(9).build(),
+                        .phase(ModulePhase.FORMAT).priority(19).build(),
                 ModuleDescriptor.builder("format", "format", FormatModule::new)
-                        .phase(ModulePhase.FORMAT).priority(10).build()
+                        .phase(ModulePhase.FORMAT).priority(20).build()
         );
     }
 
@@ -55,6 +62,18 @@ public final class ModuleRegistry {
                 //     .build(),
                 ModuleDescriptor.builder("update-notify", "update-notify", UpdateNotifyModule::new)
                         .priority(10)
+                        .build()
+        );
+    }
+
+    @Contract(" -> new")
+    private static @NonNull @Unmodifiable List<ModuleDescriptor> commandModules() {
+        return List.of(
+                ModuleDescriptor.builder("blocked-commands", "blocked-commands", BlockedCommandsModule::new)
+                        .priority(10).build(),
+                ModuleDescriptor.builder("nick", "nick", NickModule::new)
+                        .priority(11)
+                        .command(mm -> new NickCommand(mm, mm.getModuleContext().getMessagesManager()))
                         .build()
         );
     }

@@ -1,18 +1,18 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║                             TChat                            ║
-# ║                      tect.host | by Alex                     ║
-# ║                                                              ║
-# ║                            es.yml                            ║
+# ║               TChat              ║
+# ║            tect.host | by Alex           ║
+# ║                                ║
+# ║              es.yml              ║
 # ╚══════════════════════════════════════════════════════════════╝
 
 # NO TOCAR!
-config-version: 1
+config-version: 2
 
 # No puedes usar placeholders en el prefijo
 #
 # Para deshabilitar el prefijo, puedes dejar este apartado vacío
 #prefix: ""
-prefix: "<gradient:#5B03E4:#C03AFE>TChat</gradient> <color:#FFD700>»</color> <gray>"
+prefix: "<gradient:#5B03E4:#C03AFE>TChat</gradient> <color:#FFD700>»</color><gray>"
 
 # Puedes usar los colores legacy '&' y MiniMessage (recomendado) en todos los mensajes
 #
@@ -41,3 +41,14 @@ messages:
   blocked-words-remove-not-found: "<yellow>Esa palabra no está en la lista.</yellow>"
   blocked-words-list-empty: "<gray>No hay ninguna palabra bloqueada actualmente.</gray>"
   blocked-words-list: "<gold>Palabras bloqueadas (%count%): <white>%words%</white></gold>"
+  
+  # Módulo Nick
+  # Los placeholders varían según el mensaje: %player%, %max%, %nick%
+  nick-module-disabled: "<red>El módulo de nicks no está habilitado.</red>"
+  nick-usage: "<gray>Uso: /nick <apodo|off> [jugador]</gray>"
+  player-not-found: "<red>El jugador <white>%player%</white> no ha sido encontrado.</red>"
+  nick-console-requires-target: "<red>La consola debe especificar un jugador objetivo: /nick <apodo> <jugador></red>"
+  nick-removed: "<green>Apodo eliminado para <white>%player%</white>.</green>"
+  nick-too-long: "<red>¡Ese apodo es demasiado largo! El máximo permitido son <white>%max%</white> caracteres.</red>"
+  nick-invalid-chars: "<red>Ese apodo contiene caracteres inválidos. Usa solo letras, números, guiones y guiones bajos.</red>"
+  nick-set: "<green>Apodo de <white>%player%</white> cambiado a <white>%nick%</white>.</green>"

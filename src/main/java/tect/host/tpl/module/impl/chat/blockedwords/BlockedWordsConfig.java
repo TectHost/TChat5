@@ -18,8 +18,7 @@ public final class BlockedWordsConfig {
     public BlockedWordsConfig(@NonNull ConfigFile configFile) {
         this.action = Action.fromString(configFile.get().getString("action", "CENSOR"));
 
-        String censorStr = configFile.get().getString("censor-char", "*");
-        this.censorChar = censorStr.isEmpty() ? '*' : censorStr.charAt(0);
+        this.censorChar = configFile.get().getString("censor-char", "*").charAt(0);
 
         List<String> raw = configFile.get().getStringList("blocked-words");
         Set<String> words = new LinkedHashSet<>(raw.size());

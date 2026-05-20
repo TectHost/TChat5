@@ -1,4 +1,4 @@
-package tect.host.tpl.util;
+package tect.host.tpl.context;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;

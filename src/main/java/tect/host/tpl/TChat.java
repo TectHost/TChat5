@@ -6,16 +6,22 @@ import org.bukkit.plugin.java.JavaPlugin;
 import tect.host.tpl.command.TChatCommand;
 import tect.host.tpl.config.ConfigManager;
 import tect.host.tpl.config.MessagesManager;
-import tect.host.tpl.listener.ChatListener;
+import tect.host.tpl.data.DataManager;
+import tect.host.tpl.listener.PlayerChatListener;
+import tect.host.tpl.listener.PlayerCommandListener;
 import tect.host.tpl.listener.PlayerJoinListener;
-import tect.host.tpl.manager.*;
+import tect.host.tpl.listener.PlayerQuitListener;
 import tect.host.tpl.module.BukkitSchedulerAccess;
 import tect.host.tpl.module.ModuleCommand;
 import tect.host.tpl.module.ModuleContext;
 import tect.host.tpl.module.SchedulerAccess;
 import tect.host.tpl.module.hook.placeholderapi.PlaceholderApiHook;
-
-import java.util.List;
+import tect.host.tpl.module.registry.ModuleManager;
+import tect.host.tpl.module.registry.ModuleRegistry;
+import tect.host.tpl.pipeline.ChatProcessor;
+import tect.host.tpl.pipeline.CommandProcessor;
+import tect.host.tpl.pipeline.JoinProcessor;
+import tect.host.tpl.pipeline.QuitProcessor;
 
 public final class TChat extends JavaPlugin {
 
@@ -23,6 +29,7 @@ public final class TChat extends JavaPlugin {
     private MessagesManager messagesManager;
     private PlaceholderApiHook placeholderApiHook;
     private ModuleManager moduleManager;
+    private DataManager dataManager;
 
     @Override
     public void onEnable() {
@@ -32,9 +39,11 @@ public final class TChat extends JavaPlugin {
 
         messagesManager = new MessagesManager(this, configManager, placeholderApiHook);
 
-        SchedulerAccess scheduler = new BukkitSchedulerAccess(this);
+        dataManager = new DataManager(getDataFolder(), configManager, getLogger());
 
-        ModuleContext moduleContext = new ModuleContext(this, configManager, messagesManager, placeholderApiHook, scheduler);
+        final SchedulerAccess scheduler = new BukkitSchedulerAccess(this);
+
+        final ModuleContext moduleContext = new ModuleContext(this, configManager, messagesManager, placeholderApiHook, scheduler, dataManager);
 
         moduleManager = new ModuleManager(getLogger(), configManager, moduleContext);
         moduleManager.registerDescriptors(ModuleRegistry.createDefaultRegistry());
@@ -42,8 +51,10 @@ public final class TChat extends JavaPlugin {
 
         placeholderApiHook.registerExpansion(this, moduleManager);
 
-        getServer().getPluginManager().registerEvents(new ChatListener(new ChatProcessor(moduleManager)), this);
+        getServer().getPluginManager().registerEvents(new PlayerChatListener(new ChatProcessor(moduleManager)), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(new JoinProcessor(moduleManager)), this);
+        getServer().getPluginManager().registerEvents(new PlayerQuitListener(new QuitProcessor(moduleManager)), this);
+        getServer().getPluginManager().registerEvents(new PlayerCommandListener(new CommandProcessor(moduleManager)), this);
 
         registerCommands();
         new Metrics(this, 23305);
@@ -53,6 +64,7 @@ public final class TChat extends JavaPlugin {
     public void onDisable() {
         if (placeholderApiHook != null) placeholderApiHook.unregisterExpansion();
         if (moduleManager != null) moduleManager.unloadAll();
+        if (dataManager != null) dataManager.close();
     }
 
     public void reloadPluginState() {
@@ -63,18 +75,14 @@ public final class TChat extends JavaPlugin {
 
     private void registerCommands() {
         getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
-            TChatCommand tChatCommand = new TChatCommand(this);
+            final TChatCommand tChatCommand = new TChatCommand(this);
             event.registrar().register("tchat", tChatCommand);
-            event.registrar().register("chat",  tChatCommand);
+            event.registrar().register("chat", tChatCommand);
 
-            for (ModuleDescriptor descriptor : ModuleRegistry.createDefaultRegistry()) {
-                var cmdFactory = descriptor.getCommandFactory();
-                if (cmdFactory != null) {
-                    ModuleCommand cmd = cmdFactory.apply(moduleManager);
-                    event.registrar().register(cmd.getName(), cmd);
-                    for (String alias : cmd.getAliases()) {
-                        event.registrar().register(alias, cmd);
-                    }
+            for (ModuleCommand cmd : moduleManager.getActiveCommands()) {
+                event.registrar().register(cmd.getName(), cmd);
+                for (String alias : cmd.getAliases()) {
+                    event.registrar().register(alias, cmd);
                 }
             }
         });

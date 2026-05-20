@@ -15,9 +15,7 @@ public final class GroupMigrations {
 
             // v0 -> v1
             //.addMigration(config -> {
-            //    if (!config.isSet("groups.default.color")) {
-            //        config.set("groups.default.color", "&f");
-            //    }
+            //    config.set("path", "default");
             //})
     }
 }

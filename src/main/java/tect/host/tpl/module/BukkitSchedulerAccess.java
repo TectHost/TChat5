@@ -16,23 +16,21 @@ public final class BukkitSchedulerAccess implements SchedulerAccess {
 
     @Override
     public @NonNull Cancellable runAsync(@NonNull Runnable task) {
-        ScheduledTask t = plugin.getServer().getAsyncScheduler().runNow(plugin, $ -> task.run());
+        ScheduledTask t = plugin.getServer().getAsyncScheduler().runNow(plugin, _ -> task.run());
         return t::cancel;
     }
 
     @Override
     public @NonNull Cancellable runSync(@NonNull Runnable task) {
-        ScheduledTask t = plugin.getServer().getGlobalRegionScheduler().run(plugin, $ -> task.run());
+        ScheduledTask t = plugin.getServer().getGlobalRegionScheduler().run(plugin, _ -> task.run());
         return t::cancel;
     }
 
-    /**
-     * runLater is always async
-     */
+    /** runLater is always async */
     @Override
     public @NonNull Cancellable runLater(@NonNull Runnable task, long delayTicks) {
         long delayNanos = delayTicks * 50L * 1_000_000L;
-        ScheduledTask t = plugin.getServer().getAsyncScheduler().runDelayed(plugin, $ -> task.run(), delayNanos, TimeUnit.NANOSECONDS);
+        ScheduledTask t = plugin.getServer().getAsyncScheduler().runDelayed(plugin, _ -> task.run(), delayNanos, TimeUnit.NANOSECONDS);
         return t::cancel;
     }
 
@@ -40,7 +38,7 @@ public final class BukkitSchedulerAccess implements SchedulerAccess {
     public @NonNull Cancellable runTimer(@NonNull Runnable task, long delayTicks, long periodTicks) {
         long delayNanos  = delayTicks  * 50L * 1_000_000L;
         long periodNanos = periodTicks * 50L * 1_000_000L;
-        ScheduledTask t = plugin.getServer().getAsyncScheduler().runAtFixedRate(plugin, $ -> task.run(), delayNanos, periodNanos, TimeUnit.NANOSECONDS);
+        ScheduledTask t = plugin.getServer().getAsyncScheduler().runAtFixedRate(plugin, _ -> task.run(), delayNanos, periodNanos, TimeUnit.NANOSECONDS);
         return t::cancel;
     }
 }

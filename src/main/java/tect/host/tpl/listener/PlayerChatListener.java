@@ -7,14 +7,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.jspecify.annotations.NonNull;
-import tect.host.tpl.manager.ChatProcessor;
-import tect.host.tpl.util.MessageContext;
+import tect.host.tpl.pipeline.ChatProcessor;
+import tect.host.tpl.context.MessageContext;
 
-public final class ChatListener implements Listener {
+public final class PlayerChatListener implements Listener {
 
     private final ChatProcessor processor;
 
-    public ChatListener(ChatProcessor processor) {
+    public PlayerChatListener(ChatProcessor processor) {
         this.processor = processor;
     }
 

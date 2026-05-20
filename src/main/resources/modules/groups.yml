@@ -23,11 +23,7 @@ groups:
 
   admin:
     permission: tchat.group.admin
-    # Lower number means higher priority
     priority: 2
     prefix: "&c&lADMIN"
     suffix: ""
-    # If empty, this group format is considered disabled
-    # You can use placeholders from the PlaceholderAPI
-    # Preferably use MiniMessage colors, although legacy colors (&) will also work
     format: "%tchat_prefix% <reset><hover:show_text:'<gray>Player: <yellow>%tchat_nick%'><white>%tchat_nick%</white></hover> <yellow>></yellow> <white><message></white>"

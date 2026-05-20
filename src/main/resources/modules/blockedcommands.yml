@@ -1,0 +1,41 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                      blockedcommands.yml                     ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# DON'T TOUCH THIS!
+config-version: 0
+
+# List of commands players cannot use
+# Supports commands with or without '/'
+#
+# If you block "/me" (or "me"), commands like "/me ga" will also
+# be blocked, but "/mega" will not
+blocked-commands:
+  - icanhasbukkit
+  - ver
+  - about
+  - pl
+  - plugins
+  - help
+  - "?"
+  - me
+  - bukkit:icanhasbukkit
+  - bukkit:ver
+  - bukkit:about
+  - bukkit:pl
+  - bukkit:plugins
+  - bukkit:help
+  - bukkit:?
+  - bukkit:me
+
+# Message sent to the player
+# Supports MiniMessage tags and legacy & color codes
+# Leave empty to block silently (no message shown)
+message:
+  - "&cYou are not allowed to use that command."
+
+# Coming soon...
+actions: []

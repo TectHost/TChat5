@@ -1,4 +1,4 @@
-package tect.host.tpl.manager;
+package tect.host.tpl.module.registry;
 
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.NonNull;
@@ -6,6 +6,10 @@ import org.jspecify.annotations.Nullable;
 import tect.host.tpl.config.ConfigManager;
 import tect.host.tpl.module.*;
 import tect.host.tpl.module.Module;
+import tect.host.tpl.module.type.ChatModule;
+import tect.host.tpl.module.type.CommandModule;
+import tect.host.tpl.module.type.JoinModule;
+import tect.host.tpl.module.type.QuitModule;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,8 +23,8 @@ public final class ModuleManager {
     private final ConcurrentHashMap<String, Module> activeModules = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, ModuleCommand> activeCommands = new ConcurrentHashMap<>();
 
-    private record Pipeline(Map<ModulePhase, List<ChatModule>> chat, List<JoinModule> join) {
-        static final Pipeline EMPTY = new Pipeline(Map.of(), List.of());
+    private record Pipeline(Map<ModulePhase, List<ChatModule>> chat, List<JoinModule> join, List<QuitModule> quit, List<CommandModule> commands) {
+        static final Pipeline EMPTY = new Pipeline(Map.of(), List.of(), List.of(), List.of());
     }
     private volatile Pipeline pipeline = Pipeline.EMPTY;
 
@@ -67,7 +71,6 @@ public final class ModuleManager {
 
             if (!missing.isEmpty()) {
                 logger.warning("Module '%s' skipped: missing required modules %s".formatted(descriptor.getId(), missing));
-                disableAndRemove(descriptor.getId());
                 continue;
             }
 
@@ -103,36 +106,6 @@ public final class ModuleManager {
         }
 
         pipeline = Pipeline.EMPTY;
-    }
-
-    public @NonNull ModuleContext getModuleContext() {
-        return moduleContext;
-    }
-
-    public @NonNull @UnmodifiableView Collection<Module> getActiveModules() {
-        return Collections.unmodifiableCollection(activeModules.values());
-    }
-
-    public @NonNull @UnmodifiableView Collection<ModuleCommand> getActiveCommands() {
-        return Collections.unmodifiableCollection(activeCommands.values());
-    }
-
-    public List<ChatModule> getModulesForPhase(@NonNull ModulePhase phase) {
-        return pipeline.chat().getOrDefault(phase, List.of());
-    }
-
-    public List<JoinModule> getJoinModules() {
-        return pipeline.join();
-    }
-
-    /**
-     * Retrieve an active module by id, cast to the expected type
-     * Returns null if the module is not loaded or type doesn't match
-     */
-    @SuppressWarnings("unchecked")
-    public <T extends Module> @Nullable T getModule(@NonNull String id, @NonNull Class<T> type) {
-        Module module = activeModules.get(id);
-        return type.isInstance(module) ? (T) module : null;
     }
 
     private void disableAndRemove(@NonNull String id) {
@@ -182,7 +155,7 @@ public final class ModuleManager {
             inDegree.putIfAbsent(d.getId(), 0);
             for (String dep : d.getRequiredModules()) {
                 if (!enabled.containsKey(dep)) continue;
-                dependents.computeIfAbsent(dep, k -> new ArrayList<>()).add(d.getId());
+                dependents.computeIfAbsent(dep, _ -> new ArrayList<>()).add(d.getId());
                 inDegree.merge(d.getId(), 1, Integer::sum);
             }
         }
@@ -210,32 +183,83 @@ public final class ModuleManager {
     }
 
     private void rebuildPipeline() {
-        Map<ModulePhase, List<ChatModule>> snap = new EnumMap<>(ModulePhase.class);
+        List<Map.Entry<String, Module>> sorted = new ArrayList<>(activeModules.entrySet());
+        sorted.sort(this::compareByPriorityThenId);
+
+        Map<ModulePhase, List<ChatModule>> chatSnap = new EnumMap<>(ModulePhase.class);
         List<JoinModule> newJoin = new ArrayList<>();
+        List<QuitModule> newQuit = new ArrayList<>();
+        List<CommandModule> newCommands = new ArrayList<>();
 
-        activeModules.entrySet().stream()
-                .sorted(this::compareByPriorityThenId)
-                .forEach(e -> {
-                    Module m = e.getValue();
-                    ModuleDescriptor desc = descriptors.get(e.getKey());
+        for (Map.Entry<String, Module> entry : sorted) {
+            Module m = entry.getValue();
+            ModuleDescriptor desc = descriptors.get(entry.getKey());
 
-                    if (m instanceof ChatModule cm) {
-                        if (desc == null || desc.getPhase() == null) {
-                            logger.warning("ChatModule '%s' has no phase — it will never execute!".formatted(e.getKey()));
-                        } else {
-                            snap.computeIfAbsent(desc.getPhase(), $ -> new ArrayList<>()).add(cm);
-                        }
-                    } else if (m instanceof JoinModule jm) {
-                        newJoin.add(jm);
+            switch (m) {
+                case ChatModule cm -> {
+                    if (desc == null || desc.getPhase() == null) {
+                        logger.warning("ChatModule '%s' has no phase, it will never execute!".formatted(entry.getKey())
+                        );
+                    } else {
+                        chatSnap.computeIfAbsent(desc.getPhase(), _ -> new ArrayList<>()).add(cm);
                     }
-                });
+                }
+                case JoinModule jm -> newJoin.add(jm);
+                case QuitModule qm -> newQuit.add(qm);
+                case CommandModule cm -> newCommands.add(cm);
+                default -> throw new IllegalStateException("Unexpected value: " + m);
+            }
+        }
 
-        pipeline = new Pipeline(Collections.unmodifiableMap(snap), List.copyOf(newJoin));
+        pipeline = new Pipeline(
+                Collections.unmodifiableMap(chatSnap),
+                List.copyOf(newJoin),
+                List.copyOf(newQuit),
+                List.copyOf(newCommands)
+        );
     }
 
     private int compareByPriorityThenId(Map.@NonNull Entry<String, Module> a, Map.@NonNull Entry<String, Module> b) {
         int pa = descriptors.get(a.getKey()).getPriority();
         int pb = descriptors.get(b.getKey()).getPriority();
         return pa != pb ? Integer.compare(pa, pb) : a.getKey().compareTo(b.getKey());
+    }
+
+    public @NonNull ModuleContext getModuleContext() {
+        return moduleContext;
+    }
+
+    public @NonNull @UnmodifiableView Collection<Module> getActiveModules() {
+        return Collections.unmodifiableCollection(activeModules.values());
+    }
+
+    public @NonNull @UnmodifiableView Collection<ModuleCommand> getActiveCommands() {
+        return Collections.unmodifiableCollection(activeCommands.values());
+    }
+
+    public List<ChatModule> getModulesForPhase(@NonNull ModulePhase phase) {
+        return pipeline.chat().getOrDefault(phase, List.of());
+    }
+
+    public List<JoinModule> getJoinModules() {
+        return pipeline.join();
+    }
+
+    public List<QuitModule> getQuitModules() {
+        return pipeline.quit();
+    }
+
+    public List<CommandModule> getCommandModules() {
+        return pipeline.commands();
+    }
+
+    /**
+     * Retrieve an active module by id, cast to the expected type
+     * Returns null if the module is not loaded or the type doesn't match
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends Module> @Nullable T getModule(@NonNull String id, @NonNull Class<T> type) {
+        Module module = activeModules.get(id);
+        return type.isInstance(module) ? (T) module : null;
     }
 }

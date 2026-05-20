@@ -15,9 +15,7 @@ public final class BlockedWordsMigrations {
 
         // v0 -> v1
         //.addMigration(config -> {
-        //    if (!config.isSet("blocked-words.aternos")) {
-        //        config.set("blocked-words.aternos", "&f");
-        //    }
+        //    config.set("path", "default");
         //})
     }
 }

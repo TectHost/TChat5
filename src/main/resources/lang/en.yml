@@ -1,18 +1,18 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║                             TChat                            ║
-# ║                      tect.host | by Alex                     ║
-# ║                                                              ║
-# ║                            en.yml                            ║
+# ║               TChat              ║
+# ║            tect.host | by Alex           ║
+# ║                                ║
+# ║              en.yml              ║
 # ╚══════════════════════════════════════════════════════════════╝
 
 # DON'T TOUCH THIS
-config-version: 1
+config-version: 2
 
 # You cannot use placeholders in the prefix
 #
 # To disable the prefix, you can leave this field blank
 #prefix: ""
-prefix: "<gradient:#5B03E4:#C03AFE>TChat</gradient> <color:#FFD700>»</color> <gray>"
+prefix: "<gradient:#5B03E4:#C03AFE>TChat</gradient> <color:#FFD700>»</color><gray>"
 
 # You can use the legacy ‘&’ colors and MiniMessage (recommended) in all messages
 #
@@ -41,3 +41,14 @@ messages:
   blocked-words-remove-not-found: "<yellow>That word is not in the list.</yellow>"
   blocked-words-list-empty: "<gray>No words are currently blocked.</gray>"
   blocked-words-list: "<gold>Blocked words (%count%): <white>%words%</white></gold>"
+  
+  # Nick module
+  # Placeholders vary depending on the message: %player%, %max%, %nick%
+  nick-module-disabled: "<red>The nick module is not enabled.</red>"
+  nick-usage: "<gray>Usage: /nick <nickname|off> [player]</gray>"
+  player-not-found: "<red>Player <white>%player%</white> not found.</red>"
+  nick-console-requires-target: "<red>Console must specify a target player: /nick <nickname> <player></red>"
+  nick-removed: "<green>Nickname removed for <white>%player%</white>.</green>"
+  nick-too-long: "<red>That nickname is too long! Maximum allowed is <white>%max%</white> characters.</red>"
+  nick-invalid-chars: "<red>That nickname contains invalid characters. Use only letters, numbers, dashes, and underscores.</red>"
+  nick-set: "<green>Nickname for <white>%player%</white> set to <white>%nick%</white>.</green>"

@@ -1,10 +1,10 @@
 package tect.host.tpl.module.impl.chat.format;
 
 import org.jspecify.annotations.NonNull;
-import tect.host.tpl.module.ChatModule;
+import tect.host.tpl.module.type.ChatModule;
 import tect.host.tpl.module.ModuleContext;
-import tect.host.tpl.util.ChatRenderer;
-import tect.host.tpl.util.MessageContext;
+import tect.host.tpl.pipeline.ChatRenderer;
+import tect.host.tpl.context.MessageContext;
 
 public class FormatModule implements ChatModule {
 

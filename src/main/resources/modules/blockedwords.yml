@@ -6,7 +6,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # What to do when a blocked word is detected:
-# - CENSOR:  Replace only the matched characters with censor-char (partial)
+# - CENSOR: Replace only the matched characters with censor-char (partial)
 # - CENSOR_ALL: Replace the entire message with censor-char repeated
 # - BLOCK: Cancel the message entirely
 action: CENSOR
@@ -17,7 +17,7 @@ action: CENSOR
 block-message:
   - "&cYour message was blocked."
 
-# Character used to replace matched letters (only relevant when action: CENSOR)
+# Character used to replace matched letters (only relevant when action: CENSOR and CENSOR_ALL)
 censor-char: "*"
 
 # List of words to block.

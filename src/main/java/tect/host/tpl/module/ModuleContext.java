@@ -1,13 +1,16 @@
 package tect.host.tpl.module;
 
+import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import tect.host.tpl.TChat;
 import tect.host.tpl.config.ConfigFile;
 import tect.host.tpl.config.ConfigManager;
 import tect.host.tpl.config.MessagesManager;
+import tect.host.tpl.data.DataManager;
 import tect.host.tpl.module.hook.placeholderapi.PlaceholderApiHook;
 
+import java.util.Collection;
 import java.util.logging.Logger;
 
 public final class ModuleContext {
@@ -19,8 +22,9 @@ public final class ModuleContext {
     private final SchedulerAccess scheduler;
     private final String pluginVersion;
     private final Logger logger;
+    private final DataManager dataManager;
 
-    public ModuleContext(@NonNull TChat plugin, @NonNull ConfigManager coreConfig, @NonNull MessagesManager messagesManager, @NonNull PlaceholderApiHook placeholderApiHook, @NonNull SchedulerAccess scheduler) {
+    public ModuleContext(@NonNull TChat plugin, @NonNull ConfigManager coreConfig, @NonNull MessagesManager messagesManager, @NonNull PlaceholderApiHook placeholderApiHook, @NonNull SchedulerAccess scheduler, @NonNull DataManager dataManager) {
         this.plugin = plugin;
         this.coreConfig = coreConfig;
         this.messagesManager = messagesManager;
@@ -28,6 +32,7 @@ public final class ModuleContext {
         this.scheduler = scheduler;
         this.pluginVersion = plugin.getPluginMeta().getVersion();
         this.logger = plugin.getLogger();
+        this.dataManager = dataManager;
     }
 
     public @NonNull ConfigFile createConfigFile(@NonNull String fileName, @Nullable String subFolder) {
@@ -40,4 +45,9 @@ public final class ModuleContext {
     public @NonNull SchedulerAccess getScheduler() { return scheduler; }
     public @NonNull String getPluginVersion() { return pluginVersion; }
     public @NonNull Logger getLogger() { return logger; }
+    public @NonNull DataManager getDataManager() { return dataManager; }
+
+    public @NonNull Collection<? extends Player> getOnlinePlayers() {
+        return plugin.getServer().getOnlinePlayers();
+    }
 }

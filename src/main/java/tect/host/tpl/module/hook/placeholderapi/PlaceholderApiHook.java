@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import tect.host.tpl.TChat;
-import tect.host.tpl.manager.ModuleManager;
+import tect.host.tpl.module.registry.ModuleManager;
 
 public final class PlaceholderApiHook {
 
@@ -30,7 +30,7 @@ public final class PlaceholderApiHook {
             registeredExpansion.register();
         }
 
-        registeredExpansion.refreshGroupService();
+        registeredExpansion.refreshModules();
     }
 
     public void unregisterExpansion() {

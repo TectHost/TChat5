@@ -1,8 +1,9 @@
-package tect.host.tpl.manager;
+package tect.host.tpl.pipeline;
 
 import org.jspecify.annotations.NonNull;
-import tect.host.tpl.module.JoinModule;
-import tect.host.tpl.util.JoinContext;
+import tect.host.tpl.module.registry.ModuleManager;
+import tect.host.tpl.module.type.JoinModule;
+import tect.host.tpl.context.JoinContext;
 
 public final class JoinProcessor {
 
