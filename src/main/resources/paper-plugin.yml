@@ -31,8 +31,14 @@ permissions:
       tchat.admin.command: true
       tchat.admin.bypass: true
       tchat.admin.check-updates: true
-      tchat.nick: true
-      tchat.admin.nick.others: true
+      tchat.command: true
+
+  tchat.command:
+    description: Grants all command permissions
+    default: op
+    children:
+      tchat.command.nick: true
+      tchat.command.channel: true
 
   tchat.colorchat:
     description: Grants all colorchat permissions (colors + formats + advanced)
@@ -48,8 +54,10 @@ permissions:
     children:
       tchat.admin.command.reload: true
       tchat.admin.command.blockedwords: true
+      tchat.admin.command.blockchat: true
       tchat.admin.command.nick.others: true
       tchat.command.nick: true
+      tchat.command.channel: true
 
   tchat.admin.bypass:
     description: Grants all bypass permissions
@@ -57,6 +65,7 @@ permissions:
     children:
       tchat.admin.bypass.blockedwords: true
       tchat.admin.bypass.anticap: true
+      tchat.admin.bypass.blockchat: true
 
   tchat.colorchat.colors:
     description: Grants all 16 standard colors
@@ -98,6 +107,22 @@ permissions:
       tchat.colorchat.advanced.gradient: true
       tchat.colorchat.advanced.rainbow: true
 
+  tchat.admin.bypass.blockedwords:
+    description: Bypass blockedwords module
+    default: op
+
+  tchat.admin.bypass.anticap:
+    description: Bypass anticap module
+    default: op
+
+  tchat.admin.bypass.blockchat:
+    description: Bypass blockchat, can talk even when chat is blocked
+    default: op
+
+  tchat.admin.command.nick.others:
+    description: Allows to change the nick to other users
+    default: op
+
   tchat.admin.command.reload:
     description: Allows reloading TChat
     default: op
@@ -106,12 +131,8 @@ permissions:
     description: Allows to add and remove blocked words
     default: op
 
-  tchat.admin.bypass.blockedwords:
-    description: Bypass blockedwords module
-    default: op
-
-  tchat.admin.bypass.anticap:
-    description: Bypass anticap module
+  tchat.admin.command.blockchat:
+    description: Allows to enable/disable global chat block
     default: op
 
   tchat.admin.check-updates:
@@ -122,8 +143,8 @@ permissions:
     description: Allows to change your own nick
     default: op
 
-  tchat.admin.command.nick.others:
-    description: Allows to change the nick to other users
+  tchat.command.channel:
+    description: Allows to join and leave channels
     default: op
 
   tchat.colorchat.color.black:

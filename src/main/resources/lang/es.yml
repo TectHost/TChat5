@@ -1,12 +1,12 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║               TChat              ║
-# ║            tect.host | by Alex           ║
-# ║                                ║
-# ║              es.yml              ║
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                            es.yml                            ║
 # ╚══════════════════════════════════════════════════════════════╝
 
 # NO TOCAR!
-config-version: 2
+config-version: 3
 
 # No puedes usar placeholders en el prefijo
 #
@@ -26,6 +26,8 @@ messages:
   reload-success: "<green>TChat se ha recargado correctamente.</green>"
   reload-failure: "<red>No se pudo recargar TChat. Revisa la consola para mas detalles.</red>"
   unknown-subcommand: "<red>Subcomando desconocido. Usa <white>/tchat reload</white>.</red>"
+  player-not-found: "<red>El jugador <white>%player%</white> no ha sido encontrado.</red>"
+  command-player-only: "<red>Este comando solo puede ser ejecutado por un jugador.</red>"
 
   # Módulo Update-Notify
   # Puedes usar %latest% y %current%
@@ -46,9 +48,44 @@ messages:
   # Los placeholders varían según el mensaje: %player%, %max%, %nick%
   nick-module-disabled: "<red>El módulo de nicks no está habilitado.</red>"
   nick-usage: "<gray>Uso: /nick <apodo|off> [jugador]</gray>"
-  player-not-found: "<red>El jugador <white>%player%</white> no ha sido encontrado.</red>"
   nick-console-requires-target: "<red>La consola debe especificar un jugador objetivo: /nick <apodo> <jugador></red>"
   nick-removed: "<green>Apodo eliminado para <white>%player%</white>.</green>"
   nick-too-long: "<red>¡Ese apodo es demasiado largo! El máximo permitido son <white>%max%</white> caracteres.</red>"
   nick-invalid-chars: "<red>Ese apodo contiene caracteres inválidos. Usa solo letras, números, guiones y guiones bajos.</red>"
   nick-set: "<green>Apodo de <white>%player%</white> cambiado a <white>%nick%</white>.</green>"
+
+  # Módulo BlockChat
+  # Puedes usar %player% en los mensajes de broadcast
+  block-chat-blocked: "<red>El chat está bloqueado temporalmente.</red>"
+  block-chat-enabled: "<green>Has bloqueado el chat global.</green>"
+  block-chat-disabled: "<green>Has desbloqueado el chat global.</green>"
+  block-chat-enabled-broadcast: "<dark_gray>[</dark_gray><red>Chat</red><dark_gray>]</dark_gray> <gray>El chat ha sido bloqueado por <red>%player%</red>.</gray>"
+  block-chat-disabled-broadcast: "<dark_gray>[</dark_gray><green>Chat</green><dark_gray>]</dark_gray> <gray>El chat ha sido desbloqueado por <green>%player%</green>.</gray>"
+  block-chat-already-on: "<yellow>El chat ya está bloqueado.</yellow>"
+  block-chat-already-off: "<yellow>El chat ya está desbloqueado.</yellow>"
+  block-chat-status-on: "<gray>Estado del chat: <red>Bloqueado</red></gray>"
+  block-chat-status-off: "<gray>Estado del chat: <green>Desbloqueado</green></gray>"
+  block-chat-usage: "<gray>Uso: /blockchat [on|off|toggle|status]</gray>"
+  block-chat-module-disabled: "<red>El módulo block-chat no está activo.</red>"
+
+  # Módulo Channel
+  # %channel% = id del canal, %player% = nombre del jugador, %message% = contenido del mensaje
+  channel-module-disabled: "<red>El módulo de canales no está habilitado.</red>"
+  channel-usage: "<gray>Uso: /channel <join|leave|send|list> [canal] [mensaje]</gray>"
+  channel-join-usage: "<gray>Uso: /channel join <canal></gray>"
+  channel-send-usage: "<gray>Uso: /channel send <canal> <mensaje></gray>"
+  channel-not-found: "<red>El canal <white>%channel%</white> no existe.</red>"
+  channel-not-in: "<red>No estás en el canal <white>%channel%</white>.</red>"
+  channel-not-in-any: "<red>No estás en ningún canal.</red>"
+  channel-already-joined: "<yellow>Ya estás en el canal <white>%channel%</white>.</yellow>"
+  channel-full: "<red>El canal <white>%channel%</white> está lleno.</red>"
+  channel-no-recipients: "<yellow>No hay destinatarios en el canal <white>%channel%</white>.</yellow>"
+  channel-joined: "<green>Te has unido al canal <white>%channel%</white>.</green>"
+  channel-left: "<gray>Has salido del canal <white>%channel%</white>.</gray>"
+  channel-send-success: "<gray>Mensaje enviado a <white>%channel%</white>: %message%</gray>"
+  channel-announce-join: "<dark_gray>[</dark_gray><aqua>%channel%</aqua><dark_gray>]</dark_gray> <gray><white>%player%</white> se ha unido al canal.</gray>"
+  channel-announce-leave: "<dark_gray>[</dark_gray><aqua>%channel%</aqua><dark_gray>]</dark_gray> <gray><white>%player%</white> ha salido del canal.</gray>"
+  channel-list-header: "<gold>Canales disponibles:</gold>"
+  channel-list-entry: "<gray>  - <white><hover:show_text:'<green>Entrar al canal</green>'><click:run_command:/channel join %channel%>%channel%</click></hover></white></gray>"
+  channel-list-entry-active: "<gray>  - <aqua><hover:show_text:'<red>Salir del canal</red>'><click:run_command:/channel leave %channel%>%channel%</click></hover></aqua> <dark_gray>(activo)</dark_gray></gray>"
+  channel-list-empty: "<gray>No hay canales disponibles para ti.</gray>"

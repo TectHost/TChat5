@@ -19,8 +19,8 @@ public final class NickRepository implements Repository {
 
     private static final String MIGRATION_V1 = """
             CREATE TABLE IF NOT EXISTS player_nicks (
-                uuid    TEXT    NOT NULL PRIMARY KEY,
-                nick    TEXT    NOT NULL,
+                uuid TEXT NOT NULL PRIMARY KEY,
+                nick TEXT NOT NULL,
                 updated INTEGER NOT NULL DEFAULT (unixepoch())
             )
             """;
@@ -60,8 +60,7 @@ public final class NickRepository implements Repository {
 
     public void preload(@NonNull UUID uuid) {
         CompletableFuture.supplyAsync(() -> {
-            try (Connection conn = dataManager.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(SELECT)) {
+            try (Connection conn = dataManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT)) {
 
                 ps.setString(1, uuid.toString());
                 try (ResultSet rs = ps.executeQuery()) {

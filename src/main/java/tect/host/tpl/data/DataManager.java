@@ -14,8 +14,8 @@ public final class DataManager {
 
     private static final String CREATE_MIGRATIONS_TABLE = """
             CREATE TABLE IF NOT EXISTS schema_migrations (
-                module     TEXT    NOT NULL,
-                version    INTEGER NOT NULL,
+                module TEXT NOT NULL,
+                version INTEGER NOT NULL,
                 applied_at INTEGER NOT NULL DEFAULT (unixepoch()),
                 PRIMARY KEY (module, version)
             )

@@ -1,0 +1,47 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                       autobroadcast.yml                      ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# DON'T TOUCH THIS!
+config-version: 0
+
+options:
+  # Seconds between each broadcast entry
+  time: 300
+
+broadcasts:
+
+  broadcast1:
+    # Message lines (supports %center%, &, MiniMessage, and PlaceholderAPI)
+    message:
+      - "<dark_gray><strikethrough>                              </strikethrough>"
+      - "<gradient:#c03afe:#5b03e4><bold>✦ TChat5 ✦</bold></gradient>"
+      - "<gray>Welcome back, <white>%player_name%</white></gray>"
+      - "<gray>This server is powered by</gray> <gradient:#c03afe:#a72cf8:#8e1ff1:#7411eb:#5b03e4><bold>TChat</bold></gradient>"
+      - "<dark_gray><strikethrough>                              </strikethrough>"
+
+    # Channel to send the broadcast through
+    channel: "global"
+
+    # Optional. If set, only players with this permission see this broadcast
+    permission: "tchat.broadcast.view.broadcast1"
+
+    # Coming soon...
+    actions: []
+
+  broadcast2:
+    message:
+      - "%center%<gradient:#ff4d6d:#ff758f><bold>✦ ANNOUNCEMENT ✦</bold></gradient>"
+      - "%center%<gray>Need powerful hosting?</gray>"
+      - "%center%<gray>Try</gray> <gradient:#8e2de2:#4a00e0><bold>Tect.host</bold></gradient>"
+      - "%center%<gray>High performance Minecraft & VPS hosting</gray>"
+
+    # No channel entry = send the message to global chat
+
+    # No permission entry = visible to all players
+
+    # Coming soon...
+    actions: []

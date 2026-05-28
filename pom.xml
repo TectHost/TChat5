@@ -6,7 +6,7 @@
 
     <groupId>tect.host</groupId>
     <artifactId>TChat</artifactId>
-    <version>5.0.0-DEV-3</version>
+    <version>5.0.0-DEV-4</version>
     <packaging>jar</packaging>
 
     <name>TChat</name>
@@ -15,7 +15,7 @@
     <properties>
         <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <paper.version>26.1.2.build.64-stable</paper.version>
+        <paper.version>26.1.2.build.66-stable</paper.version>
         <plugin.main>tect.host.tpl.TChat</plugin.main>
         <plugin.author>Alex M. (TectHost)</plugin.author>
         <plugin.api-version>1.21</plugin.api-version>

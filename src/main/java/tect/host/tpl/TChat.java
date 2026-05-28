@@ -46,6 +46,7 @@ public final class TChat extends JavaPlugin {
         final ModuleContext moduleContext = new ModuleContext(this, configManager, messagesManager, placeholderApiHook, scheduler, dataManager);
 
         moduleManager = new ModuleManager(getLogger(), configManager, moduleContext);
+        moduleContext.setModuleManager(moduleManager);
         moduleManager.registerDescriptors(ModuleRegistry.createDefaultRegistry());
         moduleManager.loadEnabledModules();
 

@@ -6,10 +6,7 @@ import org.jspecify.annotations.Nullable;
 import tect.host.tpl.config.ConfigManager;
 import tect.host.tpl.module.*;
 import tect.host.tpl.module.Module;
-import tect.host.tpl.module.type.ChatModule;
-import tect.host.tpl.module.type.CommandModule;
-import tect.host.tpl.module.type.JoinModule;
-import tect.host.tpl.module.type.QuitModule;
+import tect.host.tpl.module.type.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -207,6 +204,7 @@ public final class ModuleManager {
                 case JoinModule jm -> newJoin.add(jm);
                 case QuitModule qm -> newQuit.add(qm);
                 case CommandModule cm -> newCommands.add(cm);
+                case BroadcastModule bm -> {}
                 default -> throw new IllegalStateException("Unexpected value: " + m);
             }
         }

@@ -6,7 +6,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # DON'T TOUCH THIS!
-config-version: 2
+config-version: 3
 
 chat:
   # Global chat format (modules.format)
@@ -82,3 +82,18 @@ modules:
   #
   # This module does not have a configuration file
   nick: true
+
+  # This module sends messages via chat (or performs actions) every few seconds
+  #
+  # Auto broadcast module loaded from modules/autobroadcast.yml
+  auto-broadcast: true
+
+  # This module adds a command to block the chat
+  #
+  # This module does not have a configuration file
+  block-chat: true
+
+  # This module allows you to create private channels.
+  #
+  # Channels module loaded from modules/channels.yml
+  channels: true

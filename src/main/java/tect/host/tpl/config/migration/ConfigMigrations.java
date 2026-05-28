@@ -26,6 +26,13 @@ public final class ConfigMigrations {
                 config.set("modules.anti-cap", false);
                 config.set("modules.blocked-commands", false);
                 config.set("modules.nick", false);
+            })
+
+            // v2 -> v3
+            .addMigrations(config -> {
+                config.set("modules.auto-broadcast", false);
+                config.set("modules.block-chat", false);
+                config.set("modules.channels", false);
             });
     }
 }

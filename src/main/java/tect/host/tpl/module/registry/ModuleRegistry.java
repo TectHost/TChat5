@@ -5,9 +5,14 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.NonNull;
 import tect.host.tpl.module.ModulePhase;
+import tect.host.tpl.module.impl.broadcast.autobroadcast.AutoBroadcastModule;
 import tect.host.tpl.module.impl.chat.anticap.AntiCapModule;
+import tect.host.tpl.module.impl.chat.blockchat.BlockChatCommand;
+import tect.host.tpl.module.impl.chat.blockchat.BlockChatModule;
 import tect.host.tpl.module.impl.chat.blockedwords.BlockedWordsCommand;
 import tect.host.tpl.module.impl.chat.blockedwords.BlockedWordsModule;
+import tect.host.tpl.module.impl.chat.channel.ChannelCommand;
+import tect.host.tpl.module.impl.chat.channel.ChannelModule;
 import tect.host.tpl.module.impl.chat.colorchat.ColorChatModule;
 import tect.host.tpl.module.impl.chat.group.GroupModule;
 import tect.host.tpl.module.impl.chat.format.FormatModule;
@@ -31,6 +36,7 @@ public final class ModuleRegistry {
         all.addAll(chatModules());
         all.addAll(joinModules());
         all.addAll(commandModules());
+        all.addAll(broadcastModules());
 
         return Collections.unmodifiableList(all);
     }
@@ -38,16 +44,20 @@ public final class ModuleRegistry {
     @Contract(" -> new")
     private static @NonNull @Unmodifiable List<ModuleDescriptor> chatModules() {
         return List.of(
+                ModuleDescriptor.builder("block-chat", "block-chat", BlockChatModule::new)
+                        .phase(ModulePhase.PRE_PROCESS).priority(1).command(mm -> new BlockChatCommand(mm, mm.getModuleContext().getMessagesManager())).build(),
                 ModuleDescriptor.builder("blocked-words", "blocked-words", BlockedWordsModule::new)
                         .phase(ModulePhase.PRE_PROCESS).priority(5).command(mm -> new BlockedWordsCommand(mm, mm.getModuleContext().getMessagesManager())).build(),
                 ModuleDescriptor.builder("anti-cap", "anti-cap", AntiCapModule::new)
-                        .phase(ModulePhase.PRE_PROCESS).priority(6).build(),
+                        .phase(ModulePhase.PRE_PROCESS).priority(10).build(),
+                ModuleDescriptor.builder("channels", "channels", ChannelModule::new)
+                        .phase(ModulePhase.PRE_PROCESS).priority(20).command(mm -> new ChannelCommand(mm, mm.getModuleContext().getMessagesManager())).build(),
                 ModuleDescriptor.builder("colorchat", "colorchat", ColorChatModule::new)
-                        .phase(ModulePhase.PRE_PROCESS).priority(8).build(),
+                        .phase(ModulePhase.PRE_PROCESS).priority(80).build(),
                 ModuleDescriptor.builder("group", "group", GroupModule::new)
-                        .phase(ModulePhase.FORMAT).priority(19).build(),
+                        .phase(ModulePhase.FORMAT).priority(99).build(),
                 ModuleDescriptor.builder("format", "format", FormatModule::new)
-                        .phase(ModulePhase.FORMAT).priority(20).build()
+                        .phase(ModulePhase.FORMAT).priority(100).build()
         );
     }
 
@@ -75,6 +85,14 @@ public final class ModuleRegistry {
                         .priority(11)
                         .command(mm -> new NickCommand(mm, mm.getModuleContext().getMessagesManager()))
                         .build()
+        );
+    }
+
+    @Contract(" -> new")
+    private static @NonNull @Unmodifiable List<ModuleDescriptor> broadcastModules() {
+        return List.of(
+                ModuleDescriptor.builder("auto-broadcast", "auto-broadcast", AutoBroadcastModule::new)
+                        .priority(10).build()
         );
     }
 }

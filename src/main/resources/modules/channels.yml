@@ -1,0 +1,48 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                         channels.yml                         ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# DON'T TOUCH THIS!
+config-version: 0
+
+# Message / Announce Mode:
+# - 0 -> visible to all online players
+# - 1 -> visible to players with channel permission
+# - 2 -> visible only to players who are in the channel (/channel join)
+# - 3 -> disabled (no one receives the message/announcement)
+#
+# Permissions:
+# - <permission> -> join, leave and use the channel
+# - <permission>.send ->
+
+channels:
+
+  admin:
+    # This permission is to join/leave the channel
+    # To use /channel send <message> you need to use tchat.channel.admin.send permission
+    permission: "tchat.channel.admin"
+    # This format takes precedence over the group and format settings,
+    # so it will override any format the user already has
+    format: "&8[&cAdmin&8] &a%tchat_nick% &7> <message>"
+    message-mode: 2
+    announce-mode: 2
+    # 0 = no limit
+    limit: 0
+
+  moderation:
+    permission: "tchat.channel.mod"
+    format: "&8[&bMod&8] &a%tchat_nick% &7> <message>"
+    message-mode: 1
+    announce-mode: 2
+    # 10 players limit
+    limit: 10
+
+  global:
+    permission: "tchat.channel.global"
+    format: "&8[&4Global&8] &a%tchat_nick% &7> <message>"
+    message-mode: 0
+    announce-mode: 0
+    # If you don't set a limit, it will be treated as 0 (unlimited)
