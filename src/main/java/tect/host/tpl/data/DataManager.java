@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.jspecify.annotations.NonNull;
 import tect.host.tpl.config.ConfigManager;
+import tect.host.tpl.util.Utils;
 
 import java.io.File;
 import java.sql.*;
@@ -34,7 +35,7 @@ public final class DataManager {
         this.method = resolveMethod(config);
         this.dataSource = buildPool(dataFolder, config);
         ensureMigrationsTable();
-        logger.info("DataManager initialized with method %s".formatted(method));
+        Utils.log(logger, "INFO", "DataManager initialized with method %s".formatted(method));
     }
 
     @NonNull
@@ -60,7 +61,7 @@ public final class DataManager {
             int pending = migrations.size() - currentVersion;
 
             if (pending <= 0) {
-                logger.fine("[DataManager] %s - schema up to date (v%d)".formatted(moduleId, currentVersion));
+                Utils.log(logger, "FINE", "[DataManager] %s - schema up to date (v%d)".formatted(moduleId, currentVersion));
                 repository.onInitialized();
                 return;
             }
@@ -69,7 +70,7 @@ public final class DataManager {
             try {
                 for (int i = currentVersion; i < migrations.size(); i++) {
                     int newVersion = i + 1;
-                    logger.info("[DataManager] %s - applying migration v%d".formatted(moduleId, newVersion));
+                    Utils.log(logger, "INFO", "[DataManager] %s - applying migration v%d".formatted(moduleId, newVersion));
 
                     try (Statement stmt = conn.createStatement()) {
                         stmt.execute(migrations.get(i));
@@ -81,7 +82,7 @@ public final class DataManager {
                     }
                 }
                 conn.commit();
-                logger.info("[DataManager] %s - migrated to v%d".formatted(moduleId, migrations.size()));
+                Utils.log(logger, "INFO", "[DataManager] %s - migrated to v%d".formatted(moduleId, migrations.size()));
             } catch (SQLException e) {
                 conn.rollback();
                 throw e;
@@ -89,7 +90,7 @@ public final class DataManager {
                 conn.setAutoCommit(true);
             }
         } catch (SQLException e) {
-            logger.severe("[DataManager] Migration failed for module '%s': %s".formatted(moduleId, e.getMessage()));
+            Utils.log(logger, "SEVERE", "[DataManager] Migration failed for module '%s': %s".formatted(moduleId, e.getMessage()));
             throw new RuntimeException("Schema migration failed for module: " + moduleId, e);
         }
 
@@ -99,7 +100,7 @@ public final class DataManager {
     public void close() {
         if (!dataSource.isClosed()) {
             dataSource.close();
-            logger.info("DataManager pool closed.");
+            Utils.log(logger, "INFO", "DataManager pool closed.");
         }
     }
 
@@ -107,7 +108,7 @@ public final class DataManager {
         try (Connection conn = getConnection(); Statement stmt = conn.createStatement()) {
             stmt.execute(CREATE_MIGRATIONS_TABLE);
         } catch (SQLException e) {
-            logger.severe("Failed to create schema_migrations table: " + e.getMessage());
+            Utils.log(logger, "SEVERE", "Failed to create schema_migrations table: " + e.getMessage());
             throw new RuntimeException("Cannot initialize DataManager", e);
         }
     }

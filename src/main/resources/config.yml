@@ -6,7 +6,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # DON'T TOUCH THIS!
-config-version: 3
+config-version: 4
 
 chat:
   # Global chat format (modules.format)
@@ -37,6 +37,49 @@ storage:
 # and will not participate in the chat flow at all (you can also delete its corresponding configuration file)
 modules:
 
+  # It lets censor, block, or convert words to
+  # lowercase when they're typed in all caps
+  #
+  # Anti cap module loaded from modules/anticap.yml
+  anti-cap: true
+
+  # This module sends messages via chat (or performs actions) every few seconds
+  #
+  # Auto broadcast module loaded from modules/autobroadcast.yml
+  auto-broadcast: true
+
+  # This module adds a command to block the chat
+  #
+  # This module does not have a configuration file
+  block-chat: true
+
+  # Allows to block specific commands from being used in chat
+  #
+  # Blocked commands module loaded from modules/blockedcommands.yml
+  blocked-commands: true
+
+  # Allows to block or censor words from a list
+  # It also detects similar words, for example:
+  # If the word "hello" is blocked, "he llo" will also be blocked.
+  #
+  # Blocked words module loaded from modules/blockedwords.yml
+  blocked-words: true
+
+  # This module allows you to create private channels.
+  #
+  # Channels module loaded from modules/channels.yml
+  channels: true
+
+  # This module allows you to create channels between worlds
+  #
+  # Chat bridge module loaded from modules/chatbridge.yml
+  chat-bridge: false
+
+  # Allows to translate colors and formats in chat using permissions
+  #
+  # This module does not have a configuration file
+  colorchat: true
+
   # Global format module (The group format will continue working even if you disable this module)
   #
   # The format module applies to all users, if used in conjunction with the groups module,
@@ -50,50 +93,18 @@ modules:
   # Group module loaded from modules/groups.yml
   group: true
 
-  # Send a message to the admins via chat when the plugin isn't up to date
-  #
-  # This module does not have a configuration file
-  update-notify: true
-
-  # Allows to translate colors and formats in chat using permissions
-  #
-  # This module does not have a configuration file
-  colorchat: true
-
-  # Allows to block or censor words from a list
-  # It also detects similar words, for example:
-  # If the word "hello" is blocked, "he llo" will also be blocked.
-  #
-  # Blocked words module loaded from modules/blockedwords.yml
-  blocked-words: true
-
-  # It lets censor, block, or convert words to
-  # lowercase when they're typed in all caps
-  #
-  # Anti cap module loaded from modules/anticap.yml
-  anti-cap: true
-
-  # Allows to block specific commands from being used in chat
-  #
-  # Blocked commands module loaded from modules/blockedcommands.yml
-  blocked-commands: true
-
   # Allows to change your nickname
   #
   # This module does not have a configuration file
   nick: true
 
-  # This module sends messages via chat (or performs actions) every few seconds
-  #
-  # Auto broadcast module loaded from modules/autobroadcast.yml
-  auto-broadcast: true
-
-  # This module adds a command to block the chat
+  # Send a message to the admins via chat when the plugin isn't up to date
   #
   # This module does not have a configuration file
-  block-chat: true
+  update-notify: true
 
-  # This module allows you to create private channels.
+  # This module allows you to use local chats (radius)
+  # It also lets you block chat by world
   #
-  # Channels module loaded from modules/channels.yml
-  channels: true
+  # Worlds module loaded from modules/worlds.yml
+  worlds: false

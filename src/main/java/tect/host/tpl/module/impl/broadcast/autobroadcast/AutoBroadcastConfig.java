@@ -37,7 +37,10 @@ public final class AutoBroadcastConfig {
                 String rawPerm = section.getString("permission", "none");
                 Optional<String> permission = rawPerm.isBlank() || rawPerm.equalsIgnoreCase("none") ? Optional.empty() : Optional.of(rawPerm);
 
-                loaded.add(new AutoBroadcastEntry(id, messages, channel, permission));
+                List<String> rawActions = section.getStringList("actions");
+                List<String> actions = rawActions.stream().filter(l -> l != null && !l.isBlank()).toList();
+
+                loaded.add(new AutoBroadcastEntry(id, messages, channel, permission, actions));
             }
         }
 

@@ -40,8 +40,7 @@ public final class ColorUtil {
 
     /**
      * Converts legacy & codes to MiniMessage format
-     * Use ONLY for trusted external input (e.g. LuckPerms prefixes via PAPI)
-     * that may contain legacy codes.
+     * Use ONLY for trusted external input that may contain legacy codes.
      */
     public static @NonNull String legacyToMini(@NonNull String legacy) {
         return MINI.serialize(LEGACY.deserialize(legacy));

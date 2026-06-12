@@ -43,7 +43,7 @@ public final class BlockChatCommand implements ModuleCommand {
             return;
         }
 
-        BlockChatModule module = moduleManager.getModule(BlockChatModule.ID, BlockChatModule.class);
+        BlockChatModule module = moduleManager.getModule("block-chat", BlockChatModule.class);
         if (module == null) {
             messagesManager.sendMessage(sender, "block-chat-module-disabled");
             return;

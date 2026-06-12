@@ -6,7 +6,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # DON'T TOUCH THIS!
-config-version: 0
+config-version: 1
 
 # Action to take when a message exceeds the cap threshold:
 # - ToLowerCase : convert all uppercase letters to lowercase (recommended)
@@ -14,7 +14,7 @@ config-version: 0
 # - CENSOR : replace uppercase letters with '*' (or the selected censor-char)
 action: "ToLowerCase"
 
-# Character used to replace matched letters (only relevant when action: CENSOR)
+# Character used to replace matched letters (only relevant when the action is: CENSOR)
 censor-char: "*"
 
 # Fraction of letters (0.0–1.0) that must be uppercase to trigger
@@ -22,11 +22,6 @@ censor-char: "*"
 # Messages with fewer than 4 letters are always ignored
 percent: 0.75
 
-# Message sent to the player when mode is BLOCK
-# Supports MiniMessage tags and legacy & color codes
-# Leave empty to block silently (no message shown)
-message:
-  - "<red>Please don't use excessive capitals."
-
-# Coming soon...
-actions: []
+# https://tchat.tect.host/general/actions
+actions:
+  - "[MESSAGE] <red>Please don't use excessive capitals."

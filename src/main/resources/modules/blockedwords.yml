@@ -5,20 +5,21 @@
 # ║                       blockedwords.yml                       ║
 # ╚══════════════════════════════════════════════════════════════╝
 
+# DON'T TOUCH THIS!
+config-version: 1
+
 # What to do when a blocked word is detected:
 # - CENSOR: Replace only the matched characters with censor-char (partial)
 # - CENSOR_ALL: Replace the entire message with censor-char repeated
 # - BLOCK: Cancel the message entirely
 action: CENSOR
 
-# Message sent to the player when their message is blocked (only used when action: BLOCK).
-# Supports legacy color codes and MiniMessage tags.
-# Leave empty to send no message.
-block-message:
-  - "&cYour message was blocked."
-
 # Character used to replace matched letters (only relevant when action: CENSOR and CENSOR_ALL)
 censor-char: "*"
+
+# https://tchat.tect.host/general/actions
+actions:
+  - "[MESSAGE] <red>Your message was blocked.</red>"
 
 # List of words to block.
 # Detection is fuzzy: special characters and spaces are ignored,
@@ -548,6 +549,3 @@ blocked-words:
   - wtf
   - xrated
   - xxx
-
-# Coming soon...
-actions: []

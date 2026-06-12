@@ -6,7 +6,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # NO TOCAR!
-config-version: 3
+config-version: 4
 
 # No puedes usar placeholders en el prefijo
 #
@@ -89,3 +89,6 @@ messages:
   channel-list-entry: "<gray>  - <white><hover:show_text:'<green>Entrar al canal</green>'><click:run_command:/channel join %channel%>%channel%</click></hover></white></gray>"
   channel-list-entry-active: "<gray>  - <aqua><hover:show_text:'<red>Salir del canal</red>'><click:run_command:/channel leave %channel%>%channel%</click></hover></aqua> <dark_gray>(activo)</dark_gray></gray>"
   channel-list-empty: "<gray>No hay canales disponibles para ti.</gray>"
+
+  # Módulo worlds
+  worlds-chat-disabled: "<red>El chat está desactivado en este mundo.</red>"

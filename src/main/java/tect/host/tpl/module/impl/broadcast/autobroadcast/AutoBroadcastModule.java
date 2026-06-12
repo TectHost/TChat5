@@ -21,12 +21,10 @@ public final class AutoBroadcastModule implements BroadcastModule {
 
     private static final String ID = "auto-broadcast";
 
-    private record LoadedState(@NonNull AutoBroadcastConfig config) {}
-
     private final ModuleContext moduleContext;
     private ConfigFile configFile;
 
-    private volatile LoadedState state;
+    private volatile @Nullable AutoBroadcastConfig config;
     private final AtomicInteger index = new AtomicInteger(0);
     private SchedulerAccess.@Nullable Cancellable timerHandle;
 
@@ -58,14 +56,14 @@ public final class AutoBroadcastModule implements BroadcastModule {
     }
 
     private void load() {
-        state = new LoadedState(new AutoBroadcastConfig(configFile));
+        config = new AutoBroadcastConfig(configFile);
     }
 
     private void scheduleTimer() {
-        LoadedState snap = state;
-        if (snap == null || snap.config().getEntries().isEmpty()) return;
+        AutoBroadcastConfig cfg = config;
+        if (cfg == null || cfg.getEntries().isEmpty()) return;
 
-        long periodTicks = snap.config().getIntervalSeconds() * 20L;
+        long periodTicks = cfg.getIntervalSeconds() * 20L;
         timerHandle = moduleContext.getScheduler().runTimer(this::broadcast, periodTicks, periodTicks);
     }
 
@@ -77,10 +75,10 @@ public final class AutoBroadcastModule implements BroadcastModule {
     }
 
     private void broadcast() {
-        LoadedState snap = state;
-        if (snap == null) return;
+        AutoBroadcastConfig cfg = config;
+        if (cfg == null) return;
 
-        List<AutoBroadcastEntry> entries = snap.config().getEntries();
+        List<AutoBroadcastEntry> entries = cfg.getEntries();
         if (entries.isEmpty()) return;
 
         int i = index.getAndUpdate(cur -> (cur + 1) % entries.size());
@@ -89,9 +87,13 @@ public final class AutoBroadcastModule implements BroadcastModule {
         Collection<? extends Player> online = moduleContext.getOnlinePlayers();
         List<Player> recipients = resolveRecipients(entry, online);
 
+        List<String> actions = entry.actions();
+
         for (Player player : recipients) {
             if (entry.permission().isPresent() && !player.hasPermission(entry.permission().get())) continue;
             sendLines(player, entry.rawMessages());
+
+            moduleContext.getActionExecutor().execute(player, actions);
         }
     }
 

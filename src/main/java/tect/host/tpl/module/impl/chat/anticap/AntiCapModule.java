@@ -1,31 +1,22 @@
 package tect.host.tpl.module.impl.chat.anticap;
 
-import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
 import tect.host.tpl.config.ConfigFile;
 import tect.host.tpl.module.type.ChatModule;
 import tect.host.tpl.module.ModuleContext;
-import tect.host.tpl.util.ColorUtil;
 import tect.host.tpl.context.MessageContext;
 import tect.host.tpl.util.Utils;
 
-import java.util.List;
 
 public final class AntiCapModule implements ChatModule {
 
     private static final String ID = "anti-cap";
+
     private static final String BYPASS_PERM = "tchat.admin.bypass.anticap";
 
-    private record LoadedState(@NonNull AntiCapConfig config, @NonNull List<Component> messageComponents) {
-        @Contract("_ -> new")
+    private record LoadedState(@NonNull AntiCapConfig config) {
         static @NonNull LoadedState from(@NonNull AntiCapConfig config) {
-            List<Component> components = config.getMessage().stream()
-                    .map(ColorUtil::legacyToMini)
-                    .map(ColorUtil::deserialize)
-                    .toList();
-            return new LoadedState(config, components);
+            return new LoadedState(config);
         }
     }
 
@@ -66,20 +57,12 @@ public final class AntiCapModule implements ChatModule {
         if (!exceedsCapThreshold(raw, snap.config().getPercent())) return;
 
         switch (snap.config().getAction()) {
-            case BLOCK -> {
-                ctx.setCancelled(true);
-
-                List<Component> components = snap.messageComponents();
-                if (!components.isEmpty()) {
-                    Player player = ctx.getPlayer();
-                    for (Component component : components) {
-                        player.sendMessage(component);
-                    }
-                }
-            }
+            case BLOCK -> ctx.setCancelled(true);
             case CENSOR -> ctx.setRawOverride(censorUpperCase(raw, snap.config().getCensorChar()));
             case TO_LOWER_CASE -> ctx.setRawOverride(raw.toLowerCase(java.util.Locale.ROOT));
         }
+
+        moduleContext.getActionExecutor().execute(ctx.getPlayer(), snap.config().getActions());
     }
 
     /**

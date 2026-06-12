@@ -2,35 +2,31 @@
 # ║                             TChat                            ║
 # ║                      tect.host | by Alex                     ║
 # ║                                                              ║
-# ║                      blockedcommands.yml                     ║
+# ║                          worlds.yml                          ║
 # ╚══════════════════════════════════════════════════════════════╝
 
 # DON'T TOUCH THIS!
-config-version: 1
+config-version: 0
 
-# List of commands players cannot use
-# Supports commands with or without '/'
-#
-# If you block "/me" (or "me"), commands like "/me ga" will also
-# be blocked, but "/mega" will not
-blocked-commands:
-  - icanhasbukkit
-  - ver
-  - about
-  - pl
-  - plugins
-  - help
-  - "?"
-  - me
-  - bukkit:icanhasbukkit
-  - bukkit:ver
-  - bukkit:about
-  - bukkit:pl
-  - bukkit:plugins
-  - bukkit:help
-  - bukkit:?
-  - bukkit:me
+worlds:
 
-# https://tchat.tect.host/general/actions
-actions:
-  - "[MESSAGE] <red>You are not allowed to use that command.</red>"
+  world:
+    chat-enabled: true
+    chat-radius:
+      radius: 0
+      bypass:
+        char: "!"
+
+  world_nether:
+    chat-enabled: true
+    chat-radius:
+      radius: 0
+      bypass:
+        char: "!"
+
+  world_the_end:
+    chat-enabled: true
+    chat-radius:
+      radius: 0
+      bypass:
+        char: "!"

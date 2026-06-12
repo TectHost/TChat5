@@ -2,13 +2,13 @@ package tect.host.tpl.config.migration;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jspecify.annotations.NonNull;
+import tect.host.tpl.util.Utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class ConfigMigrator {
@@ -35,14 +35,14 @@ public final class ConfigMigrator {
 
         if (current >= target) return false;
 
-        logger.info("[%s] Migrating config from v%d to v%d".formatted(fileName, current, target));
+        Utils.log(logger, "INFO", "[%s] Migrating config from v%d to v%d".formatted(fileName, current, target));
 
         for (int v = current; v < target; v++) {
             try {
                 migrations.get(v).apply(config);
-                logger.info("[%s] Applied migration v%d → v%d".formatted(fileName, v, v + 1));
+                Utils.log(logger, "INFO", "[%s] Applied migration v%d -> v%d".formatted(fileName, v, v + 1));
             } catch (Exception e) {
-                logger.log(Level.SEVERE, "[%s] Migration v%d → v%d failed, stopping".formatted(fileName, v, v + 1), e);
+                Utils.log(logger, "SEVERE", "[%s] Migration v%d -> v%d failed, stopping: %s".formatted(fileName, v, v + 1, e.toString()));
                 break;
             }
             config.set(VERSION_KEY, v + 1);
@@ -51,7 +51,7 @@ public final class ConfigMigrator {
         try {
             config.save(file);
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "[%s] Could not save migrated config".formatted(fileName), e);
+            Utils.log(logger, "SEVERE", "[%s] Could not save migrated config: %s".formatted(fileName, e));
         }
 
         return true;

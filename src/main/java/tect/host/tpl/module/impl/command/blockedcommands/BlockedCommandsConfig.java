@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public final class BlockedCommandsConfig {
 
     private final Set<String> blockedRoots;
-    private final List<String> blockMessage;
+    private final List<String> actions;
 
     public BlockedCommandsConfig(@NonNull ConfigFile configFile) {
         List<String> raw = configFile.get().getStringList("blocked-commands");
@@ -20,12 +20,10 @@ public final class BlockedCommandsConfig {
                 .map(s -> s.stripLeading().toLowerCase(Locale.ROOT))
                 .collect(Collectors.toUnmodifiableSet());
 
-        List<String> rawMsg = configFile.get().getStringList("message");
-        this.blockMessage = rawMsg.stream()
-                .filter(l -> l != null && !l.isBlank())
-                .toList();
+        List<String> rawActions = configFile.get().getStringList("actions");
+        this.actions = rawActions.stream().filter(l -> l != null && !l.isBlank()).toList();
     }
 
     public @NonNull Set<String> getBlockedRoots() { return blockedRoots; }
-    public @NonNull List<String> getBlockMessage() { return blockMessage; }
+    public @NonNull List<String> getActions() { return actions; }
 }

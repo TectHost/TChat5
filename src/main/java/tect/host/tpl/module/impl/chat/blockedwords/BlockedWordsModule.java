@@ -1,14 +1,11 @@
 package tect.host.tpl.module.impl.chat.blockedwords;
 
-import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.NonNull;
 import tect.host.tpl.config.ConfigFile;
 import tect.host.tpl.module.type.ChatModule;
 import tect.host.tpl.module.ModuleContext;
-import tect.host.tpl.util.ColorUtil;
 import tect.host.tpl.context.MessageContext;
 import tect.host.tpl.util.Utils;
 
@@ -19,16 +16,16 @@ public final class BlockedWordsModule implements ChatModule {
     private static final String ID = "blocked-words";
     private static final String BYPASS_PERM = "tchat.admin.bypass.blockedwords";
 
-    private record LoadedState(BlockedWordsConfig config, SequencedSet<String> words, Map<String, String> cache, List<Component> blockMessageLines) {
+    private record LoadedState(BlockedWordsConfig config, SequencedSet<String> words, Map<String, String> cache, List<String> actions) {
         @Contract("_ -> new")
         static @NonNull LoadedState from(@NonNull BlockedWordsConfig config) {
             SequencedSet<String> words = new LinkedHashSet<>(config.getBlockedWords());
-            return new LoadedState(config, words, buildCache(words), buildMessageComponents(config));
+            return new LoadedState(config, words, buildCache(words), config.getActions());
         }
 
         @Contract("_, _ -> new")
         static @NonNull LoadedState withWords(@NonNull BlockedWordsConfig config, @NonNull SequencedSet<String> words) {
-            return new LoadedState(config, new LinkedHashSet<>(words), buildCache(words), buildMessageComponents(config));
+            return new LoadedState(config, new LinkedHashSet<>(words), buildCache(words), config.getActions());
         }
 
         private static @NonNull @UnmodifiableView Map<String, String> buildCache(@NonNull Set<String> words) {
@@ -38,12 +35,6 @@ public final class BlockedWordsModule implements ChatModule {
                 if (!stripped.isEmpty()) map.put(w, stripped);
             }
             return Collections.unmodifiableMap(map);
-        }
-
-        private static @NonNull List<Component> buildMessageComponents(@NonNull BlockedWordsConfig config) {
-            List<String> lines = config.getBlockMessage();
-            if (lines.isEmpty()) return List.of();
-            return lines.stream().map(ColorUtil::legacyToMini).map(ColorUtil::deserialize).toList();
         }
     }
 
@@ -86,14 +77,6 @@ public final class BlockedWordsModule implements ChatModule {
                 if (!result.matched()) return;
 
                 ctx.setCancelled(true);
-
-                List<Component> components = snap.blockMessageLines();
-                if (!components.isEmpty()) {
-                    Player player = ctx.getPlayer();
-                    for (Component component : components) {
-                        player.sendMessage(component);
-                    }
-                }
             }
             case CENSOR_ALL -> {
                 String result = BlockedWordsMatcher.censorAll(ctx.getRawMessage(), snap.cache(), snap.config().getCensorChar());
@@ -104,6 +87,8 @@ public final class BlockedWordsModule implements ChatModule {
                 if (result != null) ctx.setRawOverride(result);
             }
         }
+
+        moduleContext.getActionExecutor().execute(ctx.getPlayer(), snap.actions());
     }
 
     /**

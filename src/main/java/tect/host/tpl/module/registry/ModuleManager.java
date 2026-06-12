@@ -7,6 +7,7 @@ import tect.host.tpl.config.ConfigManager;
 import tect.host.tpl.module.*;
 import tect.host.tpl.module.Module;
 import tect.host.tpl.module.type.*;
+import tect.host.tpl.util.Utils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -67,7 +68,7 @@ public final class ModuleManager {
                     .collect(Collectors.toUnmodifiableSet());
 
             if (!missing.isEmpty()) {
-                logger.warning("Module '%s' skipped: missing required modules %s".formatted(descriptor.getId(), missing));
+                Utils.log(logger, "WARNING", "Module '%s' skipped: missing required modules %s".formatted(descriptor.getId(), missing));
                 continue;
             }
 
@@ -96,9 +97,9 @@ public final class ModuleManager {
             if (module == null) continue;
             try {
                 module.onDisable();
-                logger.info("Module unloaded: %s".formatted(id));
+                Utils.log(logger, "INFO", "Module unloaded: %s".formatted(id));
             } catch (Exception e) {
-                logger.severe("Error disabling module '%s': %s".formatted(id, e.getMessage()));
+                Utils.log(logger, "SEVERE", "Error disabling module '%s': %s".formatted(id, e.getMessage()));
             }
         }
 
@@ -111,18 +112,18 @@ public final class ModuleManager {
         if (module == null) return;
         try {
             module.onDisable();
-            logger.info("Module unloaded: %s".formatted(id));
+            Utils.log(logger, "INFO", "Module unloaded: %s".formatted(id));
         } catch (Exception e) {
-            logger.severe("Error disabling module '%s': %s".formatted(id, e.getMessage()));
+            Utils.log(logger, "SEVERE", "Error disabling module '%s': %s".formatted(id, e.getMessage()));
         }
     }
 
     private void reloadModule(@NonNull ModuleDescriptor descriptor, @NonNull Module module) {
         try {
             module.onReload();
-            logger.info("Module reloaded: %s".formatted(descriptor.getId()));
+            Utils.log(logger, "INFO", "Module reloaded: %s".formatted(descriptor.getId()));
         } catch (Exception e) {
-            logger.severe("Failed to reload module '%s': %s".formatted(descriptor.getId(), e.getMessage()));
+            Utils.log(logger, "SEVERE", "Failed to reload module '%s': %s".formatted(descriptor.getId(), e.getMessage()));
         }
     }
 
@@ -137,9 +138,9 @@ public final class ModuleManager {
                 activeCommands.put(descriptor.getId(), cmdFactory.apply(this));
             }
 
-            logger.info("Module loaded: %s".formatted(descriptor.getId()));
+            Utils.log(logger, "INFO", "Module loaded: %s".formatted(descriptor.getId()));
         } catch (Exception e) {
-            logger.severe("Failed to load module '%s': %s".formatted(descriptor.getId(), e.getMessage()));
+            Utils.log(logger, "SEVERE", "Failed to load module '%s': %s".formatted(descriptor.getId(), e.getMessage()));
         }
     }
 
@@ -173,7 +174,7 @@ public final class ModuleManager {
         if (ordered.size() < enabled.size()) {
             Set<String> inCycle = new HashSet<>(enabled.keySet());
             ordered.forEach(d -> inCycle.remove(d.getId()));
-            logger.severe("Circular dependency detected, skipping modules: %s".formatted(inCycle));
+            Utils.log(logger, "SEVERE", "Circular dependency detected, skipping modules: %s".formatted(inCycle));
         }
 
         return ordered;
@@ -195,8 +196,7 @@ public final class ModuleManager {
             switch (m) {
                 case ChatModule cm -> {
                     if (desc == null || desc.getPhase() == null) {
-                        logger.warning("ChatModule '%s' has no phase, it will never execute!".formatted(entry.getKey())
-                        );
+                        Utils.log(logger, "WARNING", "ChatModule '%s' has no phase, it will never execute!".formatted(entry.getKey()));
                     } else {
                         chatSnap.computeIfAbsent(desc.getPhase(), _ -> new ArrayList<>()).add(cm);
                     }
@@ -209,12 +209,7 @@ public final class ModuleManager {
             }
         }
 
-        pipeline = new Pipeline(
-                Collections.unmodifiableMap(chatSnap),
-                List.copyOf(newJoin),
-                List.copyOf(newQuit),
-                List.copyOf(newCommands)
-        );
+        pipeline = new Pipeline(Collections.unmodifiableMap(chatSnap), List.copyOf(newJoin), List.copyOf(newQuit), List.copyOf(newCommands));
     }
 
     private int compareByPriorityThenId(Map.@NonNull Entry<String, Module> a, Map.@NonNull Entry<String, Module> b) {
@@ -225,10 +220,6 @@ public final class ModuleManager {
 
     public @NonNull ModuleContext getModuleContext() {
         return moduleContext;
-    }
-
-    public @NonNull @UnmodifiableView Collection<Module> getActiveModules() {
-        return Collections.unmodifiableCollection(activeModules.values());
     }
 
     public @NonNull @UnmodifiableView Collection<ModuleCommand> getActiveCommands() {

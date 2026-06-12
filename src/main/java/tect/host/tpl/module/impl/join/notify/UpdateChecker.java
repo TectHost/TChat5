@@ -3,6 +3,7 @@ package tect.host.tpl.module.impl.join.notify;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import tect.host.tpl.module.SchedulerAccess;
+import tect.host.tpl.util.Utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,32 +40,31 @@ public final class UpdateChecker {
 
                 int status = connection.getResponseCode();
                 if (status < 200 || status >= 300) {
-                    logger.warning("Update check failed, HTTP %d".formatted(status));
+                    Utils.log(logger, "WARNING", "Update check failed, HTTP %d".formatted(status));
                     return;
                 }
 
                 String fetched;
-                try (BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
                     fetched = reader.readLine();
                 }
 
                 if (fetched == null || fetched.isBlank()) {
-                    logger.warning("Update check failed, empty response from Spigot.");
+                    Utils.log(logger, "WARNING", "Update check failed, empty response from Spigot.");
                     return;
                 }
 
                 latestVersion = fetched.trim();
 
                 if (latestVersion.equalsIgnoreCase(currentVersion)) {
-                    logger.info("TChat is up to date (%s).".formatted(currentVersion));
+                    Utils.log(logger, "INFO", "TChat is up to date (%s).".formatted(currentVersion));
                 } else {
-                    logger.warning("A new version of TChat is available: %s (you have %s)".formatted(latestVersion, currentVersion));
-                    logger.warning("Download it at: %s".formatted(DOWNLOAD_URL));
+                    Utils.log(logger, "WARNING", "A new version of TChat is available: %s (you have %s)".formatted(latestVersion, currentVersion));
+                    Utils.log(logger, "WARNING", "Download it at: %s".formatted(DOWNLOAD_URL));
                 }
 
             } catch (IOException e) {
-                logger.warning("Update check failed: %s".formatted(e.getMessage()));
+                Utils.log(logger, "WARNING", "Update check failed: %s".formatted(e.getMessage()));
             } finally {
                 if (connection != null) connection.disconnect();
             }

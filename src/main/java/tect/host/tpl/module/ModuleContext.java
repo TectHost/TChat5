@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import tect.host.tpl.TChat;
+import tect.host.tpl.action.ActionExecutor;
 import tect.host.tpl.config.ConfigFile;
 import tect.host.tpl.config.ConfigManager;
 import tect.host.tpl.config.MessagesManager;
@@ -25,6 +26,7 @@ public final class ModuleContext {
     private final Logger logger;
     private final DataManager dataManager;
     private @Nullable ModuleManager moduleManager;
+    private @Nullable ActionExecutor actionExecutor;
 
     public ModuleContext(@NonNull TChat plugin, @NonNull ConfigManager coreConfig, @NonNull MessagesManager messagesManager, @NonNull PlaceholderApiHook placeholderApiHook, @NonNull SchedulerAccess scheduler, @NonNull DataManager dataManager) {
         this.plugin = plugin;
@@ -57,6 +59,11 @@ public final class ModuleContext {
     public @NonNull ModuleManager getModuleManager() {
         if (moduleManager == null) throw new IllegalStateException("ModuleManager not yet initialized");
         return moduleManager;
+    }
+
+    public @NonNull ActionExecutor getActionExecutor() {
+        if (actionExecutor == null) actionExecutor = new ActionExecutor(this);
+        return actionExecutor;
     }
 
     public @NonNull Collection<? extends Player> getOnlinePlayers() {

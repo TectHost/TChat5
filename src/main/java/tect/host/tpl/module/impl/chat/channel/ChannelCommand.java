@@ -151,7 +151,7 @@ public final class ChannelCommand implements ModuleCommand {
         }
 
         String rawMessage = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
-        MessageContext msgCtx = new MessageContext(player, rawMessage, net.kyori.adventure.text.Component.text(rawMessage));
+        MessageContext msgCtx = new MessageContext(player, rawMessage, net.kyori.adventure.text.Component.text(rawMessage), null);
 
         Collection<? extends Player> online = moduleManager.getModuleContext().getOnlinePlayers();
         List<Player> recipients = service.resolveRecipients(channel, online);

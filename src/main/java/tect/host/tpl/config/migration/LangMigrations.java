@@ -73,6 +73,9 @@ public final class LangMigrations {
                 config.set("messages.channel-list-empty", "<gray>There are no channels available to you.</gray>");
 
                 config.set("messages.command-player-only", "<red>This command can only be executed by a player.</red>");
-            });
+            })
+
+            // v3 -> v4
+            .addMigration(config -> config.set("messages.worlds-chat-disabled", "<red>Chat is disabled in this world.</red>"));
     }
 }

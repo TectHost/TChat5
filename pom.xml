@@ -6,7 +6,7 @@
 
     <groupId>tect.host</groupId>
     <artifactId>TChat</artifactId>
-    <version>5.0.0-DEV-4</version>
+    <version>5.0.0-DEV-5</version>
     <packaging>jar</packaging>
 
     <name>TChat</name>
@@ -15,11 +15,17 @@
     <properties>
         <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <paper.version>26.1.2.build.66-stable</paper.version>
         <plugin.main>tect.host.tpl.TChat</plugin.main>
         <plugin.author>Alex M. (TectHost)</plugin.author>
         <plugin.api-version>1.21</plugin.api-version>
         <plugin.website>https://tect.host/</plugin.website>
+
+        <paper.version>26.1.2.build.69-stable</paper.version>
+        <papi.version>2.12.2</papi.version>
+        <adventure.version>5.1.1</adventure.version>
+        <bStats.version>3.2.1</bStats.version>
+        <hikari.version>7.0.2</hikari.version>
+        <SQLite.version>3.53.1.0</SQLite.version>
     </properties>
 
     <build>
@@ -116,21 +122,21 @@
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
-            <version>2.12.2</version>
+            <version>${papi.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-api</artifactId>
-            <version>5.1.1</version>
+            <version>${adventure.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>3.2.1</version>
+            <version>${bStats.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -138,14 +144,14 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>7.0.2</version>
+            <version>${hikari.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.53.1.0</version>
+            <version>${SQLite.version}</version>
             <scope>provided</scope>
         </dependency>
 

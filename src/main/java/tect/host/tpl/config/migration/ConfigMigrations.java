@@ -33,6 +33,12 @@ public final class ConfigMigrations {
                 config.set("modules.auto-broadcast", false);
                 config.set("modules.block-chat", false);
                 config.set("modules.channels", false);
+            })
+
+            // v3 -> v4
+            .addMigrations(config -> {
+                config.set("modules.worlds", false);
+                config.set("modules.chat-bridge", false);
             });
     }
 }

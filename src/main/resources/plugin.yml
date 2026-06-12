@@ -63,6 +63,8 @@ permissions:
       tchat.admin.bypass.blockedwords: true
       tchat.admin.bypass.anticap: true
       tchat.admin.bypass.blockchat: true
+      tchat.admin.bypass.blockedcommands: true
+      tchat.admin.bypass.worlds.chat: true
 
   tchat.colorchat.colors:
     description: Grants all 16 standard colors
@@ -113,7 +115,15 @@ permissions:
     default: op
 
   tchat.admin.bypass.blockchat:
-    description: Bypass blockchat — can talk even when chat is blocked
+    description: Bypass blockchat, can talk even when chat is blocked
+    default: op
+
+  tchat.admin.bypass.worlds.chat:
+    description: Bypass chat-enabled by worlds
+    default: op
+
+  tchat.admin.bypass.blockedcommands:
+    description: Bypass blockedcommands module
     default: op
 
   tchat.admin.command.nick.others:

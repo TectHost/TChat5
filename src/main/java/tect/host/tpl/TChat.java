@@ -34,30 +34,14 @@ public final class TChat extends JavaPlugin {
     @Override
     public void onEnable() {
         configManager = new ConfigManager(this);
-
         placeholderApiHook = new PlaceholderApiHook();
-
         messagesManager = new MessagesManager(this, configManager, placeholderApiHook);
-
         dataManager = new DataManager(getDataFolder(), configManager, getLogger());
 
-        final SchedulerAccess scheduler = new BukkitSchedulerAccess(this);
-
-        final ModuleContext moduleContext = new ModuleContext(this, configManager, messagesManager, placeholderApiHook, scheduler, dataManager);
-
-        moduleManager = new ModuleManager(getLogger(), configManager, moduleContext);
-        moduleContext.setModuleManager(moduleManager);
-        moduleManager.registerDescriptors(ModuleRegistry.createDefaultRegistry());
-        moduleManager.loadEnabledModules();
-
-        placeholderApiHook.registerExpansion(this, moduleManager);
-
-        getServer().getPluginManager().registerEvents(new PlayerChatListener(new ChatProcessor(moduleManager)), this);
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(new JoinProcessor(moduleManager)), this);
-        getServer().getPluginManager().registerEvents(new PlayerQuitListener(new QuitProcessor(moduleManager)), this);
-        getServer().getPluginManager().registerEvents(new PlayerCommandListener(new CommandProcessor(moduleManager)), this);
-
+        setupModules();
+        registerListeners();
         registerCommands();
+
         new Metrics(this, 23305);
     }
 
@@ -72,6 +56,26 @@ public final class TChat extends JavaPlugin {
         configManager.reload();
         messagesManager.reload();
         moduleManager.reloadModules();
+    }
+
+    private void setupModules() {
+        final SchedulerAccess scheduler = new BukkitSchedulerAccess(this);
+        final ModuleContext moduleContext = new ModuleContext(this, configManager, messagesManager, placeholderApiHook, scheduler, dataManager);
+
+        moduleManager = new ModuleManager(getLogger(), configManager, moduleContext);
+        moduleContext.setModuleManager(moduleManager);
+        moduleManager.registerDescriptors(ModuleRegistry.createDefaultRegistry());
+        moduleManager.loadEnabledModules();
+
+        placeholderApiHook.registerExpansion(this, moduleManager);
+    }
+
+    private void registerListeners() {
+        final var pm = getServer().getPluginManager();
+        pm.registerEvents(new PlayerChatListener(new ChatProcessor(moduleManager)), this);
+        pm.registerEvents(new PlayerJoinListener(new JoinProcessor(moduleManager)), this);
+        pm.registerEvents(new PlayerQuitListener(new QuitProcessor(moduleManager)), this);
+        pm.registerEvents(new PlayerCommandListener(new CommandProcessor(moduleManager)), this);
     }
 
     private void registerCommands() {

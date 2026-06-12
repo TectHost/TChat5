@@ -13,7 +13,7 @@ public final class BlockedWordsConfig {
     private final Action action;
     private final char censorChar;
     private final Set<String> blockedWords;
-    private final List<String> blockMessage;
+    private final List<String> actions;
 
     public BlockedWordsConfig(@NonNull ConfigFile configFile) {
         this.action = Action.fromString(configFile.get().getString("action", "CENSOR"));
@@ -27,12 +27,12 @@ public final class BlockedWordsConfig {
         }
         this.blockedWords = Collections.unmodifiableSet(words);
 
-        List<String> rawMsg = configFile.get().getStringList("block-message");
-        this.blockMessage = rawMsg.stream().filter(l -> l != null && !l.isBlank()).toList();
+        List<String> rawActions = configFile.get().getStringList("actions");
+        this.actions = rawActions.stream().filter(l -> l != null && !l.isBlank()).toList();
     }
 
     public @NonNull Action getAction() { return action; }
     public char getCensorChar() { return censorChar; }
     public @NonNull Set<String> getBlockedWords() { return blockedWords; }
-    public @NonNull List<String> getBlockMessage() { return blockMessage; }
+    public @NonNull List<String> getActions() { return actions; }
 }

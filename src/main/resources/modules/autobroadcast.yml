@@ -29,7 +29,7 @@ broadcasts:
     # Optional. If set, only players with this permission see this broadcast
     permission: "tchat.broadcast.view.broadcast1"
 
-    # Coming soon...
+    # https://tchat.tect.host/general/actions
     actions: []
 
   broadcast2:
@@ -43,5 +43,5 @@ broadcasts:
 
     # No permission entry = visible to all players
 
-    # Coming soon...
+    # https://tchat.tect.host/general/actions
     actions: []

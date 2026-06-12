@@ -7,7 +7,7 @@ import tect.host.tpl.module.type.ChatModule;
 
 public final class BlockChatModule implements ChatModule {
 
-    static final String ID = "block-chat";
+    private static final String ID = "block-chat";
 
     private static final String BYPASS_PERMISSION = "tchat.admin.bypass.blockchat";
 

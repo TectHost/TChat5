@@ -62,7 +62,6 @@ public final class ChannelModule implements ChatModule {
                 channel.format().replace("%channel%", channel.id()),
                 msgCtx
         );
-        msgCtx.setFormat(formatted);
 
         for (Player recipient : recipients) {
             recipient.sendMessage(formatted);

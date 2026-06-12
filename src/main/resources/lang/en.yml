@@ -6,7 +6,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # DON'T TOUCH THIS
-config-version: 3
+config-version: 4
 
 # You cannot use placeholders in the prefix
 #
@@ -89,3 +89,6 @@ messages:
   channel-list-entry: "<gray>  - <white><hover:show_text:'<green>Join channel</green>'><click:run_command:/channel join %channel%>%channel%</click></hover></white></gray>"
   channel-list-entry-active: "<gray>  - <aqua><hover:show_text:'<red>Leave channel</red>'><click:run_command:/channel leave %channel%>%channel%</click></hover></aqua> <dark_gray>(active)</dark_gray></gray>"
   channel-list-empty: "<gray>There are no channels available to you.</gray>"
+
+  # Worlds Module
+  worlds-chat-disabled: "<red>Chat is disabled in this world.</red>"

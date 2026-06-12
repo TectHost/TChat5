@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NonNull;
 import tect.host.tpl.data.DataManager;
 import tect.host.tpl.data.Repository;
+import tect.host.tpl.util.Utils;
 
 import java.sql.*;
 import java.util.List;
@@ -75,7 +76,7 @@ public final class NickRepository implements Repository {
                     }
                 }
             } catch (SQLException e) {
-                logger.severe("Failed to preload nick for %s: %s".formatted(uuid, e.getMessage()));
+                Utils.log(logger, "SEVERE", "Failed to preload nick for %s: %s".formatted(uuid, e.getMessage()));
                 return Optional.empty();
             }
         }, asyncExecutor);
@@ -98,7 +99,7 @@ public final class NickRepository implements Repository {
                 } else {
                     cache.remove(uuid);
                 }
-                logger.severe("Failed to save nick for %s: %s".formatted(uuid, e.getMessage()));
+                Utils.log(logger, "SEVERE", "Failed to save nick for %s: %s".formatted(uuid, e.getMessage()));
                 throw new RuntimeException("DB write failed for setNick", e);
             }
         }, asyncExecutor);
@@ -116,7 +117,7 @@ public final class NickRepository implements Repository {
             } catch (SQLException e) {
                 // restore nick in cache if db failed
                 if (previous != null) cache.put(uuid, previous);
-                logger.severe("Failed to remove nick for %s: %s".formatted(uuid, e.getMessage()));
+                Utils.log(logger, "SEVERE", "Failed to remove nick for %s: %s".formatted(uuid, e.getMessage()));
                 throw new RuntimeException("DB write failed for removeNick", e);
             }
         }, asyncExecutor);

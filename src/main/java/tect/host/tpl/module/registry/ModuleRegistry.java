@@ -11,11 +11,13 @@ import tect.host.tpl.module.impl.chat.blockchat.BlockChatCommand;
 import tect.host.tpl.module.impl.chat.blockchat.BlockChatModule;
 import tect.host.tpl.module.impl.chat.blockedwords.BlockedWordsCommand;
 import tect.host.tpl.module.impl.chat.blockedwords.BlockedWordsModule;
+import tect.host.tpl.module.impl.chat.bridge.ChatBridgeModule;
 import tect.host.tpl.module.impl.chat.channel.ChannelCommand;
 import tect.host.tpl.module.impl.chat.channel.ChannelModule;
 import tect.host.tpl.module.impl.chat.colorchat.ColorChatModule;
 import tect.host.tpl.module.impl.chat.group.GroupModule;
 import tect.host.tpl.module.impl.chat.format.FormatModule;
+import tect.host.tpl.module.impl.chat.worlds.WorldsModule;
 import tect.host.tpl.module.impl.command.blockedcommands.BlockedCommandsModule;
 import tect.host.tpl.module.impl.command.nick.NickCommand;
 import tect.host.tpl.module.impl.command.nick.NickModule;
@@ -46,6 +48,10 @@ public final class ModuleRegistry {
         return List.of(
                 ModuleDescriptor.builder("block-chat", "block-chat", BlockChatModule::new)
                         .phase(ModulePhase.PRE_PROCESS).priority(1).command(mm -> new BlockChatCommand(mm, mm.getModuleContext().getMessagesManager())).build(),
+                ModuleDescriptor.builder("worlds", "worlds", WorldsModule::new)
+                        .phase(ModulePhase.PRE_PROCESS).priority(2).build(),
+                ModuleDescriptor.builder("chat-bridge", "chat-bridge", ChatBridgeModule::new)
+                        .phase(ModulePhase.PRE_PROCESS).priority(3).build(),
                 ModuleDescriptor.builder("blocked-words", "blocked-words", BlockedWordsModule::new)
                         .phase(ModulePhase.PRE_PROCESS).priority(5).command(mm -> new BlockedWordsCommand(mm, mm.getModuleContext().getMessagesManager())).build(),
                 ModuleDescriptor.builder("anti-cap", "anti-cap", AntiCapModule::new)
