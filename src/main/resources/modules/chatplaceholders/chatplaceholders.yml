@@ -1,0 +1,18 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                     chatplaceholders.yml                     ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# DON'T TOUCH THIS!
+config-version: 0
+
+# Maximum total tag replacements per message across ALL tags combined.
+# 0 = unlimited.
+max-replacements-per-message: 5
+
+# Toggle built-in tags individually.
+# Each has its own config file inside this folder.
+built-in:
+  item: true

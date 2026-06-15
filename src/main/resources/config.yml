@@ -6,7 +6,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # DON'T TOUCH THIS!
-config-version: 4
+config-version: 5
 
 chat:
   # Global chat format (modules.format)
@@ -92,6 +92,16 @@ modules:
   #
   # Group module loaded from modules/groups.yml
   group: true
+
+  # Allows to inspect other player inventories
+  #
+  # Invsee module loaded from modules/invsee.yml
+  invsee: false
+
+  # Allows players to display custom tags in chat
+  #
+  # Item tag module loaded from modules/chatplaceholders/chatplaceholders.yml
+  chat-placeholders: true
 
   # Allows to change your nickname
   #

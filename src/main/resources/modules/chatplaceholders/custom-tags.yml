@@ -1,0 +1,35 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                        custom-tags.yml                       ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# DON'T TOUCH THIS!
+config-version: 0
+
+# Define custom tags here. When a player writes the trigger in chat:
+#   1. The trigger is replaced in the message by "label" (seen by everyone).
+#   2. "actions" are executed for the player who sent the message.
+
+# Fields:
+# - trigger -> string to detect in chat (case-insensitive, required)
+# - permission -> leave empty to allow everyone (optional)
+# - label -> MiniMessage text shown in the message (required)
+# - actions -> executed for the player who wrote the message (optional)
+#   - https://tchat.tect.host/general/actions
+
+# Examples:
+#
+# tags:
+#   - trigger: "[discord]"
+#     permission: ""
+#     label: "<click:open_url:'https://discord.gg/yourserver'><hover:show_text:'<gray>Click to join!'>[<#5865F2>Discord</#5865F2>]</hover></click>"
+#     actions:
+#       - "[MESSAGE] <gray>Discord invite: <aqua>https://discord.gg/yourserver"
+
+tags:
+  - trigger: "[pos]"
+    permission: ""
+    label: "[<green>%player_x% %player_y% %player_z%</green>]"
+    actions: []

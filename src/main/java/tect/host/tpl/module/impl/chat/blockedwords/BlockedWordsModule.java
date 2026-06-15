@@ -1,5 +1,6 @@
 package tect.host.tpl.module.impl.chat.blockedwords;
 
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.NonNull;
@@ -76,24 +77,31 @@ public final class BlockedWordsModule implements ChatModule {
                 BlockedWordsMatcher.MatchResult result = BlockedWordsMatcher.check(ctx.getRawMessage(), snap.cache());
                 if (!result.matched()) return;
 
+                executeActions(ctx.getPlayer(), snap.actions);
                 ctx.setCancelled(true);
             }
             case CENSOR_ALL -> {
                 String result = BlockedWordsMatcher.censorAll(ctx.getRawMessage(), snap.cache(), snap.config().getCensorChar());
-                if (result != null) ctx.setRawOverride(result);
+                if (result == null) return;
+
+                executeActions(ctx.getPlayer(), snap.actions);
+                ctx.setRawOverride(result);
             }
             case CENSOR -> {
                 String result = BlockedWordsMatcher.censor(ctx.getRawMessage(), snap.cache(), snap.config().getCensorChar());
-                if (result != null) ctx.setRawOverride(result);
+                if (result == null) return;
+
+                executeActions(ctx.getPlayer(), snap.actions);
+                ctx.setRawOverride(result);
             }
         }
-
-        moduleContext.getActionExecutor().execute(ctx.getPlayer(), snap.actions());
     }
 
-    /**
-     * Returns false if the word was already present
-     */
+    private void executeActions(Player player, List<String> actions) {
+        moduleContext.getActionExecutor().execute(player, actions);
+    }
+
+    /** Returns false if the word was already present */
     public synchronized boolean addWord(@NonNull String word) {
         word = word.strip();
         LoadedState current = state;
@@ -104,9 +112,7 @@ public final class BlockedWordsModule implements ChatModule {
         return true;
     }
 
-    /**
-     * Returns false if the word was not present
-     */
+    /** Returns false if the word was not present */
     public synchronized boolean removeWord(@NonNull String word) {
         word = word.strip();
         LoadedState current = state;

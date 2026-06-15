@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
 import tect.host.tpl.config.migration.ConfigMigrator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -19,7 +20,7 @@ public final class BlockedCommandsMigrations {
             .addMigration(config -> {
                 List<String> message = config.getStringList("message");
                 if (!message.isEmpty()) {
-                    java.util.List<String> existing = new java.util.ArrayList<>(config.getStringList("actions"));
+                    List<String> existing = new ArrayList<>(config.getStringList("actions"));
                     for (String line : message) {
                         if (line != null && !line.isBlank()) {
                             existing.add("[MESSAGE] " + line.strip());

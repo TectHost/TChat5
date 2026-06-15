@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import tect.host.tpl.module.ModuleCommand;
+import tect.host.tpl.module.ModuleMenu;
 import tect.host.tpl.module.ModulePhase;
 
 import java.util.Set;
@@ -18,6 +19,7 @@ public final class ModuleDescriptor {
     private final @Nullable ModulePhase phase;
     private final int priority;
     private final @Nullable Function<ModuleManager, ModuleCommand> commandFactory;
+    private final @Nullable Function<ModuleManager, ModuleMenu> menuFactory;
 
     private ModuleDescriptor(@NonNull Builder builder) {
         this.id = builder.id;
@@ -27,6 +29,7 @@ public final class ModuleDescriptor {
         this.phase = builder.phase;
         this.priority = builder.priority;
         this.commandFactory = builder.commandFactory;
+        this.menuFactory = builder.menuFactory;
     }
 
     @Contract("_, _, _ -> new")
@@ -45,6 +48,10 @@ public final class ModuleDescriptor {
         return commandFactory;
     }
 
+    public @Nullable Function<ModuleManager, ModuleMenu> getMenuFactory() {
+        return menuFactory;
+    }
+
     public static final class Builder {
 
         private final String id;
@@ -54,6 +61,7 @@ public final class ModuleDescriptor {
         private @Nullable ModulePhase phase = null;
         private int priority = 100;
         private @Nullable Function<ModuleManager, ModuleCommand> commandFactory = null;
+        private @Nullable Function<ModuleManager, ModuleMenu> menuFactory = null;
 
         private Builder(String id, String togglePath, ModuleFactory factory) {
             this.id = id;
@@ -78,6 +86,11 @@ public final class ModuleDescriptor {
 
         public Builder command(@NonNull Function<ModuleManager, ModuleCommand> commandFactory) {
             this.commandFactory = commandFactory;
+            return this;
+        }
+
+        public Builder menu(@NonNull Function<ModuleManager, ModuleMenu> menuFactory) {
+            this.menuFactory = menuFactory;
             return this;
         }
 

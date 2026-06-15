@@ -1,0 +1,27 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                          invsee.yml                          ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# DON'T TOUCH THIS!
+config-version: 0
+
+# Title of the inventory GUI (supports MiniMessage format)
+title: "<gray><player>'s inventory</gray>"
+
+# Item shown in empty/unused slots
+filler:
+  enabled: true
+  material: GRAY_STAINED_GLASS_PANE
+  name: " "
+  lore: []
+
+# Close button, always placed in the last free slot (slot 44)
+close-button:
+  enabled: true
+  material: BARRIER
+  name: "<red>Close</red>"
+  lore:
+    - "<gray>Click to close this menu.</gray>"

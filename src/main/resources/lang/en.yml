@@ -6,7 +6,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # DON'T TOUCH THIS
-config-version: 4
+config-version: 5
 
 # You cannot use placeholders in the prefix
 #
@@ -92,3 +92,7 @@ messages:
 
   # Worlds Module
   worlds-chat-disabled: "<red>Chat is disabled in this world.</red>"
+
+  # InvSee Module
+  invsee-usage: "<red>Usage: /invsee <jugador></red>"
+  invsee-module-disabled: "<red>The InvSee module is not enabled.</red>"

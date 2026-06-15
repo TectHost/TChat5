@@ -14,11 +14,15 @@ import tect.host.tpl.module.impl.chat.blockedwords.BlockedWordsModule;
 import tect.host.tpl.module.impl.chat.bridge.ChatBridgeModule;
 import tect.host.tpl.module.impl.chat.channel.ChannelCommand;
 import tect.host.tpl.module.impl.chat.channel.ChannelModule;
+import tect.host.tpl.module.impl.chat.chatplaceholders.ChatPlaceholdersModule;
 import tect.host.tpl.module.impl.chat.colorchat.ColorChatModule;
-import tect.host.tpl.module.impl.chat.group.GroupModule;
 import tect.host.tpl.module.impl.chat.format.FormatModule;
+import tect.host.tpl.module.impl.chat.group.GroupModule;
 import tect.host.tpl.module.impl.chat.worlds.WorldsModule;
 import tect.host.tpl.module.impl.command.blockedcommands.BlockedCommandsModule;
+import tect.host.tpl.module.impl.command.invsee.InvSeeCommand;
+import tect.host.tpl.module.impl.command.invsee.InvSeeMenu;
+import tect.host.tpl.module.impl.command.invsee.InvSeeModule;
 import tect.host.tpl.module.impl.command.nick.NickCommand;
 import tect.host.tpl.module.impl.command.nick.NickModule;
 import tect.host.tpl.module.impl.join.notify.UpdateNotifyModule;
@@ -58,6 +62,8 @@ public final class ModuleRegistry {
                         .phase(ModulePhase.PRE_PROCESS).priority(10).build(),
                 ModuleDescriptor.builder("channels", "channels", ChannelModule::new)
                         .phase(ModulePhase.PRE_PROCESS).priority(20).command(mm -> new ChannelCommand(mm, mm.getModuleContext().getMessagesManager())).build(),
+                ModuleDescriptor.builder("chat-placeholders", "chat-placeholders", ChatPlaceholdersModule::new)
+                        .phase(ModulePhase.PRE_PROCESS).priority(70).build(),
                 ModuleDescriptor.builder("colorchat", "colorchat", ColorChatModule::new)
                         .phase(ModulePhase.PRE_PROCESS).priority(80).build(),
                 ModuleDescriptor.builder("group", "group", GroupModule::new)
@@ -77,8 +83,7 @@ public final class ModuleRegistry {
                 //     .priority(9)
                 //     .build(),
                 ModuleDescriptor.builder("update-notify", "update-notify", UpdateNotifyModule::new)
-                        .priority(10)
-                        .build()
+                        .priority(10).build()
         );
     }
 
@@ -88,9 +93,9 @@ public final class ModuleRegistry {
                 ModuleDescriptor.builder("blocked-commands", "blocked-commands", BlockedCommandsModule::new)
                         .priority(10).build(),
                 ModuleDescriptor.builder("nick", "nick", NickModule::new)
-                        .priority(11)
-                        .command(mm -> new NickCommand(mm, mm.getModuleContext().getMessagesManager()))
-                        .build()
+                        .priority(11).command(mm -> new NickCommand(mm, mm.getModuleContext().getMessagesManager())).build(),
+                ModuleDescriptor.builder("invsee", "invsee", InvSeeModule::new)
+                        .priority(12).command(mm -> new InvSeeCommand(mm, mm.getModuleContext().getMessagesManager())).menu(InvSeeMenu::new).build()
         );
     }
 

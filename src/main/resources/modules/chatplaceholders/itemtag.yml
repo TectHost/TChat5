@@ -1,0 +1,25 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                          itemtag.yml                         ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# DON'T TOUCH THIS!
+config-version: 0
+
+# Trigger string matched case-insensitively in chat messages.
+trigger: "[item]"
+
+# Permission required to use this tag. Leave empty for everyone.
+permission: ""
+
+# Label shown in chat
+# Placeholders: <item_name>, <item_count>
+# Hover is always the native item tooltip (name, lore, enchantments, etc.)
+format: "<aqua><item_name></aqua>"
+
+# What to show when the player holds nothing.
+empty-hand:
+  enabled: true
+  format: "[<gray>Air</gray>]"

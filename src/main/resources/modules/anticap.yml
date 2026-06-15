@@ -24,4 +24,4 @@ percent: 0.75
 
 # https://tchat.tect.host/general/actions
 actions:
-  - "[MESSAGE] <red>Please don't use excessive capitals."
+  - "[MESSAGE] <red>Please don't use excessive capitals.</red>"

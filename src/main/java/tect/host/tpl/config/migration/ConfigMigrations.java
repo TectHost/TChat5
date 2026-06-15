@@ -39,6 +39,12 @@ public final class ConfigMigrations {
             .addMigrations(config -> {
                 config.set("modules.worlds", false);
                 config.set("modules.chat-bridge", false);
-            });
+            })
+
+            // v4 -> v5
+            .addMigrations(config -> {
+                config.set("modules.invsee", false);
+                config.set("modules.chat-placeholders", false);
+           });
     }
 }

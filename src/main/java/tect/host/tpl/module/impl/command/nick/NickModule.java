@@ -61,7 +61,11 @@ public final class NickModule implements JoinModule, QuitModule {
 
     public void setNick(@NonNull Player target, @NonNull String nick) {
         nickRepo.setNick(target.getUniqueId(), nick)
-                .thenRun(() -> ctx.getScheduler().runSync(() -> target.displayName(Component.text(nick))))
+                .thenRun(() -> ctx.getScheduler().runSync(() -> {
+                    if (target.isOnline()) {
+                        target.displayName(Component.text(nick));
+                    }
+                }))
                 .exceptionally(ex -> {
                     ctx.getLogger().warning("setNick failed for %s, displayName not updated: %s".formatted(target.getName(), ex.getCause().getMessage()));
                     return null;
@@ -70,7 +74,11 @@ public final class NickModule implements JoinModule, QuitModule {
 
     public void removeNick(@NonNull Player target) {
         nickRepo.removeNick(target.getUniqueId())
-                .thenRun(() -> ctx.getScheduler().runSync(() -> target.displayName(Component.text(target.getName()))))
+                .thenRun(() -> ctx.getScheduler().runSync(() -> {
+                    if (target.isOnline()) {
+                        target.displayName(Component.text(target.getName()));
+                    }
+                }))
                 .exceptionally(ex -> {
                     ctx.getLogger().warning("removeNick failed for %s, displayName not updated: %s".formatted(target.getName(), ex.getCause().getMessage()));
                     return null;

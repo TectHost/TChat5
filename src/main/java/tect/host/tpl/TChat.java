@@ -7,10 +7,7 @@ import tect.host.tpl.command.TChatCommand;
 import tect.host.tpl.config.ConfigManager;
 import tect.host.tpl.config.MessagesManager;
 import tect.host.tpl.data.DataManager;
-import tect.host.tpl.listener.PlayerChatListener;
-import tect.host.tpl.listener.PlayerCommandListener;
-import tect.host.tpl.listener.PlayerJoinListener;
-import tect.host.tpl.listener.PlayerQuitListener;
+import tect.host.tpl.listener.*;
 import tect.host.tpl.module.BukkitSchedulerAccess;
 import tect.host.tpl.module.ModuleCommand;
 import tect.host.tpl.module.ModuleContext;
@@ -76,6 +73,7 @@ public final class TChat extends JavaPlugin {
         pm.registerEvents(new PlayerJoinListener(new JoinProcessor(moduleManager)), this);
         pm.registerEvents(new PlayerQuitListener(new QuitProcessor(moduleManager)), this);
         pm.registerEvents(new PlayerCommandListener(new CommandProcessor(moduleManager)), this);
+        pm.registerEvents(new MenuClickListener(), this);
     }
 
     private void registerCommands() {

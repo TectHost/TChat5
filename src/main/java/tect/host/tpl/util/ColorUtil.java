@@ -46,9 +46,7 @@ public final class ColorUtil {
         return MINI.serialize(LEGACY.deserialize(legacy));
     }
 
-    /**
-     * Extracts plain text from a Component, stripping all formatting.
-     */
+    /** Extracts plain text from a Component, stripping all formatting. */
     public static @NonNull String toPlainText(@NonNull Component component) {
         return PLAIN.serialize(component);
     }
@@ -59,6 +57,10 @@ public final class ColorUtil {
 
     public static @NonNull Component deserialize(@NonNull String miniMessage, @NonNull TagResolver tagResolver) {
         return MINI.deserialize(miniMessage, tagResolver);
+    }
+
+    public static @NonNull Component deserialize(@NonNull String miniMessage, @NonNull TagResolver... resolvers) {
+        return MINI.deserialize(miniMessage, resolvers);
     }
 
     /**

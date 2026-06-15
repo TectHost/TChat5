@@ -20,6 +20,7 @@ public final class ModuleManager {
     private final Map<String, ModuleDescriptor> descriptors = new LinkedHashMap<>();
     private final ConcurrentHashMap<String, Module> activeModules = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, ModuleCommand> activeCommands = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ModuleMenu> activeMenus = new ConcurrentHashMap<>();
 
     private record Pipeline(Map<ModulePhase, List<ChatModule>> chat, List<JoinModule> join, List<QuitModule> quit, List<CommandModule> commands) {
         static final Pipeline EMPTY = new Pipeline(Map.of(), List.of(), List.of(), List.of());
@@ -94,6 +95,7 @@ public final class ModuleManager {
         for (String id : ids) {
             Module module = activeModules.remove(id);
             activeCommands.remove(id);
+            activeMenus.remove(id);
             if (module == null) continue;
             try {
                 module.onDisable();
@@ -109,6 +111,7 @@ public final class ModuleManager {
     private void disableAndRemove(@NonNull String id) {
         Module module = activeModules.remove(id);
         activeCommands.remove(id);
+        activeMenus.remove(id);
         if (module == null) return;
         try {
             module.onDisable();
@@ -136,6 +139,11 @@ public final class ModuleManager {
             Function<ModuleManager, ModuleCommand> cmdFactory = descriptor.getCommandFactory();
             if (cmdFactory != null) {
                 activeCommands.put(descriptor.getId(), cmdFactory.apply(this));
+            }
+
+            Function<ModuleManager, ModuleMenu> menuFactory = descriptor.getMenuFactory();
+            if (menuFactory != null) {
+                activeMenus.put(descriptor.getId(), menuFactory.apply(this));
             }
 
             Utils.log(logger, "INFO", "Module loaded: %s".formatted(descriptor.getId()));
@@ -205,7 +213,7 @@ public final class ModuleManager {
                 case QuitModule qm -> newQuit.add(qm);
                 case CommandModule cm -> newCommands.add(cm);
                 case BroadcastModule bm -> {}
-                default -> throw new IllegalStateException("Unexpected value: " + m);
+                default -> Utils.log(logger, "WARNING", "Module '%s' has an unrecognised type and was not added to any pipeline: %s".formatted(entry.getKey(), m.getClass().getSimpleName()));
             }
         }
 
@@ -226,6 +234,14 @@ public final class ModuleManager {
         return Collections.unmodifiableCollection(activeCommands.values());
     }
 
+    public @NonNull @UnmodifiableView Collection<ModuleMenu> getActiveMenus() {
+        return Collections.unmodifiableCollection(activeMenus.values());
+    }
+
+    public @Nullable ModuleMenu getMenu(@NonNull String id) {
+        return activeMenus.get(id);
+    }
+
     public List<ChatModule> getModulesForPhase(@NonNull ModulePhase phase) {
         return pipeline.chat().getOrDefault(phase, List.of());
     }
@@ -243,8 +259,8 @@ public final class ModuleManager {
     }
 
     /**
-     * Retrieve an active module by id, cast to the expected type
-     * Returns null if the module is not loaded or the type doesn't match
+     * Retrieve an active module by id, cast to the expected type.
+     * Returns null if the module is not loaded or the type doesn't match.
      */
     @SuppressWarnings("unchecked")
     public <T extends Module> @Nullable T getModule(@NonNull String id, @NonNull Class<T> type) {

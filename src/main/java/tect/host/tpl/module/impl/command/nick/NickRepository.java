@@ -87,11 +87,9 @@ public final class NickRepository implements Repository {
 
         return CompletableFuture.runAsync(() -> {
             try (Connection conn = dataManager.getConnection(); PreparedStatement ps = conn.prepareStatement(UPSERT)) {
-
                 ps.setString(1, uuid.toString());
                 ps.setString(2, nick);
                 ps.executeUpdate();
-
             } catch (SQLException e) {
                 // Revert the cache to its previous state
                 if (previous != null) {
@@ -110,10 +108,8 @@ public final class NickRepository implements Repository {
 
         return CompletableFuture.runAsync(() -> {
             try (Connection conn = dataManager.getConnection(); PreparedStatement ps = conn.prepareStatement(DELETE)) {
-
                 ps.setString(1, uuid.toString());
                 ps.executeUpdate();
-
             } catch (SQLException e) {
                 // restore nick in cache if db failed
                 if (previous != null) cache.put(uuid, previous);

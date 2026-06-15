@@ -14,7 +14,7 @@ public final class WorldsModule implements ChatModule {
 
     private static final String ID = "worlds";
 
-    private static final String BYPASS_CHAT_PERM   = "tchat.admin.bypass.worlds.chat";
+    private static final String BYPASS_CHAT_PERM = "tchat.admin.bypass.worlds.chat";
 
     private final ModuleContext moduleContext;
     private ConfigFile configFile;

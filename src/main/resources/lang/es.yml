@@ -6,7 +6,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # NO TOCAR!
-config-version: 4
+config-version: 5
 
 # No puedes usar placeholders en el prefijo
 #
@@ -92,3 +92,7 @@ messages:
 
   # Módulo worlds
   worlds-chat-disabled: "<red>El chat está desactivado en este mundo.</red>"
+
+  # Módulo InvSee
+  invsee-usage: "<red>Uso: /invsee <jugador></red>"
+  invsee-module-disabled: "<red>El módulo invsee está desactivado.</red>"

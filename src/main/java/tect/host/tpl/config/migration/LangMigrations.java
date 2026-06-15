@@ -76,6 +76,12 @@ public final class LangMigrations {
             })
 
             // v3 -> v4
-            .addMigration(config -> config.set("messages.worlds-chat-disabled", "<red>Chat is disabled in this world.</red>"));
+            .addMigration(config -> config.set("messages.worlds-chat-disabled", "<red>Chat is disabled in this world.</red>"))
+
+            // v4 -> v5
+            .addMigration(config -> {
+                config.set("messages.invsee-usage", "<red>Usage: /invsee <jugador></red>");
+                config.set("messages.invsee-module-disabled", "<red>The InvSee module is not enabled.</red>");
+            });
     }
 }
