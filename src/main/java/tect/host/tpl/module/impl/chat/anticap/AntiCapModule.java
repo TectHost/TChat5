@@ -53,13 +53,13 @@ public final class AntiCapModule implements ChatModule {
         if (snap == null) return;
         if (Utils.hasPerms(ctx.getPlayer(), BYPASS_PERM)) return;
 
-        String raw = ctx.getRawMessage();
-        if (!exceedsCapThreshold(raw, snap.config().getPercent())) return;
+        String rawMessage = ctx.getEffectiveRaw();
+        if (!exceedsCapThreshold(rawMessage, snap.config().getPercent())) return;
 
         switch (snap.config().getAction()) {
             case BLOCK -> ctx.setCancelled(true);
-            case CENSOR -> ctx.setRawOverride(censorUpperCase(raw, snap.config().getCensorChar()));
-            case TO_LOWER_CASE -> ctx.setRawOverride(raw.toLowerCase(java.util.Locale.ROOT));
+            case CENSOR -> ctx.setRawOverride(censorUpperCase(rawMessage, snap.config().getCensorChar()));
+            case TO_LOWER_CASE -> ctx.setRawOverride(rawMessage.toLowerCase(java.util.Locale.ROOT));
         }
 
         moduleContext.getActionExecutor().execute(ctx.getPlayer(), snap.config().getActions());
