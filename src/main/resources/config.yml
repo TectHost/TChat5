@@ -80,6 +80,11 @@ modules:
   # Chat bridge module loaded from modules/chatbridge.yml
   chat-bridge: false
 
+  # Allows players to display custom tags in chat
+  #
+  # Item tag module loaded from modules/chatplaceholders/chatplaceholders.yml
+  chat-placeholders: true
+
   # Allows to translate colors and formats in chat using permissions
   #
   # This module does not have a configuration file
@@ -102,11 +107,6 @@ modules:
   #
   # Invsee module loaded from modules/invsee.yml
   invsee: false
-
-  # Allows players to display custom tags in chat
-  #
-  # Item tag module loaded from modules/chatplaceholders/chatplaceholders.yml
-  chat-placeholders: true
 
   # Allows to change your nickname
   #
