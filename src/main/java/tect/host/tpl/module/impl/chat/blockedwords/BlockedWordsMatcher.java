@@ -2,6 +2,7 @@ package tect.host.tpl.module.impl.chat.blockedwords;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import tect.host.tpl.util.CensorUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +14,7 @@ public final class BlockedWordsMatcher {
 
     private BlockedWordsMatcher() {}
 
-    /**
-     * Returns the first blocked word found in rawMessage, or null if clean
-     */
+    /** Returns the first blocked word found in rawMessage, or null if clean */
     public static @NonNull MatchResult check(@NonNull String rawMessage, @NonNull Map<String, String> wordCache) {
         if (wordCache.isEmpty()) return MatchResult.CLEAN;
 
@@ -36,9 +35,7 @@ public final class BlockedWordsMatcher {
         return MatchResult.CLEAN;
     }
 
-    /**
-     * Replaces each matched region in rawMessage with censorChar
-     */
+    /** Replaces each matched region in rawMessage with censorChar */
     public static @Nullable String censor(@NonNull String rawMessage, @NonNull Map<String, String> wordCache, char censorChar) {
         if (wordCache.isEmpty()) return null;
 
@@ -46,7 +43,6 @@ public final class BlockedWordsMatcher {
         if (tokens.isEmpty()) return null;
 
         boolean[] censored = new boolean[rawMessage.length()];
-        boolean anyCensored = false;
 
         for (Map.Entry<String, String> entry : wordCache.entrySet()) {
             String normWord = entry.getValue();
@@ -67,7 +63,6 @@ public final class BlockedWordsMatcher {
                         if (levenshtein(stripped, start, winLen, normWord) <= threshold) {
                             for (int k = start; k < start + winLen; k++) {
                                 censored[token.origIndices()[k]] = true;
-                                anyCensored = true;
                             }
                             start += winLen;
                             matched = true;
@@ -79,13 +74,7 @@ public final class BlockedWordsMatcher {
             }
         }
 
-        if (!anyCensored) return null;
-
-        char[] result = rawMessage.toCharArray();
-        for (int i = 0; i < result.length; i++) {
-            if (censored[i]) result[i] = censorChar;
-        }
-        return new String(result);
+        return CensorUtil.applyMask(rawMessage, censored, censorChar);
     }
 
     /**
@@ -99,7 +88,6 @@ public final class BlockedWordsMatcher {
         if (tokens.isEmpty()) return null;
 
         boolean[] censoredOrig = new boolean[rawMessage.length()];
-        boolean anyCensored = false;
 
         for (Map.Entry<String, String> entry : wordCache.entrySet()) {
             String normWord = entry.getValue();
@@ -113,19 +101,12 @@ public final class BlockedWordsMatcher {
                 if (containsWithinDistance(stripped, normWord, threshold)) {
                     for (int origIdx : token.origIndices()) {
                         censoredOrig[origIdx] = true;
-                        anyCensored = true;
                     }
                 }
             }
         }
 
-        if (!anyCensored) return null;
-
-        char[] result = rawMessage.toCharArray();
-        for (int i = 0; i < result.length; i++) {
-            if (censoredOrig[i]) result[i] = censorChar;
-        }
-        return new String(result);
+        return CensorUtil.applyMask(rawMessage, censoredOrig, censorChar);
     }
 
     private static @NonNull List<String> tokenize(@NonNull String s) {

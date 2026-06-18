@@ -1,0 +1,51 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                      antiadvertising.yml                     ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# DON'T TOUCH THIS!
+config-version: 0
+
+# What to do when an advertising word is detected:
+# - CENSOR: Replace only the matched characters with censor-char
+# - BLOCK: Cancel the message entirely
+action: BLOCK
+# Only used if action = 'CENSOR'
+censor-char: "*"
+
+# Enable/disable the anti advertising filters
+filters:
+
+  # Examples: 192.168.1.1, 192.168.1.
+  ipv4: true
+
+  # Examples: 2001:db8::1, [::1]:25565
+  ipv6: true
+
+  # Examples: play.hypixel.net
+  domains: true
+
+  # Examples: www.example.com, https://example.com
+  urls: true
+
+# Whitelist domains from all the filters
+whitelist:
+
+  # To disable this option:
+  #domains: []
+  domains:
+    - tect.host
+
+# Custom regex patterns.
+# If the pattern is invalid the plugin will use the default regex (and will send a warning in the console)
+#
+#patterns:
+#  ipv4: "(?<![\\w.])(?:(?:25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(?:(?:25[0-5]|2[0-4]\\d|[01]?\\d\\d?)(?::\\d{1,5})?|(?=\\s|$))(?![\\w.])"
+#  ipv6: "(?i)(?:\\[?[0-9a-f]{1,4}(?::[0-9a-f]{0,4}){2,7}]?|::(?:[0-9a-f]{1,4}:){0,6}[0-9a-f]{1,4}|[0-9a-f]{1,4}::(?:[0-9a-f]{1,4}:){0,5}[0-9a-f]{1,4})(?::\\d{1,5})?"
+#  domain-url: "(?i)(?:https?://|ftp://|www\\.)?(?:[a-z0-9](?:[a-z0-9\\-]{0,61}[a-z0-9])?\\.)+(?:com|net|org|gg|io|me|co)(?:/\\S*)?"
+
+# https://tchat.tect.host/general/actions
+actions:
+  - "[MESSAGE] <red>Your message has been blocked.</red>"

@@ -45,6 +45,7 @@ public final class ConfigMigrations {
             .addMigrations(config -> {
                 config.set("modules.invsee", false);
                 config.set("modules.chat-placeholders", false);
+                config.set("modules.anti-advertising", false);
            });
     }
 }

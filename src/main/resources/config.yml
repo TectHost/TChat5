@@ -37,6 +37,11 @@ storage:
 # and will not participate in the chat flow at all (you can also delete its corresponding configuration file)
 modules:
 
+  # Detects and blocks/censors IP addresses, domain names and URLs in chat
+  #
+  # Anti advertising module loaded from modules/antiadvertising.yml
+  anti-advertising: true
+
   # It lets censor, block, or convert words to
   # lowercase when they're typed in all caps
   #

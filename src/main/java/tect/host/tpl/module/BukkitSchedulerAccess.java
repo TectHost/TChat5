@@ -36,7 +36,7 @@ public final class BukkitSchedulerAccess implements SchedulerAccess {
 
     @Override
     public @NonNull Cancellable runTimer(@NonNull Runnable task, long delayTicks, long periodTicks) {
-        long delayNanos  = delayTicks  * 50L * 1_000_000L;
+        long delayNanos = delayTicks  * 50L * 1_000_000L;
         long periodNanos = periodTicks * 50L * 1_000_000L;
         ScheduledTask t = plugin.getServer().getAsyncScheduler().runAtFixedRate(plugin, _ -> task.run(), delayNanos, periodNanos, TimeUnit.NANOSECONDS);
         return t::cancel;

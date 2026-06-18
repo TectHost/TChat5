@@ -19,7 +19,7 @@ censor-char: "*"
 
 # https://tchat.tect.host/general/actions
 actions:
-  - "[MESSAGE] <red>Your message was blocked.</red>"
+  - "[MESSAGE] <red>Your message has been blocked.</red>"
 
 # List of words to block.
 # Detection is fuzzy: special characters and spaces are ignored,

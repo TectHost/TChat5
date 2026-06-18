@@ -20,12 +20,12 @@
         <plugin.api-version>1.21</plugin.api-version>
         <plugin.website>https://tect.host/</plugin.website>
 
-        <paper.version>26.1.2.build.69-stable</paper.version>
+        <paper.version>26.1.2.build.70-stable</paper.version>
         <papi.version>2.12.2</papi.version>
         <adventure.version>5.1.1</adventure.version>
         <bStats.version>3.2.1</bStats.version>
-        <hikari.version>7.0.2</hikari.version>
-        <SQLite.version>3.53.1.0</SQLite.version>
+        <hikari.version>7.1.0</hikari.version>
+        <SQLite.version>3.53.2.0</SQLite.version>
     </properties>
 
     <build>

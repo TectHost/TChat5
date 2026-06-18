@@ -6,6 +6,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.NonNull;
 import tect.host.tpl.module.ModulePhase;
 import tect.host.tpl.module.impl.broadcast.autobroadcast.AutoBroadcastModule;
+import tect.host.tpl.module.impl.chat.antiadvertising.AntiAdvertisingModule;
 import tect.host.tpl.module.impl.chat.anticap.AntiCapModule;
 import tect.host.tpl.module.impl.chat.blockchat.BlockChatCommand;
 import tect.host.tpl.module.impl.chat.blockchat.BlockChatModule;
@@ -58,6 +59,8 @@ public final class ModuleRegistry {
                         .phase(ModulePhase.PRE_PROCESS).priority(3).build(),
                 ModuleDescriptor.builder("blocked-words", "blocked-words", BlockedWordsModule::new)
                         .phase(ModulePhase.PRE_PROCESS).priority(5).command(mm -> new BlockedWordsCommand(mm, mm.getModuleContext().getMessagesManager())).build(),
+                ModuleDescriptor.builder("anti-advertising", "anti-advertising", AntiAdvertisingModule::new)
+                        .phase(ModulePhase.PRE_PROCESS).priority(6).build(),
                 ModuleDescriptor.builder("anti-cap", "anti-cap", AntiCapModule::new)
                         .phase(ModulePhase.PRE_PROCESS).priority(10).build(),
                 ModuleDescriptor.builder("channels", "channels", ChannelModule::new)

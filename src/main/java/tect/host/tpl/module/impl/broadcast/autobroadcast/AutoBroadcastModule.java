@@ -12,6 +12,7 @@ import tect.host.tpl.module.impl.chat.channel.ChannelService;
 import tect.host.tpl.module.type.BroadcastModule;
 import tect.host.tpl.util.CenterUtil;
 import tect.host.tpl.util.ColorUtil;
+import tect.host.tpl.util.Utils;
 
 import java.util.Collection;
 import java.util.List;
@@ -106,7 +107,7 @@ public final class AutoBroadcastModule implements BroadcastModule {
         ChannelModule channelModule = moduleContext.getModuleManager().getModule(ChannelModule.ID, ChannelModule.class);
 
         if (channelModule == null || channelModule.getChannelService() == null) {
-            moduleContext.getLogger().warning("AutoBroadcast entry '%s' targets channel '%s' but ChannelModule is not active — broadcasting to all.".formatted(entry.id(), channelId));
+            Utils.log(moduleContext.getLogger(), "WARNING", "AutoBroadcast entry '%s' targets channel '%s' but ChannelModule is not active. Broadcasting to all.".formatted(entry.id(), channelId));
             return List.copyOf(online);
         }
 
@@ -114,7 +115,7 @@ public final class AutoBroadcastModule implements BroadcastModule {
         var channelEntry = service.getChannel(channelId);
 
         if (channelEntry == null) {
-            moduleContext.getLogger().warning("AutoBroadcast entry '%s' targets unknown channel '%s' — broadcasting to all.".formatted(entry.id(), channelId));
+            Utils.log(moduleContext.getLogger(), "WARNING", "AutoBroadcast entry '%s' targets unknown channel '%s'. Broadcasting to all.".formatted(entry.id(), channelId));
             return List.copyOf(online);
         }
 

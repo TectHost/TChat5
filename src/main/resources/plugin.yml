@@ -13,12 +13,6 @@ website: ${plugin.website}
 softdepend:
   - PlaceholderAPI
 
-commands:
-  tchat:
-    description: Main TChat command
-    usage: /tchat reload
-    permission: tchat.admin.reload
-
 permissions:
   tchat.admin:
     description: Allows to do everything in TChat
@@ -53,6 +47,7 @@ permissions:
       tchat.admin.command.blockedwords: true
       tchat.admin.command.blockchat: true
       tchat.admin.command.nick.others: true
+      tchat.admin.command.invsee: true
       tchat.command.nick: true
       tchat.command.channel: true
 
@@ -65,6 +60,7 @@ permissions:
       tchat.admin.bypass.blockchat: true
       tchat.admin.bypass.blockedcommands: true
       tchat.admin.bypass.worlds.chat: true
+      tchat.admin.bypass.antiadvertising: true
 
   tchat.colorchat.colors:
     description: Grants all 16 standard colors
@@ -126,6 +122,10 @@ permissions:
     description: Bypass blockedcommands module
     default: op
 
+  tchat.admin.bypass.antiadvertising:
+    description: Bypass Anti Advertising filters
+    default: op
+
   tchat.admin.command.nick.others:
     description: Allows to change the nick to other users
     default: op
@@ -140,6 +140,10 @@ permissions:
 
   tchat.admin.command.blockchat:
     description: Allows to enable/disable global chat block
+    default: op
+
+  tchat.admin.command.invsee:
+    description: Allows to see other players inventories
     default: op
 
   tchat.admin.check-updates:

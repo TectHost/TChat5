@@ -36,7 +36,7 @@ public final class ActionExecutor {
         if (close < 2) { warn(raw); return; }
 
         String type = raw.substring(1, close).toUpperCase();
-        String arg  = close + 1 < raw.length() ? raw.substring(close + 1).stripLeading() : "";
+        String arg = close + 1 < raw.length() ? raw.substring(close + 1).stripLeading() : "";
 
         ActionHandler handler = handlers.get(type);
         if (handler == null) {
