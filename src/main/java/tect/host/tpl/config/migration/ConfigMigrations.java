@@ -58,6 +58,7 @@ public final class ConfigMigrations {
                 config.set("modules.grammar", false);
                 config.set("modules.anti-unicode", false);
                 config.set("storage.remote.useSSL", false);
+                config.set("modules.clickable-links", false);
            });
     }
 }

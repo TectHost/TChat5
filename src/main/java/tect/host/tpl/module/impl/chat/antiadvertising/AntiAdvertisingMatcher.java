@@ -5,6 +5,7 @@ import org.jspecify.annotations.Nullable;
 import tect.host.tpl.util.text.CensorUtil;
 import tect.host.tpl.util.text.NormalizedText;
 import tect.host.tpl.util.text.ObfuscationNormalizer;
+import tect.host.tpl.util.text.UrlPatterns;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,16 +28,6 @@ public final class AntiAdvertisingMatcher {
                     "|::(?:[0-9a-f]{1,4}:){0,6}[0-9a-f]{1,4}" +
                     "|[0-9a-f]{1,4}::(?:[0-9a-f]{1,4}:){0,5}[0-9a-f]{1,4}" +
                     ")(?::\\d{1,5})?",
-            Pattern.CASE_INSENSITIVE);
-
-    private static final Pattern DOMAIN_URL = Pattern.compile(
-            "(?:https?://|ftp://|www\\.)?" +
-                    "(?:[a-z0-9](?:[a-z0-9\\-]{0,61}[a-z0-9])?\\.)" +
-                    "+" +
-                    "(?:com|net|org|gg|io|me|co|uk|de|fr|es|ru|xyz|tk|top|club|site|online|store|" +
-                    "info|biz|tv|us|ca|au|jp|cn|br|in|pl|nl|se|no|fi|dk|be|ch|at|nz|mx|ar|cl|" +
-                    "cc|eu|mobi|pro|name|coop|aero|museum|gov|mil|edu|int)" +
-                    "(?:/\\S*)?",
             Pattern.CASE_INSENSITIVE);
 
     private record Span(int start, int end, @NonNull String type) {}
@@ -73,7 +64,7 @@ public final class AntiAdvertisingMatcher {
         }
 
         if (config.isCheckDomains() || config.isCheckUrls()) {
-            Pattern p = config.getCustomDomainUrlPattern() != null ? config.getCustomDomainUrlPattern() : DOMAIN_URL;
+            Pattern p = config.getCustomDomainUrlPattern() != null ? config.getCustomDomainUrlPattern() : UrlPatterns.DOMAIN_URL;
             Matcher m = p.matcher(normalized);
             while (m.find()) {
                 Span span = classify(m, config);
@@ -100,7 +91,7 @@ public final class AntiAdvertisingMatcher {
         }
 
         if (config.isCheckDomains() || config.isCheckUrls()) {
-            Pattern p = config.getCustomDomainUrlPattern() != null ? config.getCustomDomainUrlPattern() : DOMAIN_URL;
+            Pattern p = config.getCustomDomainUrlPattern() != null ? config.getCustomDomainUrlPattern() : UrlPatterns.DOMAIN_URL;
             Matcher m = p.matcher(normalized);
             while (m.find()) {
                 Span span = classify(m, config);

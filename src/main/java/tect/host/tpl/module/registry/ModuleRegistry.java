@@ -19,6 +19,7 @@ import tect.host.tpl.module.impl.chat.channel.ChannelCommand;
 import tect.host.tpl.module.impl.chat.channel.ChannelModule;
 import tect.host.tpl.module.impl.chat.chatcooldown.ChatCooldownModule;
 import tect.host.tpl.module.impl.chat.chatplaceholders.ChatPlaceholdersModule;
+import tect.host.tpl.module.impl.chat.clickablelinks.ClickableLinksModule;
 import tect.host.tpl.module.impl.chat.colorchat.ColorChatModule;
 import tect.host.tpl.module.impl.chat.format.FormatModule;
 import tect.host.tpl.module.impl.chat.grammar.GrammarModule;
@@ -83,6 +84,8 @@ public final class ModuleRegistry {
                         .phase(ModulePhase.PRE_PROCESS).priority(70).build(),
                 ModuleDescriptor.builder("colorchat", "colorchat", ColorChatModule::new)
                         .phase(ModulePhase.PRE_PROCESS).priority(80).build(),
+                ModuleDescriptor.builder("clickable-links", "clickable-links", ClickableLinksModule::new)
+                        .phase(ModulePhase.PRE_PROCESS).priority(85).build(),
                 ModuleDescriptor.builder("group", "group", GroupModule::new)
                         .phase(ModulePhase.FORMAT).priority(99).build(),
                 ModuleDescriptor.builder("format", "format", FormatModule::new)
