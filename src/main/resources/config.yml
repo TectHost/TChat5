@@ -103,6 +103,11 @@ modules:
   # Item tag module loaded from modules/chatplaceholders/chatplaceholders.yml
   chat-placeholders: true
 
+  # Makes URLs in chat clickable to open them in the browser.
+  #
+  # This module does not have a configuration file
+  clickable-links: true
+
   # Allows to translate colors and formats in chat using permissions.
   #
   # This module does not have a configuration file
