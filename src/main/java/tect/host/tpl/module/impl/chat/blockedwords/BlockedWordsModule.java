@@ -74,21 +74,21 @@ public final class BlockedWordsModule implements ChatModule {
 
         switch (snap.config().getAction()) {
             case BLOCK -> {
-                BlockedWordsMatcher.MatchResult result = BlockedWordsMatcher.check(ctx.getRawMessage(), snap.cache());
+                BlockedWordsMatcher.MatchResult result = BlockedWordsMatcher.check(ctx.getEffectiveRaw(), snap.cache());
                 if (!result.matched()) return;
 
                 executeActions(ctx.getPlayer(), snap.actions);
                 ctx.setCancelled(true);
             }
             case CENSOR_ALL -> {
-                String result = BlockedWordsMatcher.censorAll(ctx.getRawMessage(), snap.cache(), snap.config().getCensorChar());
+                String result = BlockedWordsMatcher.censorAll(ctx.getEffectiveRaw(), snap.cache(), snap.config().getCensorChar());
                 if (result == null) return;
 
                 executeActions(ctx.getPlayer(), snap.actions);
                 ctx.setRawOverride(result);
             }
             case CENSOR -> {
-                String result = BlockedWordsMatcher.censor(ctx.getRawMessage(), snap.cache(), snap.config().getCensorChar());
+                String result = BlockedWordsMatcher.censor(ctx.getEffectiveRaw(), snap.cache(), snap.config().getCensorChar());
                 if (result == null) return;
 
                 executeActions(ctx.getPlayer(), snap.actions);

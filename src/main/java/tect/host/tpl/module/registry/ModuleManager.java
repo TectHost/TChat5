@@ -7,12 +7,11 @@ import tect.host.tpl.config.ConfigManager;
 import tect.host.tpl.module.*;
 import tect.host.tpl.module.Module;
 import tect.host.tpl.module.type.*;
-import tect.host.tpl.util.Utils;
+import tect.host.tpl.util.logging.DebugLogger;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public final class ModuleManager {
@@ -26,13 +25,29 @@ public final class ModuleManager {
         static final Pipeline EMPTY = new Pipeline(Map.of(), List.of(), List.of(), List.of());
     }
     private volatile Pipeline pipeline = Pipeline.EMPTY;
+    private volatile List<String> loadOrder = List.of();
 
-    private final Logger logger;
+    public record LoadResult(int loaded, int skipped, int failed) {
+        static final LoadResult EMPTY = new LoadResult(0, 0, 0);
+    }
+    private volatile LoadResult lastLoadResult = LoadResult.EMPTY;
+
+    public record MenuLoadResult(int enabled, int disabled, int skipped) {
+        static final MenuLoadResult EMPTY = new MenuLoadResult(0, 0, 0);
+    }
+    private volatile MenuLoadResult lastMenuLoadResult = MenuLoadResult.EMPTY;
+
+    public record ModuleTimings(double dependencyResolutionMs, double totalLoadMs, @Nullable String slowestModuleId, double slowestModuleMs) {
+        static final ModuleTimings EMPTY = new ModuleTimings(0, 0, null, 0);
+    }
+    private volatile ModuleTimings lastTimings = ModuleTimings.EMPTY;
+
+    private final DebugLogger log;
     private final ConfigManager configManager;
     private final ModuleContext moduleContext;
 
-    public ModuleManager(Logger logger, ConfigManager configManager, ModuleContext moduleContext) {
-        this.logger = logger;
+    public ModuleManager(@NonNull DebugLogger log, @NonNull ConfigManager configManager, @NonNull ModuleContext moduleContext) {
+        this.log = log;
         this.configManager = configManager;
         this.moduleContext = moduleContext;
     }
@@ -46,6 +61,8 @@ public final class ModuleManager {
     }
 
     public void loadEnabledModules() {
+        final long totalStart = System.nanoTime();
+
         Map<String, ModuleDescriptor> enabled = new LinkedHashMap<>();
         for (ModuleDescriptor descriptor : descriptors.values()) {
             if (configManager.isModuleEnabled(descriptor.getTogglePath())) {
@@ -53,15 +70,25 @@ public final class ModuleManager {
             }
         }
 
+        final long dependencyStart = System.nanoTime();
         List<ModuleDescriptor> ordered = resolveDependencyOrder(enabled);
+        final double dependencyMs = elapsedMs(dependencyStart);
+        log.debug("Dependency resolution took %.2fms".formatted(dependencyMs));
 
         Set<String> toUnload = new LinkedHashSet<>(activeModules.keySet());
         for (ModuleDescriptor d : ordered) toUnload.remove(d.getId());
 
-        List<String> reverseUnload = new ArrayList<>(toUnload);
-        Collections.reverse(reverseUnload);
+        List<String> reverseUnload = new ArrayList<>(loadOrder.reversed());
+        reverseUnload.retainAll(toUnload);
+        for (String id : toUnload) {
+            if (!reverseUnload.contains(id)) reverseUnload.add(id);
+        }
 
         for (String id : reverseUnload) disableAndRemove(id);
+
+        int loaded = 0, skipped = 0, failed = 0;
+        String slowestId = null;
+        double slowestMs = -1;
 
         for (ModuleDescriptor descriptor : ordered) {
             Set<String> missing = descriptor.getRequiredModules().stream()
@@ -69,28 +96,71 @@ public final class ModuleManager {
                     .collect(Collectors.toUnmodifiableSet());
 
             if (!missing.isEmpty()) {
-                Utils.log(logger, "WARNING", "Module '%s' skipped: missing required modules %s".formatted(descriptor.getId(), missing));
+                log.warn("Module '%s' skipped: missing required modules %s".formatted(descriptor.getId(), missing));
+                skipped++;
                 continue;
             }
 
+            final long moduleStart = System.nanoTime();
+
             Module existing = activeModules.get(descriptor.getId());
             if (existing != null) {
-                reloadModule(descriptor, existing);
+                if (reloadModule(descriptor, existing)) loaded++;
+                else failed++;
             } else {
-                enableModule(descriptor);
+                boolean ok = enableModule(descriptor);
+                if (ok) loaded++;
+                else failed++;
+            }
+
+            double moduleMs = elapsedMs(moduleStart);
+            log.debug("Module '%s' loaded in %.2fms".formatted(descriptor.getId(), moduleMs));
+            if (moduleMs > slowestMs) {
+                slowestMs = moduleMs;
+                slowestId = descriptor.getId();
             }
         }
 
+        loadOrder = ordered.stream().map(ModuleDescriptor::getId).toList();
+
+        lastLoadResult = new LoadResult(loaded, skipped, failed);
+        lastMenuLoadResult = resolveMenuLoadResult();
         rebuildPipeline();
+
+        double totalMs = elapsedMs(totalStart);
+        lastTimings = new ModuleTimings(dependencyMs, totalMs, slowestId, Math.max(slowestMs, 0));
+        log.debug("Total module load took %.2fms".formatted(totalMs));
+    }
+
+    private @NonNull MenuLoadResult resolveMenuLoadResult() {
+        int enabled = 0, disabled = 0, skipped = 0;
+        for (ModuleDescriptor descriptor : descriptors.values()) {
+            if (descriptor.getMenuFactory() == null) continue;
+            if (!configManager.isModuleEnabled(descriptor.getTogglePath())) {
+                disabled++;
+            } else if (!activeModules.containsKey(descriptor.getId())) {
+                skipped++;
+            } else {
+                enabled++;
+            }
+        }
+        return new MenuLoadResult(enabled, disabled, skipped);
+    }
+
+    private static double elapsedMs(long startNanos) {
+        return (System.nanoTime() - startNanos) / 1_000_000.0;
     }
 
     public void reloadModules() {
+        log.refresh();
         loadEnabledModules();
     }
 
     public void unloadAll() {
-        List<String> ids = new ArrayList<>(activeModules.keySet());
-        Collections.reverse(ids);
+        List<String> ids = new ArrayList<>(loadOrder.reversed());
+        for (String id : activeModules.keySet()) {
+            if (!ids.contains(id)) ids.add(id);
+        }
 
         for (String id : ids) {
             Module module = activeModules.remove(id);
@@ -99,13 +169,14 @@ public final class ModuleManager {
             if (module == null) continue;
             try {
                 module.onDisable();
-                Utils.log(logger, "INFO", "Module unloaded: %s".formatted(id));
+                log.debug("Module unloaded: " + id);
             } catch (Exception e) {
-                Utils.log(logger, "SEVERE", "Error disabling module '%s': %s".formatted(id, e.getMessage()));
+                log.severe("Error disabling module '%s': %s".formatted(id, e.getMessage()));
             }
         }
 
         pipeline = Pipeline.EMPTY;
+        loadOrder = List.of();
     }
 
     private void disableAndRemove(@NonNull String id) {
@@ -115,40 +186,55 @@ public final class ModuleManager {
         if (module == null) return;
         try {
             module.onDisable();
-            Utils.log(logger, "INFO", "Module unloaded: %s".formatted(id));
+            log.debug("Module unloaded: " + id);
         } catch (Exception e) {
-            Utils.log(logger, "SEVERE", "Error disabling module '%s': %s".formatted(id, e.getMessage()));
+            log.severe("Error disabling module '%s': %s".formatted(id, e.getMessage()));
         }
     }
 
-    private void reloadModule(@NonNull ModuleDescriptor descriptor, @NonNull Module module) {
+    private boolean reloadModule(@NonNull ModuleDescriptor descriptor, @NonNull Module module) {
         try {
             module.onReload();
-            Utils.log(logger, "INFO", "Module reloaded: %s".formatted(descriptor.getId()));
+            log.debug("Module reloaded: " + descriptor.getId());
+            return true;
         } catch (Exception e) {
-            Utils.log(logger, "SEVERE", "Failed to reload module '%s': %s".formatted(descriptor.getId(), e.getMessage()));
+            log.severe("Failed to reload module '%s': %s".formatted(descriptor.getId(), e.getMessage()));
+            return false;
         }
     }
 
-    private void enableModule(@NonNull ModuleDescriptor descriptor) {
+    private boolean enableModule(@NonNull ModuleDescriptor descriptor) {
+        Module module = null;
         try {
-            Module module = descriptor.getFactory().create(moduleContext);
+            module = descriptor.getFactory().create(moduleContext);
+
+            if (!descriptor.getId().equals(module.getId())) {
+                log.severe("Module registered under id '%s' but reports getId()='%s' — check ModuleRegistry".formatted(descriptor.getId(), module.getId()));
+                return false;
+            }
+
             module.onEnable();
             activeModules.put(descriptor.getId(), module);
 
             Function<ModuleManager, ModuleCommand> cmdFactory = descriptor.getCommandFactory();
-            if (cmdFactory != null) {
-                activeCommands.put(descriptor.getId(), cmdFactory.apply(this));
-            }
+            if (cmdFactory != null) activeCommands.put(descriptor.getId(), cmdFactory.apply(this));
 
             Function<ModuleManager, ModuleMenu> menuFactory = descriptor.getMenuFactory();
-            if (menuFactory != null) {
-                activeMenus.put(descriptor.getId(), menuFactory.apply(this));
-            }
+            if (menuFactory != null) activeMenus.put(descriptor.getId(), menuFactory.apply(this));
 
-            Utils.log(logger, "INFO", "Module loaded: %s".formatted(descriptor.getId()));
+            log.debug("Module loaded: " + descriptor.getId());
+            return true;
         } catch (Exception e) {
-            Utils.log(logger, "SEVERE", "Failed to load module '%s': %s".formatted(descriptor.getId(), e.getMessage()));
+            log.severe("Failed to load module '%s': %s".formatted(descriptor.getId(), e.getMessage()));
+
+            if (module != null) {
+                try {
+                    module.onDisable();
+                } catch (Exception cleanupEx) {
+                    log.severe("Cleanup after failed load also failed for '%s': %s".formatted(descriptor.getId(), cleanupEx.getMessage()));
+                }
+            }
+            return false;
         }
     }
 
@@ -182,7 +268,7 @@ public final class ModuleManager {
         if (ordered.size() < enabled.size()) {
             Set<String> inCycle = new HashSet<>(enabled.keySet());
             ordered.forEach(d -> inCycle.remove(d.getId()));
-            Utils.log(logger, "SEVERE", "Circular dependency detected, skipping modules: %s".formatted(inCycle));
+            log.severe("Circular dependency detected, skipping modules: " + inCycle);
         }
 
         return ordered;
@@ -201,19 +287,34 @@ public final class ModuleManager {
             Module m = entry.getValue();
             ModuleDescriptor desc = descriptors.get(entry.getKey());
 
-            switch (m) {
-                case ChatModule cm -> {
-                    if (desc == null || desc.getPhase() == null) {
-                        Utils.log(logger, "WARNING", "ChatModule '%s' has no phase, it will never execute!".formatted(entry.getKey()));
-                    } else {
-                        chatSnap.computeIfAbsent(desc.getPhase(), _ -> new ArrayList<>()).add(cm);
-                    }
+            boolean recognised = false;
+
+            if (m instanceof ChatModule cm) {
+                recognised = true;
+                if (desc == null || desc.getPhase() == null) {
+                    log.warn("ChatModule '%s' has no phase, it will never execute!".formatted(entry.getKey()));
+                } else {
+                    chatSnap.computeIfAbsent(desc.getPhase(), _ -> new ArrayList<>()).add(cm);
                 }
-                case JoinModule jm -> newJoin.add(jm);
-                case QuitModule qm -> newQuit.add(qm);
-                case CommandModule cm -> newCommands.add(cm);
-                case BroadcastModule bm -> {}
-                default -> Utils.log(logger, "WARNING", "Module '%s' has an unrecognised type and was not added to any pipeline: %s".formatted(entry.getKey(), m.getClass().getSimpleName()));
+            }
+            if (m instanceof JoinModule jm) {
+                recognised = true;
+                newJoin.add(jm);
+            }
+            if (m instanceof QuitModule qm) {
+                recognised = true;
+                newQuit.add(qm);
+            }
+            if (m instanceof CommandModule cm) {
+                recognised = true;
+                newCommands.add(cm);
+            }
+            if (m instanceof BroadcastModule) {
+                recognised = true;
+            }
+
+            if (!recognised) {
+                log.warn("Module '%s' has an unrecognised type and was not added to any pipeline: %s".formatted(entry.getKey(), m.getClass().getSimpleName()));
             }
         }
 
@@ -229,6 +330,12 @@ public final class ModuleManager {
     public @NonNull ModuleContext getModuleContext() {
         return moduleContext;
     }
+
+    public @NonNull MenuLoadResult getMenuLoadResult() { return lastMenuLoadResult; }
+
+    public @NonNull ModuleTimings getModuleTimings() { return lastTimings; }
+
+    public @NonNull LoadResult getLoadResult() { return lastLoadResult; }
 
     public @NonNull @UnmodifiableView Collection<ModuleCommand> getActiveCommands() {
         return Collections.unmodifiableCollection(activeCommands.values());
@@ -259,8 +366,8 @@ public final class ModuleManager {
     }
 
     /**
-     * Retrieve an active module by id, cast to the expected type.
-     * Returns null if the module is not loaded or the type doesn't match.
+     * Retrieve an active module by id, cast to the expected type
+     * Returns null if the module is not loaded or the type doesn't match
      */
     @SuppressWarnings("unchecked")
     public <T extends Module> @Nullable T getModule(@NonNull String id, @NonNull Class<T> type) {

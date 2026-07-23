@@ -1,0 +1,54 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                          grammar.yml                         ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# DON'T TOUCH THIS!
+config-version: 0
+
+# Collapses multiple consecutive spaces into a single one and trims
+# leading/trailing whitespace from the message.
+trim-spaces:
+  enabled: true
+
+# Capitalizes the first letters of the message.
+# Example: "hello" -> "Hello" (with letters: 1)
+cap:
+  enabled: true
+  # Number of letters to convert to uppercase, starting from the beginning.
+  letters: 1
+  # Minimum message length required to trigger this function.
+  min-characters: 0
+
+# Capitalizes the first letter after a sentence-ending punctuation mark
+# (., ! or ?) followed by a space.
+sentence-case:
+  enabled: true
+  # Minimum message length required to trigger this function.
+  min-characters: 0
+
+# Appends a final character to the message if it doesn't already end
+# with one of the ignored endings below.
+final-dot:
+  enabled: true
+  # You can customize this, you can use any other character, but
+  # I recommend leaving it as a single dot.
+  character: "."
+  # Minimum message length required to trigger this function.
+  min-characters: 0
+  # Endings that prevent the final character from being appended
+  # (only the last character of the message is checked).
+  ignore-endings:
+    - "."
+    - "!"
+    - "?"
+    - ","
+    - ";"
+    - ":"
+    - ")"
+    - "]"
+    - "}"
+    - "\""
+    - "'"

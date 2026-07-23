@@ -1,0 +1,39 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                    customcommands/heal.yml                   ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: heal
+
+aliases:
+  - healme
+
+# Arguments
+args:
+  min: 0
+  max: -1
+  usage: "/heal"
+  usage-actions:
+    - "[MESSAGE] <red>Usage: {usage}"
+
+# Permission
+# - Remove or leave blank to allow everyone
+permission: "tchat.command.heal"
+no-permission-actions:
+  - "[MESSAGE] <red>You don't have permission to use /heal."
+
+# Cooldown
+cooldown: 30
+cooldown-actions:
+  - "[MESSAGE] <yellow>You must wait <bold>{remaining}s</bold> before using /heal again."
+
+# Actions on success
+# {arg0} = the destination the player typed
+# {args} = all arguments joined by space
+# {player} = player name
+actions:
+  - "[CONSOLE_COMMAND] effect give {player} instant_health 1 255 true"
+  - "[MESSAGE] <green>You have been healed!</green>"
+  - "[SOUND] entity.player.levelup"

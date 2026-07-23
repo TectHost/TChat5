@@ -1,0 +1,22 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                 customcommands/showcoords.yml                ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: showcoords
+
+aliases:
+  - coords
+  - mycoords
+
+args:
+  min: 0
+  max: 0
+
+# No permission field = everyone can use it
+# No cooldown field = no cooldown
+
+actions:
+  - "[BROADCAST] <gray>[<green>{player}</green>]</gray> <#3AFE09>These are my coordinates: <#FEB322>%player_x%, %player_y%, %player_z%<#3AFE09>!"

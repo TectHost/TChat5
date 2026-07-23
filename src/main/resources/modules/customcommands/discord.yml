@@ -1,0 +1,22 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                    customcommands/heal.yml                   ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: discord
+
+aliases:
+  - dc
+
+args:
+  min: 0
+  max: 0
+
+# No permission field = everyone can use it
+# No cooldown field = no cooldown
+
+actions:
+  - "[MESSAGE] <#5865F2><bold>Discord</bold> <white>-> <aqua>https://discord.gg/M2xdzXTpdB"
+  - "[ACTION_BAR] <#5865F2>Join us on Discord!"

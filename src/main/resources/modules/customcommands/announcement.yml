@@ -1,0 +1,28 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                customcommands/announcement.yml               ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: announcement
+
+aliases:
+  - announce
+  - ann
+
+args:
+  min: 1
+  max: -1
+  usage: "/announcement <message>"
+  usage-actions:
+    - "[MESSAGE] <red>Usage: {usage}"
+
+permission: "tchat.admin.command.announcement"
+no-permission-actions:
+  - "[MESSAGE] <red>You don't have permission to use /announcement."
+
+# No cooldown field = no cooldown
+
+actions:
+  - "[PRINT] <blue><bold>[ANNOUNCEMENT] <color:#FFD700>»</color> <gray>{args}"

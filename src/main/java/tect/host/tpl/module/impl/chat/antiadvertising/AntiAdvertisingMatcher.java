@@ -2,9 +2,11 @@ package tect.host.tpl.module.impl.chat.antiadvertising;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import tect.host.tpl.util.CensorUtil;
-import tect.host.tpl.util.MaskUtil;
+import tect.host.tpl.util.text.CensorUtil;
+import tect.host.tpl.util.text.NormalizedText;
+import tect.host.tpl.util.text.ObfuscationNormalizer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,11 +14,6 @@ import java.util.regex.Pattern;
 public final class AntiAdvertisingMatcher {
 
     private AntiAdvertisingMatcher() {}
-
-    private static final Pattern ZERO_WIDTH = Pattern.compile("[\\u200B-\\u200D\\uFEFF\\u00AD\\u2060\\u180E]");
-    private static final Pattern DOT_WORD = Pattern.compile("\\(dot\\)|\\[dot]|\\{dot}|(?<![a-z0-9])dot(?![a-z0-9])", Pattern.CASE_INSENSITIVE);
-    private static final Pattern COLON_WORD = Pattern.compile("\\(colon\\)|\\[colon]", Pattern.CASE_INSENSITIVE);
-    private static final Pattern SPACE_AROUND_PUNCT = Pattern.compile("\\s*([.:])\\s*");
 
     private static final Pattern IPV4 = Pattern.compile(
             "(?<![\\w.])(?:(?:25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}" +
@@ -42,75 +39,88 @@ public final class AntiAdvertisingMatcher {
                     "(?:/\\S*)?",
             Pattern.CASE_INSENSITIVE);
 
+    private record Span(int start, int end, @NonNull String type) {}
+
     public static @NonNull AntiAdvertisingResult check(@NonNull String raw, @NonNull AntiAdvertisingConfig config) {
-        String n = normalise(raw);
-
-        if (config.isCheckIpv4()) {
-            Pattern p = config.getCustomIpv4Pattern() != null ? config.getCustomIpv4Pattern() : IPV4;
-            if (p.matcher(n).find()) return new AntiAdvertisingResult(true, "ipv4");
-        }
-
-        if (config.isCheckIpv6()) {
-            Pattern p = config.getCustomIpv6Pattern() != null ? config.getCustomIpv6Pattern() : IPV6;
-            if (p.matcher(n).find()) return new AntiAdvertisingResult(true, "ipv6");
-        }
-
-        if (config.isCheckDomains() || config.isCheckUrls()) {
-            Pattern p = config.getCustomDomainUrlPattern() != null ? config.getCustomDomainUrlPattern() : DOMAIN_URL;
-            Matcher m = p.matcher(n);
-            while (m.find()) {
-                String match = m.group().toLowerCase();
-                if (isWhitelisted(match, config.getWhitelistedDomains())) continue;
-                String type = resolveType(match);
-                if (type.equals("url") && !config.isCheckUrls()) continue;
-                if (type.equals("domain") && !config.isCheckDomains()) continue;
-                return new AntiAdvertisingResult(true, type);
-            }
-        }
-
-        return AntiAdvertisingResult.CLEAN;
+        NormalizedText normalized = ObfuscationNormalizer.normalizeObfuscation(raw);
+        Span first = findFirst(normalized.text(), config);
+        return first != null ? new AntiAdvertisingResult(true, first.type()) : AntiAdvertisingResult.CLEAN;
     }
 
     public static @Nullable String censor(@NonNull String raw, @NonNull AntiAdvertisingConfig config, char censorChar) {
-        if (!check(raw, config).matched()) return null;
+        NormalizedText normalized = ObfuscationNormalizer.normalizeObfuscation(raw);
+        List<Span> spans = findAll(normalized.text(), config);
+        if (spans.isEmpty()) return null;
 
         boolean[] mask = new boolean[raw.length()];
-
-        if (config.isCheckIpv4()) {
-            Pattern p = config.getCustomIpv4Pattern() != null ? config.getCustomIpv4Pattern() : IPV4;
-            MaskUtil.applyMatcher(p.matcher(raw), mask);
-        }
-
-        if (config.isCheckIpv6()) {
-            Pattern p = config.getCustomIpv6Pattern() != null ? config.getCustomIpv6Pattern() : IPV6;
-            MaskUtil.applyMatcher(p.matcher(raw), mask);
-        }
-
-        if (config.isCheckDomains() || config.isCheckUrls()) {
-            Pattern p = config.getCustomDomainUrlPattern() != null ? config.getCustomDomainUrlPattern() : DOMAIN_URL;
-            Matcher m = p.matcher(raw);
-            while (m.find()) {
-                String match = m.group().toLowerCase();
-                if (isWhitelisted(match, config.getWhitelistedDomains())) continue;
-                String type = resolveType(match);
-                if (type.equals("url") && !config.isCheckUrls()) continue;
-                if (type.equals("domain") && !config.isCheckDomains()) continue;
-                MaskUtil.applyRange(mask, m.start(), m.end());
-            }
-        }
+        for (Span span : spans) normalized.markRaw(mask, span.start(), span.end());
 
         String result = CensorUtil.applyMask(raw, mask, censorChar);
         return result != null ? result : CensorUtil.censorFull(raw, censorChar);
     }
 
-    private static @NonNull String normalise(@NonNull String raw) {
-        String s = ZERO_WIDTH.matcher(raw).replaceAll("");
-        s = DOT_WORD.matcher(s).replaceAll(".");
-        s = COLON_WORD.matcher(s).replaceAll(":");
-        s = SPACE_AROUND_PUNCT.matcher(s).replaceAll("$1");
-        return s;
+    private static @Nullable Span findFirst(@NonNull String normalized, @NonNull AntiAdvertisingConfig config) {
+        if (config.isCheckIpv4()) {
+            Pattern p = config.getCustomIpv4Pattern() != null ? config.getCustomIpv4Pattern() : IPV4;
+            Matcher m = p.matcher(normalized);
+            if (m.find()) return new Span(m.start(), m.end(), "ipv4");
+        }
+
+        if (config.isCheckIpv6()) {
+            Pattern p = config.getCustomIpv6Pattern() != null ? config.getCustomIpv6Pattern() : IPV6;
+            Matcher m = p.matcher(normalized);
+            if (m.find()) return new Span(m.start(), m.end(), "ipv6");
+        }
+
+        if (config.isCheckDomains() || config.isCheckUrls()) {
+            Pattern p = config.getCustomDomainUrlPattern() != null ? config.getCustomDomainUrlPattern() : DOMAIN_URL;
+            Matcher m = p.matcher(normalized);
+            while (m.find()) {
+                Span span = classify(m, config);
+                if (span != null) return span;
+            }
+        }
+
+        return null;
     }
 
+    private static @NonNull List<Span> findAll(@NonNull String normalized, @NonNull AntiAdvertisingConfig config) {
+        List<Span> spans = new ArrayList<>();
+
+        if (config.isCheckIpv4()) {
+            Pattern p = config.getCustomIpv4Pattern() != null ? config.getCustomIpv4Pattern() : IPV4;
+            Matcher m = p.matcher(normalized);
+            while (m.find()) spans.add(new Span(m.start(), m.end(), "ipv4"));
+        }
+
+        if (config.isCheckIpv6()) {
+            Pattern p = config.getCustomIpv6Pattern() != null ? config.getCustomIpv6Pattern() : IPV6;
+            Matcher m = p.matcher(normalized);
+            while (m.find()) spans.add(new Span(m.start(), m.end(), "ipv6"));
+        }
+
+        if (config.isCheckDomains() || config.isCheckUrls()) {
+            Pattern p = config.getCustomDomainUrlPattern() != null ? config.getCustomDomainUrlPattern() : DOMAIN_URL;
+            Matcher m = p.matcher(normalized);
+            while (m.find()) {
+                Span span = classify(m, config);
+                if (span != null) spans.add(span);
+            }
+        }
+
+        return spans;
+    }
+
+    private static @Nullable Span classify(@NonNull Matcher m, @NonNull AntiAdvertisingConfig config) {
+        String match = m.group().toLowerCase();
+        if (isWhitelisted(match, config.getWhitelistedDomains())) return null;
+
+        String type = resolveType(match);
+        if (type.equals("url") && !config.isCheckUrls()) return null;
+        if (type.equals("domain") && !config.isCheckDomains()) return null;
+
+        return new Span(m.start(), m.end(), type);
+    }
 
     private static @NonNull String resolveType(@NonNull String match) {
         return (match.startsWith("http") || match.startsWith("ftp") || match.startsWith("www")) ? "url" : "domain";

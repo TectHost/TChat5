@@ -1,0 +1,22 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                  customcommands/website.yml                  ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: website
+
+aliases:
+  - web
+
+args:
+  min: 0
+  max: 0
+
+# No permission field = everyone can use it
+# No cooldown field = no cooldown
+
+actions:
+  - "[MESSAGE] <#14B8A6><bold>Website</bold> <white>-> <aqua>https://tect.host"
+  - "[ACTION_BAR] <#14B8A6>Join us on our Website!"

@@ -1,0 +1,23 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                   customcommands/rules.yml                   ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: rules
+
+aliases: []
+
+args:
+  min: 0
+  max: 0
+
+# No permission field = everyone can use it
+# No cooldown field = no cooldown
+
+actions:
+  - "[MESSAGE] <gradient:#5B03E4:#C03AFE>TChat</gradient>"
+  - "[MESSAGE] 1. Don't use hacks"
+  - "[MESSAGE] 2. No tpa-kill"
+  - "[MESSAGE] 3. Don't use other chat plugin than TChat"

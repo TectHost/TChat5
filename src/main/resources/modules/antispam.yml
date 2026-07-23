@@ -1,0 +1,62 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                         antispam.yml                         ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# DON'T TOUCH THIS!
+config-version: 0
+
+# Action to execute when spam is detected.
+# Available values:
+# - BLOCK : cancel the message entirely.
+# - CENSOR : replace uppercase letters with '*' (or the selected censor-char).
+action: CENSOR
+
+# Character used when action is set to CENSOR.
+censor-char: "*"
+
+checks:
+
+  # Repeated Characters
+  # Example: "aaaaaaa", "!!!!!!!!"
+  # Detects the same character repeated multiple times.
+  repeated-chars:
+    enabled: true
+    threshold: 5
+
+  # Repeated Pattern
+  # Example: "hahahaha", "xdxdxdxd"
+  # Detects short fragments repeated consecutively.
+  repeated-pattern:
+    enabled: true
+    min-length: 2
+    max-length: 4
+    min-repeats: 3
+
+  # Repeated Words
+  # Example: "hello hello hello hello"
+  # Detects the same word repeated multiple times.
+  repeated-words:
+    enabled: true
+    threshold: 3
+
+  # Character Diversity
+  # Example: "asdkjfhqwe"
+  # Detects long messages with very low character diversity.
+  # Disabled by default to reduce false positives.
+  char-diversity:
+    enabled: false
+    min-length: 12
+    min-ratio: 0.30
+
+# Words ignored by the Repeated Words check.
+# Matching is case-insensitive.
+whitelist:
+  words:
+    - "haha"
+
+# Actions executed when spam is detected.
+actions:
+  - "[MESSAGE] <red>You cannot send a message that contains spam!"

@@ -6,12 +6,12 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # DON'T TOUCH THIS!
-config-version: 5
+config-version: 6
 
 chat:
   # Global chat format (modules.format)
-  # You can use placeholders from the PlaceholderAPI
-  # Preferably use MiniMessage colors, although legacy colors (&) will also work
+  # You can use placeholders from the PlaceholderAPI.
+  # Preferably use MiniMessage colors, although legacy colors (&) will also work.
   format: "%luckperms_prefix%&r&a%player_name% &e>> &7<message>"
 
   # Language file to use for plugin messages
@@ -23,6 +23,9 @@ chat:
 # Methods
 #   Local databases:
 #    - SQLite
+#
+#   Remote databases:
+#    - MariaDB
 storage:
   method: SQLite
   remote:
@@ -37,28 +40,38 @@ storage:
 # and will not participate in the chat flow at all (you can also delete its corresponding configuration file)
 modules:
 
-  # Detects and blocks/censors IP addresses, domain names and URLs in chat
+  # Detects and blocks/censors IP addresses, domain names and URLs in chat.
   #
   # Anti advertising module loaded from modules/antiadvertising.yml
   anti-advertising: true
 
   # It lets censor, block, or convert words to
-  # lowercase when they're typed in all caps
+  # lowercase when they're typed in all caps.
   #
   # Anti cap module loaded from modules/anticap.yml
   anti-cap: true
 
-  # This module sends messages via chat (or performs actions) every few seconds
+  # Block similar letters and other types of spam in the chat.
+  #
+  # Anti spam module loaded from modules/antispam.yml
+  anti-spam: true
+
+  # Block Unicode abuse, similar-looking characters, invisible characters, and other Unicode-based chat exploits.
+  #
+  # Anti unicode module loaded from modules/antiunicode.yml
+  anti-unicode: true
+
+  # This module sends messages via chat (or performs actions) every few seconds.
   #
   # Auto broadcast module loaded from modules/autobroadcast.yml
   auto-broadcast: true
 
-  # This module adds a command to block the chat
+  # This module adds a command to block the chat.
   #
   # This module does not have a configuration file
   block-chat: true
 
-  # Allows to block specific commands from being used in chat
+  # Allows to block specific commands from being used in chat.
   #
   # Blocked commands module loaded from modules/blockedcommands.yml
   blocked-commands: true
@@ -75,28 +88,50 @@ modules:
   # Channels module loaded from modules/channels.yml
   channels: true
 
-  # This module allows you to create channels between worlds
+  # This module allows you to create channels between worlds.
   #
   # Chat bridge module loaded from modules/chatbridge.yml
   chat-bridge: false
 
-  # Allows players to display custom tags in chat
+  # This module allows you to set a few seconds between each message from the player.
+  #
+  # Chat cooldown module loaded from modules/chatcooldown.yml
+  chat-cooldown: true
+
+  # Allows players to display custom tags in chat.
   #
   # Item tag module loaded from modules/chatplaceholders/chatplaceholders.yml
   chat-placeholders: true
 
-  # Allows to translate colors and formats in chat using permissions
+  # Allows to translate colors and formats in chat using permissions.
   #
   # This module does not have a configuration file
   colorchat: true
 
-  # Global format module (The group format will continue working even if you disable this module)
+  # This module allows you to set a few seconds between each command from the player.
+  #
+  # Command cooldown module loaded from modules/commandcooldown.yml
+  command-cooldown: true
+
+  # Allows to create custom commands with args, cooldown and actions.
+  # The chat reload does not apply to the Custom Commands module,
+  # you must restart the server if you make any changes or if you add or remove commands.
+  #
+  # Custom Commands module loaded from modules/customcommands/*.yml
+  custom-commands: true
+
+  # Global format module (The group format will continue working even if you disable this module).
   #
   # The format module applies to all users, if used in conjunction with the groups module,
-  # it will only apply if the user's group does not have the format enabled
+  # it will only apply if the user's group does not have the format enabled.
   #
   # Format module loaded from config.yml (do not delete this if you disable the format module)
   format: true
+
+  # Automatically formats chat messages by fixing spacing, capitalization, and punctuation
+  #
+  # Grammar module loaded from modules/grammar.yml
+  grammar: true
 
   # Allows you to configure prefixes, suffixes, formats, and other options by permission-based groups
   #
@@ -123,3 +158,6 @@ modules:
   #
   # Worlds module loaded from modules/worlds.yml
   worlds: false
+
+# Don't touch this if you don't know what you're doing
+debug: false

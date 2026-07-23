@@ -1,0 +1,26 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                   customcommands/print.yml                   ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: print
+
+aliases: []
+
+args:
+  min: 1
+  max: -1
+  usage: "/print <message>"
+  usage-actions:
+    - "[MESSAGE] <red>Usage: {usage}"
+
+permission: "tchat.command.print"
+no-permission-actions:
+  - "[MESSAGE] <red>You don't have permission to use /print."
+
+# No cooldown field = no cooldown
+
+actions:
+  - "[BROADCAST] {args}"

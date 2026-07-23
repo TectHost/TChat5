@@ -1,0 +1,25 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                   customcommands/help.yml                    ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: help
+
+aliases:
+  - "?"
+
+args:
+  min: 0
+  max: 0
+
+# No permission field = everyone can use it
+# No cooldown field = no cooldown
+
+actions:
+  - "[MESSAGE] &aHi {player}!"
+  - "[MESSAGE] &7This is the custom help"
+  - "[MESSAGE] &7from <gradient:#5B03E4:#C03AFE>TChat</gradient>"
+  - "[MESSAGE] &7"
+  - "[MESSAGE] &8Modify this in Custom Commands module"

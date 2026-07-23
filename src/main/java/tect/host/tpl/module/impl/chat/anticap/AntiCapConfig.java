@@ -7,13 +7,13 @@ import java.util.List;
 
 public final class AntiCapConfig {
 
-    private final Action action;
+    private final AntiCapAction antiCapAction;
     private final double percent;
     private final char censorChar;
     private final List<String> actions;
 
     public AntiCapConfig(@NonNull ConfigFile configFile) {
-        this.action = Action.fromString(configFile.get().getString("action", "ToLowerCase"));
+        this.antiCapAction = AntiCapAction.fromString(configFile.get().getString("action", "ToLowerCase"));
         this.percent = Math.clamp(configFile.get().getDouble("percent", 0.75), 0.0, 1.0);
         this.censorChar = configFile.get().getString("censor-char", "*").charAt(0);
 
@@ -21,7 +21,7 @@ public final class AntiCapConfig {
         this.actions = rawActions.stream().filter(l -> l != null && !l.isBlank()).toList();
     }
 
-    public @NonNull Action getAction() { return action; }
+    public @NonNull AntiCapAction getAction() { return antiCapAction; }
     public double getPercent() { return percent; }
     public char getCensorChar() { return censorChar; }
     public @NonNull List<String> getActions() { return actions; }

@@ -8,6 +8,8 @@ import tect.host.tpl.module.ModulePhase;
 import tect.host.tpl.module.impl.broadcast.autobroadcast.AutoBroadcastModule;
 import tect.host.tpl.module.impl.chat.antiadvertising.AntiAdvertisingModule;
 import tect.host.tpl.module.impl.chat.anticap.AntiCapModule;
+import tect.host.tpl.module.impl.chat.antispam.AntiSpamModule;
+import tect.host.tpl.module.impl.chat.antiunicode.AntiUnicodeModule;
 import tect.host.tpl.module.impl.chat.blockchat.BlockChatCommand;
 import tect.host.tpl.module.impl.chat.blockchat.BlockChatModule;
 import tect.host.tpl.module.impl.chat.blockedwords.BlockedWordsCommand;
@@ -15,18 +17,22 @@ import tect.host.tpl.module.impl.chat.blockedwords.BlockedWordsModule;
 import tect.host.tpl.module.impl.chat.bridge.ChatBridgeModule;
 import tect.host.tpl.module.impl.chat.channel.ChannelCommand;
 import tect.host.tpl.module.impl.chat.channel.ChannelModule;
+import tect.host.tpl.module.impl.chat.chatcooldown.ChatCooldownModule;
 import tect.host.tpl.module.impl.chat.chatplaceholders.ChatPlaceholdersModule;
 import tect.host.tpl.module.impl.chat.colorchat.ColorChatModule;
 import tect.host.tpl.module.impl.chat.format.FormatModule;
+import tect.host.tpl.module.impl.chat.grammar.GrammarModule;
 import tect.host.tpl.module.impl.chat.group.GroupModule;
 import tect.host.tpl.module.impl.chat.worlds.WorldsModule;
 import tect.host.tpl.module.impl.command.blockedcommands.BlockedCommandsModule;
+import tect.host.tpl.module.impl.command.commandcooldown.CommandCooldownModule;
+import tect.host.tpl.module.impl.command.customcommands.CustomCommandsModule;
 import tect.host.tpl.module.impl.command.invsee.InvSeeCommand;
 import tect.host.tpl.module.impl.command.invsee.InvSeeMenu;
 import tect.host.tpl.module.impl.command.invsee.InvSeeModule;
 import tect.host.tpl.module.impl.command.nick.NickCommand;
 import tect.host.tpl.module.impl.command.nick.NickModule;
-import tect.host.tpl.module.impl.join.notify.UpdateNotifyModule;
+import tect.host.tpl.module.impl.join.updatenotify.UpdateNotifyModule;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,18 +59,26 @@ public final class ModuleRegistry {
         return List.of(
                 ModuleDescriptor.builder("block-chat", "block-chat", BlockChatModule::new)
                         .phase(ModulePhase.PRE_PROCESS).priority(1).command(mm -> new BlockChatCommand(mm, mm.getModuleContext().getMessagesManager())).build(),
-                ModuleDescriptor.builder("worlds", "worlds", WorldsModule::new)
+                ModuleDescriptor.builder("chat-cooldown", "chat-cooldown", ChatCooldownModule::new)
                         .phase(ModulePhase.PRE_PROCESS).priority(2).build(),
+                ModuleDescriptor.builder("worlds", "worlds", WorldsModule::new)
+                        .phase(ModulePhase.PRE_PROCESS).priority(4).build(),
                 ModuleDescriptor.builder("chat-bridge", "chat-bridge", ChatBridgeModule::new)
-                        .phase(ModulePhase.PRE_PROCESS).priority(3).build(),
+                        .phase(ModulePhase.PRE_PROCESS).priority(5).build(),
+                ModuleDescriptor.builder("anti-unicode", "anti-unicode", AntiUnicodeModule::new)
+                        .phase(ModulePhase.PRE_PROCESS).priority(7).build(),
                 ModuleDescriptor.builder("blocked-words", "blocked-words", BlockedWordsModule::new)
-                        .phase(ModulePhase.PRE_PROCESS).priority(5).command(mm -> new BlockedWordsCommand(mm, mm.getModuleContext().getMessagesManager())).build(),
+                        .phase(ModulePhase.PRE_PROCESS).priority(9).command(mm -> new BlockedWordsCommand(mm, mm.getModuleContext().getMessagesManager())).build(),
                 ModuleDescriptor.builder("anti-advertising", "anti-advertising", AntiAdvertisingModule::new)
-                        .phase(ModulePhase.PRE_PROCESS).priority(6).build(),
-                ModuleDescriptor.builder("anti-cap", "anti-cap", AntiCapModule::new)
                         .phase(ModulePhase.PRE_PROCESS).priority(10).build(),
+                ModuleDescriptor.builder("anti-spam", "anti-spam", AntiSpamModule::new)
+                        .phase(ModulePhase.PRE_PROCESS).priority(15).build(),
+                ModuleDescriptor.builder("anti-cap", "anti-cap", AntiCapModule::new)
+                        .phase(ModulePhase.PRE_PROCESS).priority(30).build(),
                 ModuleDescriptor.builder("channels", "channels", ChannelModule::new)
-                        .phase(ModulePhase.PRE_PROCESS).priority(20).command(mm -> new ChannelCommand(mm, mm.getModuleContext().getMessagesManager())).build(),
+                        .phase(ModulePhase.PRE_PROCESS).priority(50).command(mm -> new ChannelCommand(mm, mm.getModuleContext().getMessagesManager())).build(),
+                ModuleDescriptor.builder("grammar", "grammar", GrammarModule::new)
+                        .phase(ModulePhase.PRE_PROCESS).priority(65).build(),
                 ModuleDescriptor.builder("chat-placeholders", "chat-placeholders", ChatPlaceholdersModule::new)
                         .phase(ModulePhase.PRE_PROCESS).priority(70).build(),
                 ModuleDescriptor.builder("colorchat", "colorchat", ColorChatModule::new)
@@ -93,12 +107,16 @@ public final class ModuleRegistry {
     @Contract(" -> new")
     private static @NonNull @Unmodifiable List<ModuleDescriptor> commandModules() {
         return List.of(
+                ModuleDescriptor.builder("command-cooldown", "command-cooldown", CommandCooldownModule::new)
+                        .priority(5).build(),
                 ModuleDescriptor.builder("blocked-commands", "blocked-commands", BlockedCommandsModule::new)
                         .priority(10).build(),
                 ModuleDescriptor.builder("nick", "nick", NickModule::new)
                         .priority(11).command(mm -> new NickCommand(mm, mm.getModuleContext().getMessagesManager())).build(),
                 ModuleDescriptor.builder("invsee", "invsee", InvSeeModule::new)
-                        .priority(12).command(mm -> new InvSeeCommand(mm, mm.getModuleContext().getMessagesManager())).menu(InvSeeMenu::new).build()
+                        .priority(12).command(mm -> new InvSeeCommand(mm, mm.getModuleContext().getMessagesManager())).menu(InvSeeMenu::new).build(),
+                ModuleDescriptor.builder("custom-commands", "custom-commands", CustomCommandsModule::new)
+                        .priority(100).build()
         );
     }
 

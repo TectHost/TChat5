@@ -2,9 +2,10 @@ package tect.host.tpl.module.impl.chat.blockedwords;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import tect.host.tpl.util.CensorUtil;
+import tect.host.tpl.util.text.CensorUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +61,10 @@ public final class BlockedWordsMatcher {
                 while (start <= stripped.length() - minWin) {
                     boolean matched = false;
                     for (int winLen = minWin; winLen <= maxWin && start + winLen <= stripped.length(); winLen++) {
-                        if (levenshtein(stripped, start, winLen, normWord) <= threshold) {
+                        boolean isMatch = threshold == 0
+                                ? regionEquals(stripped, start, winLen, normWord)
+                                : levenshtein(stripped, start, winLen, normWord) <= threshold;
+                        if (isMatch) {
                             for (int k = start; k < start + winLen; k++) {
                                 censored[token.origIndices()[k]] = true;
                             }
@@ -127,37 +131,37 @@ public final class BlockedWordsMatcher {
     private static @NonNull List<Token> tokenizeWithIndices(@NonNull String s) {
         List<Token> tokens = new ArrayList<>();
         StringBuilder strippedBuf = new StringBuilder();
-        List<Integer> indices = new ArrayList<>();
+
+        int[] indexBuf = new int[s.length()];
+        int indexCount = 0;
 
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (c == ' ') {
                 if (!strippedBuf.isEmpty()) {
-                    tokens.add(new Token(strippedBuf.toString(), toIntArray(indices)));
+                    tokens.add(new Token(strippedBuf.toString(), Arrays.copyOf(indexBuf, indexCount)));
                     strippedBuf.setLength(0);
-                    indices.clear();
+                    indexCount = 0;
                 }
             } else if (isAlphaNum(c)) {
                 strippedBuf.append(Character.toLowerCase(c));
-                indices.add(i);
+                indexBuf[indexCount++] = i;
             }
         }
-        if (!strippedBuf.isEmpty()) {
-            tokens.add(new Token(strippedBuf.toString(), toIntArray(indices)));
-        }
-        return tokens;
-    }
 
-    private static int @NonNull [] toIntArray(@NonNull List<Integer> list) {
-        int[] arr = new int[list.size()];
-        for (int i = 0; i < list.size(); i++) arr[i] = list.get(i);
-        return arr;
+        if (!strippedBuf.isEmpty()) {
+            tokens.add(new Token(strippedBuf.toString(), Arrays.copyOf(indexBuf, indexCount)));
+        }
+
+        return tokens;
     }
 
     /**
      * Sliding window fuzzy search over stripped text
      */
     private static boolean containsWithinDistance(@NonNull String text, @NonNull String word, int threshold) {
+        if (threshold == 0) return text.contains(word);
+
         int wLen = word.length(), tLen = text.length();
 
         int minWin = Math.max(1, wLen - threshold);
@@ -170,6 +174,14 @@ public final class BlockedWordsMatcher {
         }
 
         return false;
+    }
+
+    private static boolean regionEquals(@NonNull String a, int aStart, int aLen, @NonNull String b) {
+        if (aLen != b.length()) return false;
+        for (int i = 0; i < aLen; i++) {
+            if (a.charAt(aStart + i) != b.charAt(i)) return false;
+        }
+        return true;
     }
 
     private static int levenshtein(String a, int aStart, int aLen, @NonNull String b) {

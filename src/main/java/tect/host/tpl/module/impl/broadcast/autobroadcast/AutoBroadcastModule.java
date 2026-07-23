@@ -10,7 +10,7 @@ import tect.host.tpl.module.SchedulerAccess;
 import tect.host.tpl.module.impl.chat.channel.ChannelModule;
 import tect.host.tpl.module.impl.chat.channel.ChannelService;
 import tect.host.tpl.module.type.BroadcastModule;
-import tect.host.tpl.util.CenterUtil;
+import tect.host.tpl.util.text.CenterUtil;
 import tect.host.tpl.util.ColorUtil;
 import tect.host.tpl.util.Utils;
 

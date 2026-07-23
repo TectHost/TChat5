@@ -1,0 +1,17 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                       commandcooldown.yml                    ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# DON'T TOUCH THIS!
+config-version: 0
+
+# The number of seconds a player must wait between commands.
+cooldown-seconds: 3
+
+# Actions taken when a player runs a command while on cooldown.
+# You can use %cooldown_remaining% to display the remaining seconds.
+actions:
+  - "[MESSAGE] <red>You must wait <yellow>%cooldown_remaining%s</yellow> before using another command."

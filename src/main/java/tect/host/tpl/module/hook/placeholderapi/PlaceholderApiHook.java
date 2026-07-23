@@ -17,6 +17,10 @@ public final class PlaceholderApiHook {
         this.available = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
     }
 
+    public boolean isAvailable() {
+        return available;
+    }
+
     public @NonNull String apply(@Nullable Player player, @NonNull String text) {
         if (!available || player == null) return text;
         return PlaceholderAPI.setPlaceholders(player, text);

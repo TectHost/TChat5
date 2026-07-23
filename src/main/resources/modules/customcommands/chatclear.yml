@@ -1,0 +1,28 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                 customcommands/chatclear.yml                 ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: chatclear
+
+aliases:
+  - cc
+  - cclear
+
+args:
+  min: 0
+  max: 0
+
+permission: "tchat.admin.command.chatclear"
+no-permission-actions:
+  - "[MESSAGE] <red>You don't have permission to use /chatclear."
+
+# No cooldown field = no cooldown
+
+actions:
+  - "[FOR] 100"
+  - "[BROADCAST]"
+  - "[ENDFOR]"
+  - "[MESSAGE] &a{player} &bhas cleared the chat."

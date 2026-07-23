@@ -1,0 +1,26 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                  customcommands/plugins.yml                  ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: plugins
+
+aliases:
+  - pl
+  - plugin
+
+args:
+  min: 0
+  max: 0
+
+# No permission field = everyone can use it
+# No cooldown field = no cooldown
+
+actions:
+  - "[MESSAGE] <#3881b2>ⓘ <white>Server Plugins (3):"
+  - "[MESSAGE] <#0171ae>Paper Plugins (1):"
+  - "[MESSAGE]   &8- &aTChat"
+  - "[MESSAGE] <#d97c13>Bukkit Plugins (2):"
+  - "[MESSAGE]   &8- &aTect.host API&f, &aPlaceholderAPI"

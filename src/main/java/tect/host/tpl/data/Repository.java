@@ -8,5 +8,9 @@ public interface Repository {
     @NonNull String getModuleId();
     @NonNull List<String> getMigrations();
 
+    default @NonNull List<String> getMigrations(@NonNull DataMethod method) {
+        return getMigrations();
+    }
+
     default void onInitialized() {}
 }

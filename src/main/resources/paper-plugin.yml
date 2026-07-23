@@ -33,6 +33,9 @@ permissions:
     children:
       tchat.command.nick: true
       tchat.command.channel: true
+      tchat.command.heal: true
+      tchat.command.me: true
+      tchat.command.print: true
 
   tchat.colorchat:
     description: Grants all colorchat permissions (colors + formats + advanced)
@@ -51,8 +54,11 @@ permissions:
       tchat.admin.command.blockchat: true
       tchat.admin.command.nick.others: true
       tchat.admin.command.invsee: true
-      tchat.command.nick: true
-      tchat.command.channel: true
+      tchat.admin.command.announcement: true
+      tchat.admin.command.broadcast: true
+      tchat.admin.command.warning: true
+      tchat.admin.command.chatclear: true
+      tchat.command: true
 
   tchat.admin.bypass:
     description: Grants all bypass permissions
@@ -64,6 +70,9 @@ permissions:
       tchat.admin.bypass.blockedcommands: true
       tchat.admin.bypass.worlds.chat: true
       tchat.admin.bypass.antiadvertising: true
+      tchat.admin.bypass.antispam: true
+      tchat.admin.bypass.grammar: true
+      tchat.admin.bypass.antiunicode: true
 
   tchat.colorchat.colors:
     description: Grants all 16 standard colors
@@ -117,6 +126,18 @@ permissions:
     description: Bypass blockchat, can talk even when chat is blocked
     default: op
 
+  tchat.admin.bypass.antispam:
+    description: Bypass anti spam module
+    default: op
+
+  tchat.admin.bypass.grammar:
+    description: Bypass grammar module
+    default: op
+
+  tchat.admin.bypass.antiunicode:
+    description: Bypass anti unicode module
+    default: op
+
   tchat.admin.bypass.worlds.chat:
     description: Bypass chat-enabled by worlds
     default: op
@@ -132,6 +153,21 @@ permissions:
   tchat.admin.command.nick.others:
     description: Allows to change the nick to other users
     default: op
+
+  tchat.admin.command.announcement:
+    description: Allows to send announcements
+    default: op
+
+  tchat.admin.command.broadcast:
+    description: Allows to send broadcasts
+    default: op
+
+  tchat.admin.command.warning:
+    description: Allows to send warnings
+    default: op
+
+  tchat.admin.command.chatclear:
+    description: Allows to clear the chat
 
   tchat.admin.command.reload:
     description: Allows reloading TChat
@@ -159,6 +195,18 @@ permissions:
 
   tchat.command.channel:
     description: Allows to join and leave channels
+    default: op
+
+  tchat.command.heal:
+    description: Allows to heal players
+    default: op
+
+  tchat.command.me:
+    description: Sends a message with different format
+    default: op
+
+  tchat.command.print:
+    description: Sends messages without format
     default: op
 
   tchat.colorchat.color.black:

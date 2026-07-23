@@ -4,10 +4,12 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NonNull;
 import tect.host.tpl.data.DataManager;
+import tect.host.tpl.data.DataMethod;
 import tect.host.tpl.data.Repository;
 import tect.host.tpl.util.Utils;
 
 import java.sql.*;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,17 +20,32 @@ import java.util.logging.Logger;
 
 public final class NickRepository implements Repository {
 
-    private static final String MIGRATION_V1 = """
+    private static final String MIGRATION_V1_SQLITE = """
             CREATE TABLE IF NOT EXISTS player_nicks (
                 uuid TEXT NOT NULL PRIMARY KEY,
                 nick TEXT NOT NULL,
-                updated INTEGER NOT NULL DEFAULT (unixepoch())
+                updated INTEGER NOT NULL
             )
             """;
 
-    private static final String UPSERT = """
+    // nickname VARCHAR(32): NickCommand.MAX_NICK_LEN limits the nickname to 32 characters
+    private static final String MIGRATION_V1_MARIADB = """
+            CREATE TABLE IF NOT EXISTS player_nicks (
+                uuid VARCHAR(36) NOT NULL PRIMARY KEY,
+                nick VARCHAR(32) NOT NULL,
+                updated BIGINT NOT NULL
+            )
+            """;
+
+    private static final String UPSERT_SQLITE = """
             INSERT OR REPLACE INTO player_nicks (uuid, nick, updated)
-            VALUES (?, ?, unixepoch())
+            VALUES (?, ?, ?)
+            """;
+
+    private static final String UPSERT_MARIADB = """
+            INSERT INTO player_nicks (uuid, nick, updated)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE nick = VALUES(nick), updated = VALUES(updated)
             """;
 
     private static final String SELECT = "SELECT nick FROM player_nicks WHERE uuid = ?";
@@ -37,6 +54,7 @@ public final class NickRepository implements Repository {
     private final DataManager dataManager;
     private final Executor asyncExecutor;
     private final Logger logger;
+    private final String upsertSql;
 
     private final ConcurrentHashMap<UUID, String> cache = new ConcurrentHashMap<>();
 
@@ -44,6 +62,7 @@ public final class NickRepository implements Repository {
         this.dataManager = dataManager;
         this.asyncExecutor = asyncExecutor;
         this.logger = logger;
+        this.upsertSql = dataManager.getMethod() == DataMethod.MARIADB ? UPSERT_MARIADB : UPSERT_SQLITE;
     }
 
     @Override
@@ -52,7 +71,13 @@ public final class NickRepository implements Repository {
     @Contract(value = " -> new", pure = true)
     @Override
     public @NonNull @Unmodifiable List<String> getMigrations() {
-        return List.of(MIGRATION_V1);
+        return List.of(MIGRATION_V1_SQLITE);
+    }
+
+    @Contract(pure = true)
+    @Override
+    public @NonNull @Unmodifiable List<String> getMigrations(@NonNull DataMethod method) {
+        return List.of(method == DataMethod.MARIADB ? MIGRATION_V1_MARIADB : MIGRATION_V1_SQLITE);
     }
 
     public @NonNull Optional<String> getNickCached(@NonNull UUID uuid) {
@@ -60,24 +85,20 @@ public final class NickRepository implements Repository {
     }
 
     public void preload(@NonNull UUID uuid) {
-        CompletableFuture.supplyAsync(() -> {
+        CompletableFuture.runAsync(() -> {
             try (Connection conn = dataManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT)) {
 
                 ps.setString(1, uuid.toString());
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        String nick = rs.getString("nick");
-                        cache.put(uuid, nick);
-                        return Optional.of(nick);
+                        cache.put(uuid, rs.getString("nick"));
                     } else {
                         // No nickname
                         cache.remove(uuid);
-                        return Optional.empty();
                     }
                 }
             } catch (SQLException e) {
                 Utils.log(logger, "SEVERE", "Failed to preload nick for %s: %s".formatted(uuid, e.getMessage()));
-                return Optional.empty();
             }
         }, asyncExecutor);
     }
@@ -86,9 +107,10 @@ public final class NickRepository implements Repository {
         String previous = cache.put(uuid, nick);
 
         return CompletableFuture.runAsync(() -> {
-            try (Connection conn = dataManager.getConnection(); PreparedStatement ps = conn.prepareStatement(UPSERT)) {
+            try (Connection conn = dataManager.getConnection(); PreparedStatement ps = conn.prepareStatement(upsertSql)) {
                 ps.setString(1, uuid.toString());
                 ps.setString(2, nick);
+                ps.setLong(3, Instant.now().getEpochSecond());
                 ps.executeUpdate();
             } catch (SQLException e) {
                 // Revert the cache to its previous state

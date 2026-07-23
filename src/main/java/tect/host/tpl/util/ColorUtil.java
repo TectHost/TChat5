@@ -10,29 +10,41 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import tect.host.tpl.module.hook.placeholderapi.PlaceholderApiHook;
 
-import java.util.Map;
-
 public final class ColorUtil {
 
     private static final MiniMessage MINI = MiniMessage.miniMessage();
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
     private static final PlainTextComponentSerializer PLAIN = PlainTextComponentSerializer.plainText();
 
-    private static final Map<String, String> LEGACY_MAP = Map.ofEntries(
-            Map.entry("0", "<black>"), Map.entry("1", "<dark_blue>"),
-            Map.entry("2", "<dark_green>"), Map.entry("3", "<dark_aqua>"),
-            Map.entry("4", "<dark_red>"), Map.entry("5", "<dark_purple>"),
-            Map.entry("6", "<gold>"), Map.entry("7", "<gray>"),
-            Map.entry("8", "<dark_gray>"), Map.entry("9", "<blue>"),
-            Map.entry("a", "<green>"), Map.entry("b", "<aqua>"),
-            Map.entry("c", "<red>"), Map.entry("d", "<light_purple>"),
-            Map.entry("e", "<yellow>"), Map.entry("f", "<white>"),
-            Map.entry("k", "<obfuscated>"), Map.entry("l", "<bold>"),
-            Map.entry("m", "<strikethrough>"), Map.entry("n", "<underlined>"),
-            Map.entry("o", "<italic>"), Map.entry("r", "<reset>")
-    );
-
     private ColorUtil() {}
+
+    private static @Nullable String legacyTag(char c) {
+        return switch (Character.toLowerCase(c)) {
+            case '0' -> "<black>";
+            case '1' -> "<dark_blue>";
+            case '2' -> "<dark_green>";
+            case '3' -> "<dark_aqua>";
+            case '4' -> "<dark_red>";
+            case '5' -> "<dark_purple>";
+            case '6' -> "<gold>";
+            case '7' -> "<gray>";
+            case '8' -> "<dark_gray>";
+            case '9' -> "<blue>";
+            case 'a' -> "<green>";
+            case 'b' -> "<aqua>";
+            case 'c' -> "<red>";
+            case 'd' -> "<light_purple>";
+            case 'e' -> "<yellow>";
+            case 'f' -> "<white>";
+            case 'k' -> "<obfuscated>";
+            case 'l' -> "<bold>";
+            case 'm' -> "<strikethrough>";
+            case 'n' -> "<underlined>";
+            case 'o' -> "<italic>";
+            case 'r' -> "<reset>";
+            default -> null;
+        };
+    }
 
     public static @NonNull Component translate(@NonNull PlaceholderApiHook hook, @Nullable Player player, @NonNull String message) {
         return deserialize(hook.apply(player, message));
@@ -63,6 +75,10 @@ public final class ColorUtil {
         return MINI.deserialize(miniMessage, resolvers);
     }
 
+    public static @NonNull Component render(@NonNull PlaceholderApiHook papi, @NonNull Player player, @NonNull String text) {
+        return ColorUtil.deserialize(ColorUtil.legacyToMiniSafe(papi.apply(player, text)));
+    }
+
     /**
      * Converts legacy &-codes to MiniMessage tags in a string that may already
      * contain MiniMessage tags, leaving those tags untouched
@@ -80,7 +96,7 @@ public final class ColorUtil {
                 result.append(input, i, end + 1);
                 i = end + 1;
             } else if (c == '&' && i + 1 < input.length()) {
-                String tag = LEGACY_MAP.get(String.valueOf(input.charAt(i + 1)).toLowerCase());
+                String tag = legacyTag(input.charAt(i + 1));
                 if (tag != null) { result.append(tag); i += 2; }
                 else { result.append(c); i++; }
             } else {
@@ -96,7 +112,7 @@ public final class ColorUtil {
         while (i < to) {
             char c = input.charAt(i);
             if (c == '&' && i + 1 < to) {
-                String tag = LEGACY_MAP.get(String.valueOf(input.charAt(i + 1)).toLowerCase());
+                String tag = legacyTag(input.charAt(i + 1));
                 if (tag != null) { out.append(tag); i += 2; continue; }
             }
             out.append(c);

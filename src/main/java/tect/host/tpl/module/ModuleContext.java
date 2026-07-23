@@ -1,6 +1,7 @@
 package tect.host.tpl.module;
 
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import tect.host.tpl.TChat;
@@ -11,7 +12,10 @@ import tect.host.tpl.config.MessagesManager;
 import tect.host.tpl.data.DataManager;
 import tect.host.tpl.module.hook.placeholderapi.PlaceholderApiHook;
 import tect.host.tpl.module.registry.ModuleManager;
+import tect.host.tpl.util.Utils;
+import tect.host.tpl.util.logging.DebugLogger;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.logging.Logger;
 
@@ -24,18 +28,20 @@ public final class ModuleContext {
     private final SchedulerAccess scheduler;
     private final String pluginVersion;
     private final Logger logger;
+    private final DebugLogger debugLogger;
     private final DataManager dataManager;
     private @Nullable ModuleManager moduleManager;
-    private @Nullable ActionExecutor actionExecutor;
+    private volatile @Nullable ActionExecutor actionExecutor;
 
-    public ModuleContext(@NonNull TChat plugin, @NonNull ConfigManager coreConfig, @NonNull MessagesManager messagesManager, @NonNull PlaceholderApiHook placeholderApiHook, @NonNull SchedulerAccess scheduler, @NonNull DataManager dataManager) {
+    public ModuleContext(@NonNull TChat plugin, @NonNull ConfigManager coreConfig, @NonNull MessagesManager messagesManager, @NonNull PlaceholderApiHook placeholderApiHook, @NonNull SchedulerAccess scheduler, @NonNull DebugLogger debugLogger, @NonNull DataManager dataManager) {
         this.plugin = plugin;
         this.coreConfig = coreConfig;
         this.messagesManager = messagesManager;
         this.placeholderApiHook = placeholderApiHook;
         this.scheduler = scheduler;
-        this.pluginVersion = plugin.getPluginMeta().getVersion();
+        this.pluginVersion = Utils.getPluginVersion(plugin);
         this.logger = plugin.getLogger();
+        this.debugLogger = debugLogger;
         this.dataManager = dataManager;
     }
 
@@ -54,6 +60,7 @@ public final class ModuleContext {
     public @NonNull SchedulerAccess getScheduler() { return scheduler; }
     public @NonNull String getPluginVersion() { return pluginVersion; }
     public @NonNull Logger getLogger() { return logger; }
+    public @NonNull DebugLogger getDebugLogger() { return debugLogger; }
     public @NonNull DataManager getDataManager() { return dataManager; }
 
     public @NonNull ModuleManager getModuleManager() {
@@ -62,11 +69,25 @@ public final class ModuleContext {
     }
 
     public @NonNull ActionExecutor getActionExecutor() {
-        if (actionExecutor == null) actionExecutor = new ActionExecutor(this);
-        return actionExecutor;
+        ActionExecutor local = actionExecutor;
+        if (local == null) {
+            synchronized (this) {
+                local = actionExecutor;
+                if (local == null) {
+                    local = new ActionExecutor(this);
+                    actionExecutor = local;
+                }
+            }
+        }
+        return local;
     }
 
     public @NonNull Collection<? extends Player> getOnlinePlayers() {
         return plugin.getServer().getOnlinePlayers();
+    }
+
+    @Contract(pure = true)
+    public @NonNull File getPluginDataFolder() {
+        return plugin.getDataFolder();
     }
 }

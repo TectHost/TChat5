@@ -1,0 +1,22 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                  customcommands/youtube.yml                  ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: youtube
+
+aliases:
+  - yt
+
+args:
+  min: 0
+  max: 0
+
+# No permission field = everyone can use it
+# No cooldown field = no cooldown
+
+actions:
+  - "[MESSAGE] <#FF0000><bold>YouTube</bold> <white>-> <aqua>https://yt.tect.host"
+  - "[ACTION_BAR] <#FF0000>Join us on YouTube!"

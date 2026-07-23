@@ -1,0 +1,22 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                   customcommands/tiktok.yml                  ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: tiktok
+
+aliases:
+  - tt
+
+args:
+  min: 0
+  max: 0
+
+# No permission field = everyone can use it
+# No cooldown field = no cooldown
+
+actions:
+  - "[MESSAGE] <#25F4EE><bold>TikTok</bold> <white>-> <aqua>https://tt.tect.host"
+  - "[ACTION_BAR] <#25F4EE>Join us on TikTok!"

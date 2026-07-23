@@ -9,6 +9,7 @@ import tect.host.tpl.module.impl.chat.group.GroupModule;
 import tect.host.tpl.module.impl.chat.group.GroupService;
 import tect.host.tpl.module.impl.command.nick.NickModule;
 import tect.host.tpl.util.ColorUtil;
+import tect.host.tpl.util.Utils;
 
 public final class PlaceholderExpansion extends me.clip.placeholderapi.expansion.PlaceholderExpansion {
 
@@ -32,8 +33,8 @@ public final class PlaceholderExpansion extends me.clip.placeholderapi.expansion
 
 
     @Override public @NonNull String getIdentifier() { return "tchat"; }
-    @Override public @NonNull String getAuthor() { return String.join(", ", plugin.getPluginMeta().getAuthors()); }
-    @Override public @NonNull String getVersion() { return plugin.getPluginMeta().getVersion(); }
+    @Override public @NonNull String getAuthor() { return String.join(", ", Utils.getPluginAuthors(plugin)); }
+    @Override public @NonNull String getVersion() { return Utils.getPluginVersion(plugin); }
     @Override public boolean persist() { return true; }
 
     @Override

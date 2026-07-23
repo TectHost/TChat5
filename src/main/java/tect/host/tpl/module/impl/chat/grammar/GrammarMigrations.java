@@ -1,0 +1,22 @@
+package tect.host.tpl.module.impl.chat.grammar;
+
+import org.jetbrains.annotations.Contract;
+import org.jspecify.annotations.NonNull;
+import tect.host.tpl.config.migration.ConfigMigrator;
+
+import java.util.logging.Logger;
+
+public final class GrammarMigrations {
+
+    private GrammarMigrations() {}
+
+    @Contract("_ -> new")
+    public static @NonNull ConfigMigrator create(@NonNull Logger logger) {
+        return new ConfigMigrator(logger, "grammar.yml");
+
+        // v0 -> v1
+        //.addMigration(config -> {
+        //    config.set("path", "default");
+        //})
+    }
+}

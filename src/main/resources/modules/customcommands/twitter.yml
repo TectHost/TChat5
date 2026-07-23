@@ -1,0 +1,23 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                  customcommands/instagram.yml                ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: twitter
+
+aliases:
+  - x
+  - tw
+
+args:
+  min: 0
+  max: 0
+
+# No permission field = everyone can use it
+# No cooldown field = no cooldown
+
+actions:
+  - "[MESSAGE] <#000000><bold>X</bold> <white>-> <aqua>https://tw.tect.host"
+  - "[ACTION_BAR] <#000000>Join us on X!"

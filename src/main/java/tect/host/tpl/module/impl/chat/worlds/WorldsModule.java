@@ -64,9 +64,9 @@ public final class WorldsModule implements ChatModule {
         Set<? extends Player> recipients = ctx.getRecipients();
         if (recipients == null) return;
 
-        String raw = ctx.getRawMessage();
-        if (!raw.isEmpty() && raw.charAt(0) == worldCfg.bypassChar()) {
-            ctx.setRawOverride(raw.length() > 1 ? raw.substring(1) : raw);
+        String rawMsg = ctx.getEffectiveRaw();
+        if (!rawMsg.isEmpty() && rawMsg.charAt(0) == worldCfg.bypassChar()) {
+            ctx.setRawOverride(rawMsg.length() > 1 ? rawMsg.substring(1) : rawMsg);
             return;
         }
 

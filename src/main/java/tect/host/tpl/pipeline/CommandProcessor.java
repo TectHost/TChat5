@@ -23,6 +23,8 @@ public final class CommandProcessor {
             module.process(ctx);
         }
 
+        if (!ctx.isCancelled()) ctx.runOnSuccessHooks();
+
         return !ctx.isCancelled();
     }
 }

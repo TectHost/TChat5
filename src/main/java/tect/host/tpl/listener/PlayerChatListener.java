@@ -13,7 +13,6 @@ import tect.host.tpl.context.MessageContext;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public final class PlayerChatListener implements Listener {
 
@@ -31,11 +30,12 @@ public final class PlayerChatListener implements Listener {
 
         Set<Audience> viewers = event.viewers();
 
-        MessageContext ctx = new MessageContext(player, rawMessage, original, (Set<? extends Player>) event.viewers()
-                .stream()
-                .filter(a -> a instanceof Player)
-                .map(a -> (Player) a)
-                .collect(Collectors.toCollection(LinkedHashSet::new)));
+        Set<Player> playerViewers = new LinkedHashSet<>();
+        for (Audience a : viewers) {
+            if (a instanceof Player p) playerViewers.add(p);
+        }
+
+        MessageContext ctx = new MessageContext(player, rawMessage, original, playerViewers);
 
         processor.process(ctx);
 

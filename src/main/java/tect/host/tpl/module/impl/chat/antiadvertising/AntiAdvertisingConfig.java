@@ -12,7 +12,7 @@ import java.util.regex.PatternSyntaxException;
 
 public final class AntiAdvertisingConfig {
 
-    private final Action action;
+    private final AntiAdvertisingAction action;
     private final char censorChar;
 
     private final boolean checkIpv4;
@@ -30,7 +30,7 @@ public final class AntiAdvertisingConfig {
     public AntiAdvertisingConfig(@NonNull ConfigFile configFile, @NonNull Logger logger) {
         var cfg = configFile.get();
 
-        this.action = Action.fromString(cfg.getString("action", "BLOCK"));
+        this.action = AntiAdvertisingAction.fromString(cfg.getString("action", "BLOCK"));
         this.censorChar = getCensorCharSafe(cfg.getString("censor-char"));
 
         this.checkIpv4 = cfg.getBoolean("filters.ipv4", true);
@@ -68,7 +68,7 @@ public final class AntiAdvertisingConfig {
         }
     }
 
-    public @NonNull Action getAction() { return action; }
+    public @NonNull AntiAdvertisingAction getAction() { return action; }
     public char getCensorChar() { return censorChar; }
     public boolean isCheckIpv4() { return checkIpv4; }
     public boolean isCheckIpv6() { return checkIpv6; }

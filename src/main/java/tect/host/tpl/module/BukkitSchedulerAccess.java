@@ -1,6 +1,7 @@
 package tect.host.tpl.module;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.NonNull;
 
@@ -24,6 +25,12 @@ public final class BukkitSchedulerAccess implements SchedulerAccess {
     public @NonNull Cancellable runSync(@NonNull Runnable task) {
         ScheduledTask t = plugin.getServer().getGlobalRegionScheduler().run(plugin, _ -> task.run());
         return t::cancel;
+    }
+
+    @Override
+    public @NonNull Cancellable runSync(@NonNull Player player, @NonNull Runnable task) {
+        ScheduledTask t = player.getScheduler().run(plugin, _ -> task.run(), null);
+        return t != null ? t::cancel : () -> {};
     }
 
     /** runLater is always async */

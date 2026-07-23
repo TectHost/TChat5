@@ -1,0 +1,22 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                  customcommands/instagram.yml                ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: instagram
+
+aliases:
+  - ig
+
+args:
+  min: 0
+  max: 0
+
+# No permission field = everyone can use it
+# No cooldown field = no cooldown
+
+actions:
+  - "[MESSAGE] <#E4405F><bold>Instagram</bold> <white>-> <aqua>https://ig.tect.host"
+  - "[ACTION_BAR] <#E4405F>Join us on Instagram!"

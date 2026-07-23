@@ -10,7 +10,6 @@ import tect.host.tpl.module.impl.chat.chatplaceholders.engine.TagReplacementEngi
 import tect.host.tpl.module.impl.chat.chatplaceholders.tag.ItemChatTag;
 import tect.host.tpl.module.impl.chat.chatplaceholders.tag.ItemChatTagConfig;
 import tect.host.tpl.module.type.ChatModule;
-import tect.host.tpl.util.Utils;
 
 import java.util.Map;
 
@@ -75,7 +74,7 @@ public final class ChatPlaceholdersModule implements ChatModule {
         reg.registerAll(CustomTagLoader.load(customCfgFile, ctx.getActionExecutor(), placeholderApiHook, ctx.getLogger()));
 
         this.registry = reg;
-        Utils.log(ctx.getLogger(), "INFO", "ChatPlaceholders: loaded %d tag(s).".formatted(reg.size()));
+        ctx.getDebugLogger().info("ChatPlaceholders: loaded %d tag(s).".formatted(reg.size()));
     }
 
     @Override

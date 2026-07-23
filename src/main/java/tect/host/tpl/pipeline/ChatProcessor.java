@@ -31,5 +31,7 @@ public final class ChatProcessor {
 
             if (ctx.isCancelled()) return;
         }
+
+        ctx.runOnSuccessHooks();
     }
 }

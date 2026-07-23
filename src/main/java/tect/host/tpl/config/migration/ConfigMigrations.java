@@ -46,6 +46,18 @@ public final class ConfigMigrations {
                 config.set("modules.invsee", false);
                 config.set("modules.chat-placeholders", false);
                 config.set("modules.anti-advertising", false);
+           })
+
+           // v5 -> v6
+           .addMigrations(config -> {
+                config.set("modules.custom-commands", false);
+                config.set("debug", false);
+                config.set("modules.anti-spam", false);
+                config.set("modules.chat-cooldown", false);
+                config.set("modules.command-cooldown", false);
+                config.set("modules.grammar", false);
+                config.set("modules.anti-unicode", false);
+                config.set("storage.remote.useSSL", false);
            });
     }
 }

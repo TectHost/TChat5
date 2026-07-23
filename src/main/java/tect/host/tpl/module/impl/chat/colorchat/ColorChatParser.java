@@ -22,13 +22,13 @@ import java.util.regex.Pattern;
  */
 public final class ColorChatParser {
 
-    // &[color/format code] - case-insensitive
+    // &[color/format code] -> case-insensitive
     private static final Pattern LEGACY_PATTERN = Pattern.compile("&([0-9a-fA-Fk-oK-OrR])");
 
-    // <tag>, <tag:args…>, </tag> - captures (1)=closing slash, (2)=tag name
+    // <tag>, <tag:args…>, </tag> -> captures (1)=closing slash, (2)=tag name
     private static final Pattern MINI_PATTERN = Pattern.compile("<(/?)(#[0-9a-fA-F]{6}|[a-zA-Z_][a-zA-Z0-9_]*)(?::[^>]*)?>", Pattern.CASE_INSENSITIVE);
 
-    // Strips all <tag> / </tag> tokens - used only for the blank-message check
+    // Strips all <tag> / </tag> tokens -> used only for the blank-message check
     private static final Pattern TAG_STRIP_PATTERN = Pattern.compile("<[^>]*>");
 
     private ColorChatParser() {}

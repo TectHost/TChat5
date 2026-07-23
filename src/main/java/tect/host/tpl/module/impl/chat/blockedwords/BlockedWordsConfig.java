@@ -10,13 +10,13 @@ import java.util.Set;
 
 public final class BlockedWordsConfig {
 
-    private final Action action;
+    private final BlockedWordsAction blockedWordsAction;
     private final char censorChar;
     private final Set<String> blockedWords;
     private final List<String> actions;
 
     public BlockedWordsConfig(@NonNull ConfigFile configFile) {
-        this.action = Action.fromString(configFile.get().getString("action", "CENSOR"));
+        this.blockedWordsAction = BlockedWordsAction.fromString(configFile.get().getString("action", "CENSOR"));
 
         this.censorChar = configFile.get().getString("censor-char", "*").charAt(0);
 
@@ -31,7 +31,7 @@ public final class BlockedWordsConfig {
         this.actions = rawActions.stream().filter(l -> l != null && !l.isBlank()).toList();
     }
 
-    public @NonNull Action getAction() { return action; }
+    public @NonNull BlockedWordsAction getAction() { return blockedWordsAction; }
     public char getCensorChar() { return censorChar; }
     public @NonNull Set<String> getBlockedWords() { return blockedWords; }
     public @NonNull List<String> getActions() { return actions; }

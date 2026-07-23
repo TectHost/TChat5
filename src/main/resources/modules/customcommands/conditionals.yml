@@ -1,0 +1,35 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                customcommands/conditionals.yml               ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# This is just a test file, delete me if you see this.
+
+name: conditionals
+
+aliases:
+  - testconditionals
+
+# Arguments
+args:
+  min: 0
+  max: 0
+
+# No permission field = everyone can use it
+# No cooldown field = no cooldown
+
+# Actions on success
+# {arg0} = the destination the player typed
+# {args} = all arguments joined by space
+# {player} = player name
+actions:
+  - "[IF] {player} == 'TectHost'"
+  - "[MESSAGE] &aHi TectHost!"
+  - "[ELSE IF] %vault_eco_balance% >= '1000'"
+  - "[MESSAGE] &eYou have more than $1,000"
+  - "[ELSE]"
+  - "[MESSAGE] <gray>You're not TectHost, and you don't have enough money"
+  - "[ENDIF]"
+  - "[MESSAGE] &cThis is after the [IF]"

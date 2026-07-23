@@ -1,0 +1,67 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                       antiunicode.yml                        ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# DON'T TOUCH THIS!
+config-version: 0
+
+# What to do when a disallowed unicode character is detected:
+# - STRIP : Silently remove only the offending characters, keep the rest of the message
+# - CENSOR : Replace only the matched characters with censor-char
+# - BLOCK : Cancel the message entirely
+action: STRIP
+
+# Only used if action = 'CENSOR'
+censor-char: "*"
+
+filters:
+
+  # Bidirectional control characters (RLO/LRO/PDF/isolates/ALM).
+  # These can visually reorder text to disguise its real content ("Trojan Source" style attacks).
+  # Strongly recommended to keep this enabled.
+  bidi-control: true
+
+  # Zero-width / invisible characters (ZWSP, ZWNJ, ZWJ, word joiner, BOM, soft hyphen,
+  # variation selectors...)
+  # e.g. "d​i​s​c​o​r​d" with invisible characters between letters.
+  zero-width: true
+
+  # Non-printable ASCII control characters (does not affect tab/newline/carriage-return)
+  control-chars: true
+
+  # "Zalgo" text, excessive stacked combining diacritical marks
+  zalgo: true
+
+  # Fullwidth forms and Mathematical Alphanumeric Symbols
+  # (e.g. bold/italic unicode letters)
+  fullwidth: true
+
+  # Private Use Area characters, custom icon/font glyphs, sometimes abused for spam or ASCII-art walls
+  private-use-area: true
+
+  # Standard emoji ranges. Disabled by default since most servers allow emoji in chat.
+  emoji: false
+
+  # Restrict messages to an explicit whitelist of unicode scripts (see 'scripts.allowed' below).
+  # Disabled by default, only enable this if you want to block non-Latin alphabets entirely,
+  scripts: false
+
+zalgo:
+  # Maximum number of stacked combining marks allowed on a single base character before it's flagged
+  max-combining-marks: 2
+
+scripts:
+  # Only used if filters.scripts: true
+  # Valid names: see java.lang.Character.UnicodeScript (e.g. LATIN, CYRILLIC, GREEK, HAN, ARABIC...)
+  # https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Character.UnicodeScript.html
+  allowed:
+    - LATIN
+    - COMMON
+    - INHERITED
+
+# https://tchat.tect.host/general/actions
+actions:
+  - "[MESSAGE] <red>Your message contains disallowed characters.</red>"

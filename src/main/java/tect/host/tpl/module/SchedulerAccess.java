@@ -1,5 +1,6 @@
 package tect.host.tpl.module;
 
+import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.Executor;
@@ -15,6 +16,10 @@ public interface SchedulerAccess {
     Cancellable runSync(@NonNull Runnable task);
     Cancellable runLater(@NonNull Runnable task, long delayTicks);
     Cancellable runTimer(@NonNull Runnable task, long delayTicks, long periodTicks);
+
+    default @NonNull Cancellable runSync(@NonNull Player player, @NonNull Runnable task) {
+        return runSync(task);
+    }
 
     /** Returns an Executor that dispatches via runAsync */
     default @NonNull Executor asExecutor() {

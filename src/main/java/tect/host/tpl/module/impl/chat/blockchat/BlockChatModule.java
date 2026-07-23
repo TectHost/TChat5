@@ -13,7 +13,7 @@ public final class BlockChatModule implements ChatModule {
 
     private final ModuleContext moduleContext;
 
-    private boolean blocked = false;
+    private volatile boolean blocked = false;
 
     public BlockChatModule(@NonNull ModuleContext moduleContext) {
         this.moduleContext = moduleContext;

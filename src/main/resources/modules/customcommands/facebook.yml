@@ -1,0 +1,22 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                  customcommands/facebook.yml                 ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: facebook
+
+aliases:
+  - fb
+
+args:
+  min: 0
+  max: 0
+
+# No permission field = everyone can use it
+# No cooldown field = no cooldown
+
+actions:
+  - "[MESSAGE] <#1877F2><bold>FaceBook</bold> <white>-> <aqua>https://fb.tect.host"
+  - "[ACTION_BAR] <#1877F2>Join us on FaceBook!"

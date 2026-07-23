@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -19,6 +21,7 @@ public final class MessageContext {
     private @Nullable Component format;
     private final @Nullable Set<? extends Player> recipients;
     private boolean cancelled;
+    private final List<Runnable> onSuccessHooks = new ArrayList<>();
 
     public MessageContext(@NonNull Player player, @NonNull String rawMessage, @NonNull Component message, @Nullable Set<? extends Player> recipients) {
         this.player = Objects.requireNonNull(player, "player");
@@ -43,4 +46,17 @@ public final class MessageContext {
 
     public boolean hasRawOverride() { return overrideRaw != null; }
     public boolean isCancelled() { return cancelled; }
+
+    /**
+     * Registers an action that runs only if the message reaches the end of the
+     * pipeline without being cancelled by a later module
+     */
+    public void addOnSuccessHook(@NonNull Runnable hook) {
+        onSuccessHooks.add(hook);
+    }
+
+    /** Called by the ChatProcessor after processing completes without cancellation */
+    public void runOnSuccessHooks() {
+        for (Runnable hook : onSuccessHooks) hook.run();
+    }
 }

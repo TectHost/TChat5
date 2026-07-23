@@ -1,0 +1,17 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                        chatcooldown.yml                      ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# DON'T TOUCH THIS!
+config-version: 0
+
+# The number of seconds a player must wait between messages.
+cooldown-seconds: 3
+
+# Actions taken when a player types while on cooldown.
+# You can use %cooldown_remaining% to display the remaining seconds.
+actions:
+  - "[MESSAGE] <red>You must wait <yellow>%cooldown_remaining%s</yellow> before you can type again."
