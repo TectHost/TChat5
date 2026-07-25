@@ -12,6 +12,7 @@ import tect.host.tpl.config.MessagesManager;
 import tect.host.tpl.data.DataManager;
 import tect.host.tpl.module.hook.placeholderapi.PlaceholderApiHook;
 import tect.host.tpl.module.registry.ModuleManager;
+import tect.host.tpl.pipeline.ChatProcessor;
 import tect.host.tpl.util.Utils;
 import tect.host.tpl.util.logging.DebugLogger;
 
@@ -32,6 +33,7 @@ public final class ModuleContext {
     private final DataManager dataManager;
     private @Nullable ModuleManager moduleManager;
     private volatile @Nullable ActionExecutor actionExecutor;
+    private volatile @Nullable ChatProcessor chatProcessor;
 
     public ModuleContext(@NonNull TChat plugin, @NonNull ConfigManager coreConfig, @NonNull MessagesManager messagesManager, @NonNull PlaceholderApiHook placeholderApiHook, @NonNull SchedulerAccess scheduler, @NonNull DebugLogger debugLogger, @NonNull DataManager dataManager) {
         this.plugin = plugin;
@@ -76,6 +78,20 @@ public final class ModuleContext {
                 if (local == null) {
                     local = new ActionExecutor(this);
                     actionExecutor = local;
+                }
+            }
+        }
+        return local;
+    }
+
+    public @NonNull ChatProcessor getChatProcessor() {
+        ChatProcessor local = chatProcessor;
+        if (local == null) {
+            synchronized (this) {
+                local = chatProcessor;
+                if (local == null) {
+                    local = new ChatProcessor(getModuleManager());
+                    chatProcessor = local;
                 }
             }
         }

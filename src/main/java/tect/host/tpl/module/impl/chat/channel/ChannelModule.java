@@ -1,17 +1,13 @@
 package tect.host.tpl.module.impl.chat.channel;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import tect.host.tpl.config.ConfigFile;
 import tect.host.tpl.context.MessageContext;
+import tect.host.tpl.context.MessageOrigin;
 import tect.host.tpl.module.ModuleContext;
 import tect.host.tpl.module.type.ChatModule;
-import tect.host.tpl.pipeline.ChatRenderer;
-
-import java.util.Collection;
-import java.util.List;
 
 public final class ChannelModule implements ChatModule {
 
@@ -44,6 +40,8 @@ public final class ChannelModule implements ChatModule {
 
     @Override
     public void process(@NonNull MessageContext msgCtx) {
+        if (msgCtx.getOrigin() != MessageOrigin.CHAT) return;
+
         Player player = msgCtx.getPlayer();
         ChannelEntry channel = channelService.getActiveChannel(player);
         if (channel == null) return;
@@ -53,20 +51,7 @@ public final class ChannelModule implements ChatModule {
             return;
         }
 
-        Collection<? extends Player> online = moduleContext.getOnlinePlayers();
-        List<Player> recipients = channelService.resolveRecipients(channel, online);
-
-        Component formatted = ChatRenderer.render(
-                moduleContext.getPlaceholderApiHook(),
-                player,
-                channel.format().replace("%channel%", channel.id()),
-                msgCtx
-        );
-
-        for (Player recipient : recipients) {
-            recipient.sendMessage(formatted);
-        }
-
+        channelService.sendToChannel(player, channel, msgCtx, moduleContext);
         msgCtx.setCancelled(true);
     }
 

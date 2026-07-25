@@ -19,7 +19,6 @@ import tect.host.tpl.module.impl.command.customcommands.CustomCommandExecutor;
 import tect.host.tpl.module.impl.command.customcommands.CustomCommandsModule;
 import tect.host.tpl.module.registry.ModuleManager;
 import tect.host.tpl.module.registry.ModuleRegistry;
-import tect.host.tpl.pipeline.ChatProcessor;
 import tect.host.tpl.pipeline.CommandProcessor;
 import tect.host.tpl.pipeline.JoinProcessor;
 import tect.host.tpl.pipeline.QuitProcessor;
@@ -88,7 +87,7 @@ public final class TChat extends JavaPlugin {
 
     private void registerListeners() {
         final var pm = getServer().getPluginManager();
-        pm.registerEvents(new PlayerChatListener(new ChatProcessor(moduleManager)), this);
+        pm.registerEvents(new PlayerChatListener(moduleManager.getModuleContext().getChatProcessor()), this);
         pm.registerEvents(new PlayerJoinListener(new JoinProcessor(moduleManager)), this);
         pm.registerEvents(new PlayerQuitListener(new QuitProcessor(moduleManager)), this);
         pm.registerEvents(new PlayerCommandListener(new CommandProcessor(moduleManager)), this);

@@ -1,12 +1,17 @@
 package tect.host.tpl.module.impl.chat.channel;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import tect.host.tpl.config.ConfigFile;
+import tect.host.tpl.context.MessageContext;
+import tect.host.tpl.module.ModuleContext;
+import tect.host.tpl.pipeline.ChatRenderer;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 
 public final class ChannelService {
 
@@ -83,6 +88,36 @@ public final class ChannelService {
             case 2  -> getMembersOf(channel, onlinePlayers);
             default -> List.of();
         };
+    }
+
+    /**
+     * Renders and delivers a message to a channel's recipients, respecting any
+     * format/decorators already set on the context by earlier pipeline modules,
+     * falling back to the channel's own format otherwise.
+     */
+    public @NonNull List<Player> sendToChannel(@NonNull Player sender, @NonNull ChannelEntry channel, @NonNull MessageContext msgCtx, @NonNull ModuleContext moduleContext) {
+        Collection<? extends Player> online = moduleContext.getOnlinePlayers();
+        List<Player> recipients = resolveRecipients(channel, online);
+        if (recipients.isEmpty()) return recipients;
+
+        Component base = ChatRenderer.render(
+                moduleContext.getPlaceholderApiHook(),
+                sender,
+                channel.format().replace("%channel%", channel.id()),
+                msgCtx
+        );
+
+        List<BiFunction<Player, Component, Component>> decorators = msgCtx.getViewerDecorators();
+
+        for (Player recipient : recipients) {
+            Component rendered = base;
+            for (BiFunction<Player, Component, Component> decorator : decorators) {
+                rendered = decorator.apply(recipient, rendered);
+            }
+            recipient.sendMessage(rendered);
+        }
+
+        return recipients;
     }
 
     /**

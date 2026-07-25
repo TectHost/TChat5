@@ -9,9 +9,9 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NonNull;
 import tect.host.tpl.config.MessagesManager;
 import tect.host.tpl.context.MessageContext;
+import tect.host.tpl.context.MessageOrigin;
 import tect.host.tpl.module.ModuleCommand;
 import tect.host.tpl.module.registry.ModuleManager;
-import tect.host.tpl.pipeline.ChatRenderer;
 import tect.host.tpl.util.CompletionUtil;
 
 import java.util.Arrays;
@@ -152,24 +152,17 @@ public final class ChannelCommand implements ModuleCommand {
 
         String rawMessage = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
         MessageContext msgCtx = new MessageContext(player, rawMessage, Component.text(rawMessage), null, null);
+        msgCtx.setOrigin(MessageOrigin.COMMAND);
 
-        Collection<? extends Player> online = moduleManager.getModuleContext().getOnlinePlayers();
-        List<Player> recipients = service.resolveRecipients(channel, online);
+        moduleManager.getModuleContext().getChatProcessor().process(msgCtx);
+
+        if (msgCtx.isCancelled()) return;
+
+        List<Player> recipients = service.sendToChannel(player, channel, msgCtx, moduleManager.getModuleContext());
 
         if (recipients.isEmpty()) {
             messagesManager.sendMessage(player, "channel-no-recipients", Map.of("%channel%", channel.id()));
             return;
-        }
-
-        Component rendered = ChatRenderer.render(
-                moduleManager.getModuleContext().getPlaceholderApiHook(),
-                player,
-                channel.format().replace("%channel%", channel.id()),
-                msgCtx
-        );
-
-        for (Player recipient : recipients) {
-            recipient.sendMessage(rendered);
         }
 
         messagesManager.sendMessage(player, "channel-send-success", Map.of("%channel%", channel.id(), "%message%", rawMessage));

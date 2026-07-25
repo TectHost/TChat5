@@ -15,6 +15,7 @@ import java.util.function.BiFunction;
 public final class MessageContext {
 
     private final Player player;
+    private @NonNull MessageOrigin origin = MessageOrigin.CHAT;
     private final World world;
     private final String rawMessage;
     private final @Nullable SignedMessage signedMessage;
@@ -39,6 +40,7 @@ public final class MessageContext {
     public void setFormat(@NonNull Component format) { this.format = format; }
     public void setMessage(@NonNull Component message) { this.message = message; }
     public void setRawOverride(@NonNull String raw) { this.overrideRaw = raw; }
+    public void setOrigin(@NonNull MessageOrigin origin) { this.origin = origin; }
 
     public @NonNull Player getPlayer() { return player; }
     public @NonNull World getWorld() { return world; }
@@ -48,6 +50,7 @@ public final class MessageContext {
     public @Nullable Set<? extends Player> getRecipients() { return recipients; }
     public @Nullable SignedMessage getSignedMessage() { return signedMessage; }
     public @NonNull String getEffectiveRaw() { return overrideRaw != null ? overrideRaw : rawMessage; }
+    public @NonNull MessageOrigin getOrigin() { return origin; }
 
     public boolean hasRawOverride() { return overrideRaw != null; }
     public boolean isCancelled() { return cancelled; }
