@@ -18,6 +18,8 @@ import tect.host.tpl.module.impl.chat.bridge.ChatBridgeModule;
 import tect.host.tpl.module.impl.chat.channel.ChannelCommand;
 import tect.host.tpl.module.impl.chat.channel.ChannelModule;
 import tect.host.tpl.module.impl.chat.chatcooldown.ChatCooldownModule;
+import tect.host.tpl.module.impl.chat.chatdelete.ChatDeleteCommand;
+import tect.host.tpl.module.impl.chat.chatdelete.ChatDeleteModule;
 import tect.host.tpl.module.impl.chat.chatplaceholders.ChatPlaceholdersModule;
 import tect.host.tpl.module.impl.chat.clickablelinks.ClickableLinksModule;
 import tect.host.tpl.module.impl.chat.colorchat.ColorChatModule;
@@ -89,7 +91,9 @@ public final class ModuleRegistry {
                 ModuleDescriptor.builder("group", "group", GroupModule::new)
                         .phase(ModulePhase.FORMAT).priority(99).build(),
                 ModuleDescriptor.builder("format", "format", FormatModule::new)
-                        .phase(ModulePhase.FORMAT).priority(100).build()
+                        .phase(ModulePhase.FORMAT).priority(100).build(),
+                ModuleDescriptor.builder("chat-delete", "chat-delete", ChatDeleteModule::new)
+                        .phase(ModulePhase.FORMAT).priority(110).command(mm -> new ChatDeleteCommand(mm, mm.getModuleContext().getMessagesManager())).build()
         );
     }
 

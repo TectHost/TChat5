@@ -6,7 +6,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # DON'T TOUCH THIS!
-config-version: 6
+config-version: 7
 
 chat:
   # Global chat format (modules.format)
@@ -97,6 +97,14 @@ modules:
   #
   # Chat cooldown module loaded from modules/chatcooldown.yml
   chat-cooldown: true
+
+  # This module allows you to delete messages from the chat.
+  # To use this module, the server must have online mode enabled.
+  # If the server is behind a proxy, the proxy must forward chat session keys.
+  # enforce-secure-profile must also be enabled.
+  #
+  # Chat delete module loaded from modules/chatdelete.yml
+  chat-delete: false
 
   # Allows players to display custom tags in chat.
   #

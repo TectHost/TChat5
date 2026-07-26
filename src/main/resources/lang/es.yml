@@ -6,7 +6,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # NO TOCAR!
-config-version: 5
+config-version: 6
 
 # No puedes usar placeholders en el prefijo
 #
@@ -96,3 +96,11 @@ messages:
   # Módulo InvSee
   invsee-usage: "<red>Uso: /invsee <jugador></red>"
   invsee-module-disabled: "<red>El módulo invsee está desactivado.</red>"
+
+  # Módulo ChatDelete
+  # Puedes usar %id% donde corresponda
+  chat-delete-usage: "<gray>Uso: /chatdelete <id></gray>"
+  chat-delete-module-disabled: "<red>El módulo chat-delete no está habilitado.</red>"
+  chat-delete-success: "<green>Mensaje <white>%id%</white> borrado.</green>"
+  chat-delete-unsigned: "<yellow>Ese mensaje no se pudo borrar del chat porque no se envió como chat firmado.</yellow>"
+  chat-delete-not-found: "<red>Ese mensaje ya no existe o ya ha sido borrado.</red>"

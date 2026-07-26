@@ -6,7 +6,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # DON'T TOUCH THIS
-config-version: 5
+config-version: 6
 
 # You cannot use placeholders in the prefix
 #
@@ -96,3 +96,11 @@ messages:
   # InvSee Module
   invsee-usage: "<red>Usage: /invsee <jugador></red>"
   invsee-module-disabled: "<red>The InvSee module is not enabled.</red>"
+
+  # ChatDelete module
+  # You can use %id% where applicable
+  chat-delete-usage: "<gray>Usage: /chatdelete <id></gray>"
+  chat-delete-module-disabled: "<red>The chat-delete module is not enabled.</red>"
+  chat-delete-success: "<green>Message <white>%id%</white> deleted.</green>"
+  chat-delete-unsigned: "<yellow>That message could not be removed from chat because it was not sent as signed chat.</yellow>"
+  chat-delete-not-found: "<red>That message no longer exists or has already been deleted.</red>"

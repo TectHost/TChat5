@@ -59,6 +59,11 @@ public final class ConfigMigrations {
                 config.set("modules.anti-unicode", false);
                 config.set("storage.remote.useSSL", false);
                 config.set("modules.clickable-links", false);
-           });
+           })
+
+            // v6 -> v7
+               .addMigrations(config -> {
+                config.set("modules.chat-delete", false);
+            });
     }
 }

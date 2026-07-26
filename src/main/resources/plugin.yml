@@ -22,6 +22,7 @@ permissions:
       tchat.admin.command: true
       tchat.admin.bypass: true
       tchat.admin.check-updates: true
+      tchat.admin.command.chatdelete: true
       tchat.command: true
 
   tchat.command:
@@ -153,6 +154,10 @@ permissions:
 
   tchat.admin.command.announcement:
     description: Allows to send announcements
+    default: op
+
+  tchat.admin.command.chatdelete:
+    description: Allows to delete messages
     default: op
 
   tchat.admin.command.broadcast:

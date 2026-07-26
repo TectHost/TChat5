@@ -82,6 +82,15 @@ public final class LangMigrations {
             .addMigration(config -> {
                 config.set("messages.invsee-usage", "<red>Usage: /invsee <jugador></red>");
                 config.set("messages.invsee-module-disabled", "<red>The InvSee module is not enabled.</red>");
+            })
+
+            // v5 -> v6
+            .addMigration(config -> {
+                config.set("messages.chat-delete-usage", "<gray>Usage: /chatdelete <id></gray>");
+                config.set("messages.chat-delete-module-disabled", "<red>The chat-delete module is not enabled.</red>");
+                config.set("messages.chat-delete-success", "<green>Message <white>%id%</white> deleted.</green>");
+                config.set("messages.chat-delete-unsigned", "<yellow>That message could not be removed from chat because it was not sent as signed chat.</yellow>");
+                config.set("messages.chat-delete-not-found", "<red>That message no longer exists or has already been deleted.</red>");
             });
     }
 }

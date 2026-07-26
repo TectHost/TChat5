@@ -1,0 +1,17 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                             TChat                            ║
+# ║                      tect.host | by Alex                     ║
+# ║                                                              ║
+# ║                    modules/chatdelete.yml                    ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# The clickable prefix shown before every chat message, visible only to
+# players with the tchat.admin.command.chatdelete permission.
+prefix-text: "<hover:show_text:'<gray>Delete this message</gray>'><click:run_command:'/chatdelete %id%'><red>[X]</red></click></hover> "
+
+# How many recently sent messages are kept available for deletion.
+# Once this limit is reached, the oldest entries are discarded first (FIFO).
+cache-size: 200
+
+# How long (in seconds) a message stays deletable after being sent.
+cache-ttl-seconds: 300
