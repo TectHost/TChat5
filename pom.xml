@@ -20,7 +20,7 @@
         <plugin.api-version>1.21</plugin.api-version>
         <plugin.website>https://tect.host/</plugin.website>
 
-        <paper.version>26.1.2.build.74-stable</paper.version>
+        <paper.version>26.2.build.84-stable</paper.version>
         <papi.version>2.12.3</papi.version>
         <adventure.version>5.2.0</adventure.version>
         <bStats.version>3.2.1</bStats.version>
