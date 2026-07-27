@@ -5,6 +5,9 @@
 # ║                    modules/chatdelete.yml                    ║
 # ╚══════════════════════════════════════════════════════════════╝
 
+# DON'T TOUCH THIS!
+config-version: 0
+
 # The clickable prefix shown before every chat message, visible only to
 # players with the tchat.admin.command.chatdelete permission.
 prefix-text: "<hover:show_text:'<gray>Delete this message</gray>'><click:run_command:'/chatdelete %id%'><red>[X]</red></click></hover> "
